@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/ObjectManager.dart';
 import 'package:profit_calculator/SingleMeal.dart';
+import 'Model/EnvironmentConfig.dart' as config;
 
 import 'Model/Ingredient.dart';
 import 'Model/Meal.dart';
@@ -17,8 +19,11 @@ class MealList extends StatefulWidget {
 
 class _MealListState extends State<MealList> {
   bool isLoading = false;
-
+  String ingredientJsonFile = config.ingredientJsonFile;
+  String mealJsonFile = config.mealJsonFile;
   final FileManagement fileManagement = FileManagement();
+  final ObjectManager objManager = ObjectManager();
+
   @override
   Widget build(BuildContext context) {
     // List<Meal> mealsnew = [
@@ -42,10 +47,10 @@ class _MealListState extends State<MealList> {
     //   Ingredient(3, "name3", 12, 4288585374, "Kg"),
     // ];
 
-    // fileManagement.writeFile('IngredientListJson', jsonEncode(ingredientsnew));
+    // fileManagement.writeFile(ingredientJsonFile, jsonEncode(ingredientsnew));
     // print(jsonEncode(ingredientsnew));
 
-    // fileManagement.writeFile('MealListJson', jsonEncode(mealsnew));
+    // fileManagement.writeFile(mealJsonFile, jsonEncode(mealsnew));
 
 //Show a loading circle if isLoading is true.
     return isLoading
@@ -58,20 +63,19 @@ class _MealListState extends State<MealList> {
                 constraints: BoxConstraints(maxWidth: 700),
                 child: Column(children: [
                   FutureBuilder(
-                    future: fileManagement.readFile('MealListJson'),
+                    future: fileManagement.readFile(mealJsonFile),
                     initialData: '',
-                    builder:
-                        (BuildContext context, AsyncSnapshot mealFileSnapshot) {
-                          // print(mealFileSnapshot.data);
-                      if (mealFileSnapshot.hasError) {
+                    builder: (context, mealJsonSnapshot) {
+                      // print(mealFileSnapshot.data);
+                      if (mealJsonSnapshot.hasError) {
                         return Center(child: Text('Something went wrong'));
                       }
 
-                      if (mealFileSnapshot.connectionState ==
+                      if (mealJsonSnapshot.connectionState ==
                           ConnectionState.waiting) {
                         return Center(child: Text("Loading"));
                       }
-                      if (mealFileSnapshot.data.length == 0) {
+                      if (mealJsonSnapshot.data.length == 0) {
                         return Center(
                             child: Text(
                           "You have no meals.\nCreate some in the menu.",
@@ -79,33 +83,21 @@ class _MealListState extends State<MealList> {
                         ));
                       }
 //Map data from firestore to list of objects
+                      List<Meal> meals = objManager.jsonToListMeal(mealJsonSnapshot.data);
 
-                      Iterable tempMealIterable =
-                          json.decode(mealFileSnapshot.data);
-                      List<Meal> meals = List<Meal>();
-                      meals = tempMealIterable
-                          ?.map((e) => Meal.fromJson(e))
-                          ?.toList();
                       return FutureBuilder(
-                          future: fileManagement.readFile('IngredientListJson'),
+                          future: fileManagement.readFile(mealJsonFile),
                           initialData: '',
-                          builder: (context, ingredientSnapshot) {
-                            if (ingredientSnapshot.hasError)
+                          builder: (context, ingredientJsonSnapshot) {
+                            if (ingredientJsonSnapshot.hasError)
                               return Center(
                                   child: Text('Something went wrong'));
-                            if (ingredientSnapshot.connectionState ==
+                            if (ingredientJsonSnapshot.connectionState ==
                                 ConnectionState.waiting)
                               return Center(child: CircularProgressIndicator());
 //Mao ingredients from firestore to new list.
-                            Iterable tempIngredientIterable =
-                                json.decode(ingredientSnapshot.data);
-                                // print('all ingredients ${json.decode(ingredientSnapshot.data)}');
+                            List<Ingredient> allIngredients = objManager.jsonToListIngredient(ingredientJsonSnapshot.data);
 
-                            List<Ingredient> allIngredients =
-                                tempIngredientIterable
-                                    ?.map((e) => Ingredient.fromJson(e))
-                                    ?.toList();
-                                    // print('all ingredients $allIngredients');
 //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
                             meals.forEach((meal) {
                               meal.ingredients.forEach((ingredient) {

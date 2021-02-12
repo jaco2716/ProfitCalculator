@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/ObjectManager.dart';
+import 'Model/EnvironmentConfig.dart' as config;
 
 import 'Model/Ingredient.dart';
 
@@ -14,9 +16,11 @@ class IngredientList extends StatefulWidget {
 }
 
 class _IngredientListState extends State<IngredientList> {
-  final FileManagement fileManagement = FileManagement();
   bool showArchived = false;
   String appBarTitle = 'All Ingredients';
+  String ingredientJsonFile = config.ingredientJsonFile;
+  final FileManagement fileManagement = FileManagement();
+  final ObjectManager objManager = ObjectManager();
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +56,18 @@ class _IngredientListState extends State<IngredientList> {
               //   thickness: 2,
               // ),
               FutureBuilder(
-                future: fileManagement.readFile('IngredientListJson'),
+                future: fileManagement.readFile(ingredientJsonFile),
                 initialData: '',
-                builder: (context, ingredientFileSnapshot) {
-                  if (ingredientFileSnapshot.hasError) {
+                builder: (context, ingredientJsonSnapshot) {
+                  if (ingredientJsonSnapshot.hasError) {
                     return Center(child: Text('Something went wrong'));
                   }
 
-                  if (ingredientFileSnapshot.connectionState ==
+                  if (ingredientJsonSnapshot.connectionState ==
                       ConnectionState.waiting) {
                     return Center(child: Text("Loading"));
                   }
-                  if (ingredientFileSnapshot.data.length == 0) {
+                  if (ingredientJsonSnapshot.data.length == 0) {
                     return Center(
                         child: Text(
                       "You have no meals.\nCreate some in the menu.",
@@ -71,12 +75,9 @@ class _IngredientListState extends State<IngredientList> {
                     ));
                   }
 //Map data from firestore to objects in list.
-                  Iterable tempIngredientIterable =
-                      json.decode(ingredientFileSnapshot.data);
-                  List<Ingredient> ingredients = List<Ingredient>();
-                  ingredients = tempIngredientIterable
-                      ?.map((e) => Ingredient.fromJson(e))
-                      ?.toList();
+                  List<Ingredient> ingredients = objManager
+                      .jsonToListIngredient(ingredientJsonSnapshot.data);
+
                   return new ListView.builder(
                     itemCount: ingredients.length,
                     itemBuilder: (BuildContext context, int index) {

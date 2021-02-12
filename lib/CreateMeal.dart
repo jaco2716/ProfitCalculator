@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/Model/Meal.dart';
+import 'package:profit_calculator/ObjectManager.dart';
 import 'package:profit_calculator/SingleMeal.dart';
 import 'package:profit_calculator/main.dart';
 import 'Model/Ingredient.dart';
+import 'Model/EnvironmentConfig.dart' as config;
 
 class CreateMeal extends StatefulWidget {
   final bool editMode;
@@ -24,20 +27,21 @@ class _CreateMealState extends State<CreateMeal> {
   String _profitMargin;
   bool _salePriceChosen = true;
 
+  final FileManagement fileManagement = FileManagement();
+  final ObjectManager objManager = ObjectManager();
+
   List<Ingredient> _selectedIngredients = List<Ingredient>();
   List<Ingredient> ingredients = List<Ingredient>();
 
+  String mealJsonFile = config.mealJsonFile;
+  String ingredientJsonFile = config.ingredientJsonFile;
+
 //Get all ingredients from firestore
-  // getIngredientsFromDB() async {
-  //   QuerySnapshot snapshot = await FirestoreRef.ingredientRef.get();
-  //   ingredients =
-  //       snapshot.docs?.map((e) => Ingredient.fromJson(e.data()))?.toList();
-  // }
-  // getIngredientsFromFile() async {
-  //   QuerySnapshot snapshot = await FirestoreRef.ingredientRef.get();
-  //   ingredients =
-  //       snapshot.docs?.map((e) => Ingredient.fromJson(e.data()))?.toList();
-  // }
+  getIngredientsFromFile() async {
+    String fileContent = await fileManagement.readFile(ingredientJsonFile);
+
+    ingredients = objManager.jsonToListIngredient(fileContent);
+  }
 
 //Check if meal is being edited and insert object.
   initEditMode() {
@@ -53,7 +57,7 @@ class _CreateMealState extends State<CreateMeal> {
   @override
   void initState() {
     super.initState();
-    // getIngredientsFromDB();
+    getIngredientsFromFile();
 
     initEditMode();
   }
@@ -194,19 +198,19 @@ class _CreateMealState extends State<CreateMeal> {
                         label: Text('Save Meal'),
                         onPressed: () => _saveMeal(false)),
                   ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // widget.editMode ?? false
-                  //     ? Container(
-                  //         width: 200,
-                  //         child: FlatButton.icon(
-                  //             icon: Icon(Icons.copy),
-                  //             padding: EdgeInsets.all(15),
-                  //             label: Text('Dublicate'),
-                  //             onPressed: () => _saveMeal(true)),
-                  //       )
-                  //     : Center(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  widget.editMode ?? false
+                      ? Container(
+                          width: 200,
+                          child: FlatButton.icon(
+                              icon: Icon(Icons.copy),
+                              padding: EdgeInsets.all(15),
+                              label: Text('Dublicate'),
+                              onPressed: () => _saveMeal(true)),
+                        )
+                      : Center(),
                   SizedBox(
                     height: 50,
                   ),
@@ -239,12 +243,9 @@ class _CreateMealState extends State<CreateMeal> {
                   child: ListView.builder(
                     itemCount: ingredients.length,
                     itemBuilder: (BuildContext context, int index) {
-                      // return Text('hej');
                       return addIngredientListTile(
                           ingredients[index], setModalState);
                     },
-                    // physics: NeverScrollableScrollPhysics(),
-                    // shrinkWrap: true,
                   ),
                 ),
                 Container(
@@ -305,19 +306,15 @@ class _CreateMealState extends State<CreateMeal> {
         Meal newMeal =
             Meal(newID, _name, _finalSalePrice, _selectedIngredients);
 
-        bool dbSucess = false;
-        try {
-          final result = await InternetAddress.lookup('google.com');
-          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-            print('connected');
-            // dbSucess = await _saveMealToDB(newMeal);
-          }
-        } on SocketException catch (_) {
-          print('not connected');
-          dbSucess = false;
-        }
+        bool saveSucess = false;
+       
 
-        if (dbSucess) {
+          
+        saveSucess = await _saveMealToFile(newMeal);
+          
+        
+
+        if (saveSucess) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(_name + ' has been saved.'),
           ));
@@ -349,19 +346,26 @@ class _CreateMealState extends State<CreateMeal> {
     }
   }
 
-// Save object to Firestore database
-  // Future<bool> _saveMealToDB(Meal newMeal) {
-  //   return FirestoreRef.mealRef
-  //       .doc(newMeal.id.toString())
-  //       .set(newMeal.toJson())
-  //       .then((value) {
-  //     print("newMeal Added to DB");
-  //     return true;
-  //   }).catchError((error) {
-  //     print("Failed to add newMeal to DB: $error");
-  //     return false;
-  //   });
-  // }
+// Save object to json File
+  Future<bool> _saveMealToFile(Meal newMeal) async {
+    try{
+      String fileContent = await fileManagement.readFile(mealJsonFile);
+      List<Meal> allMealsFromFile = objManager.jsonToListMeal(fileContent);
+      if (widget.editMode ?? false) {
+        int editIndex = allMealsFromFile
+            .indexWhere((element) => element.id == newMeal.id);
+        allMealsFromFile[editIndex] = newMeal;
+      } else {
+        allMealsFromFile.add(newMeal);
+      }
+      fileManagement.writeFile(
+          mealJsonFile, jsonEncode(allMealsFromFile));
+    }catch(error){
+      print('Error saving meal: $error');
+      return false;
+    }
+    return true;
+  }
 
 // Each ingredient tile of the selected ingredients.
   Widget ingredientListTile(Ingredient ingredient) {

@@ -1,14 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:profit_calculator/CreateMeal.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/ObjectManager.dart';
+import 'Model/EnvironmentConfig.dart' as config;
 import 'Model/Meal.dart';
 import 'main.dart';
 
 class SingleMeal extends StatelessWidget {
   String title;
   Meal meal;
+
   SingleMeal(this.title, this.meal);
+
+  final FileManagement fileManagement = FileManagement();
+  final ObjectManager objManager = ObjectManager();
+  String mealJsonFile = config.mealJsonFile;  
 
   @override
   Widget build(BuildContext context) {
@@ -160,84 +169,6 @@ class SingleMeal extends StatelessWidget {
     );
   }
 
-//Show menu to calculate price from profit margin
-//   _showChangeProfitMargin(BuildContext context) {
-//     showDialog(
-//       context: context,
-//       builder: (context) {
-//         TextEditingController tec = TextEditingController();
-//         return AlertDialog(
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Text('Calculate the Sale Price from a Profit Margin'),
-//               Container(
-//                   padding: EdgeInsets.all(5),
-//                   width: 100,
-//                   child: TextField(
-//                     inputFormatters: <TextInputFormatter>[
-//                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-//                     ],
-//                     keyboardType: TextInputType.phone,
-//                     maxLength: 2,
-//                     maxLengthEnforced: true,
-//                     controller: tec,
-//                     decoration: InputDecoration(
-//                         hintText: '%',
-//                         border: OutlineInputBorder(),
-//                         counterText: ''),
-//                   )),
-//             ],
-//           ),
-//           actions: [
-//             FlatButton(
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//                 child: Text('Cancel')),
-//             RaisedButton(
-//               onPressed: () async {
-// //Calculate price from profit margin and save it to firestore.
-//                 String textfield = tec.text;
-//                 double profitMargin;
-//                 if (textfield != null)
-//                   profitMargin = double.tryParse(textfield);
-//                 if (profitMargin != null) {
-//                   double newSalePrice =
-//                       ((meal.totalCost / (1 - profitMargin / 100)) * 100)
-//                               .roundToDouble() /
-//                           100;
-//                   print(newSalePrice);
-//                   bool dbSucess = false;
-//                   dbSucess = await _saveProfitMarginToDB(
-//                       meal.id.toString(), newSalePrice);
-
-//                   if (dbSucess) {
-//                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                       content: Text('Profit Margin has been saved.'),
-//                     ));
-//                     meal.salePrice = newSalePrice;
-//                     Navigator.pop(context);
-//                     Navigator.pushReplacement(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => SingleMeal(meal.name, meal),
-//                         ));
-//                   } else {
-//                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//                       content: Text('Something went wrong, please try again.'),
-//                     ));
-//                   }
-//                 }
-//               },
-//               child: Text('Accept'),
-//             )
-//           ],
-//         );
-//       },
-//     );
-//   }
-
 //Show menu to delete meal.
   _deleteMealDialog(BuildContext context) {
     showDialog(
@@ -268,7 +199,7 @@ class SingleMeal extends StatelessWidget {
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-    // deleteSuccess = await _deleteMealFromDB(meal);
+    deleteSuccess = await _deleteMealFromFile(meal);
 
     if (deleteSuccess) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -287,18 +218,21 @@ class SingleMeal extends StatelessWidget {
   }
 
 //delete meal from firestore database
-  // Future<bool> _deleteMealFromDB(Meal newMeal) {
-  //   return FirestoreRef.mealRef
-  //       .doc(newMeal.id.toString())
-  //       .delete()
-  //       .then((value) {
-  //     print("${meal.name} deleted from DB");
-  //     return true;
-  //   }).catchError((error) {
-  //     print("Failed to delete ${meal.name} from DB: $error");
-  //     return false;
-  //   });
-  // }
+  Future<bool> _deleteMealFromFile(Meal newMeal) async {
+    try {
+      String fileContent = await fileManagement.readFile(mealJsonFile);
+      List<Meal> allMeals = objManager.jsonToListMeal(fileContent);
+      int deleteIndex =
+          allMeals.indexWhere((element) => element.id == newMeal.id);
+      allMeals.removeAt(deleteIndex);
+      fileManagement.writeFile(
+          mealJsonFile, jsonEncode(allMeals));
+    } catch (error) {
+      print('Error deleting meal: $error');
+      return false;
+    }
+    return true;
+  }
 
 //save new price from profit margin to database
   // Future<bool> _saveProfitMarginToDB(String id, double salePrice) {

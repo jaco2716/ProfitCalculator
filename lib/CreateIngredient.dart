@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
+import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
 import 'main.dart';
 
@@ -25,9 +27,11 @@ class _CreateIngredientState extends State<CreateIngredient> {
   String _measureUnit = 'Kg';
   Color currentColor = Colors.red;
 
+  String ingredientJsonFile = config.ingredientJsonFile;
   List<Ingredient> ingredientsList = List<Ingredient>();
 
   final FileManagement fileManagement = FileManagement();
+  final ObjectManager objManager = ObjectManager();
 
   @override
   void initState() {
@@ -144,13 +148,23 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     height: 20,
                   ),
                   widget.editMode ?? false
-                      ? IconButton(
-                          padding: EdgeInsets.all(20),
-                          iconSize: 40,
-                          color: Colors.red,
-                          icon: Icon(Icons.delete),
-                          onPressed: () => _deleteIngredientDialog(context),
-                        )
+                      ? !widget.editIngredient.archived
+                          ? IconButton(
+                              padding: EdgeInsets.all(20),
+                              iconSize: 40,
+                              color: Colors.red,
+                              icon: Icon(Icons.archive),
+                              onPressed: () =>
+                                  _archiveIngredientDialog(context, false),
+                            )
+                          : IconButton(
+                              padding: EdgeInsets.all(20),
+                              iconSize: 40,
+                              color: Colors.green,
+                              icon: Icon(Icons.archive),
+                              onPressed: () =>
+                                  _archiveIngredientDialog(context, true),
+                            )
                       : Center(),
                 ],
               ),
@@ -200,20 +214,19 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //Save to firestore database
   Future<bool> _saveIngredientToFile(Ingredient newIngredient) async {
     try {
-      String fileContent = await fileManagement.readFile('IngredientListJson');
-      Iterable tempIngredientIterable = json.decode(fileContent);
-      // print('all ingredients ${json.decode(ingredientSnapshot.data)}');
-      List<Ingredient> allIngredients =
-          tempIngredientIterable?.map((e) => Ingredient.fromJson(e))?.toList();
+      String fileContent = await fileManagement.readFile(ingredientJsonFile);
+      List<Ingredient> allIngredientsFromFile =
+          objManager.jsonToListIngredient(fileContent);
+
       if (widget.editMode ?? false) {
-        int editIndex = allIngredients
+        int editIndex = allIngredientsFromFile
             .indexWhere((element) => element.id == newIngredient.id);
-        allIngredients[editIndex] = newIngredient;
+        allIngredientsFromFile[editIndex] = newIngredient;
       } else {
-        allIngredients.add(newIngredient);
+        allIngredientsFromFile.add(newIngredient);
       }
       fileManagement.writeFile(
-          'IngredientListJson', jsonEncode(allIngredients));
+          ingredientJsonFile, jsonEncode(allIngredientsFromFile));
     } catch (error) {
       print('Error saving ingredient: $error');
       return false;
@@ -221,15 +234,23 @@ class _CreateIngredientState extends State<CreateIngredient> {
     return true;
   }
 
-//Show delete menu box
-  _deleteIngredientDialog(BuildContext context) {
+//Show archive menu box
+  _archiveIngredientDialog(BuildContext context, bool alreadyArchived) {
+    String alertContent;
+    String actionText;
+    alreadyArchived
+        ? alertContent =
+            'Are you sure you want to unarchive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.'
+        : alertContent =
+            'Are you sure you want to archive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.';
+    alreadyArchived ? actionText = 'Unarchive' : actionText = 'Archive';
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Archive'),
-          content: Text(
-              'Are you sure you want to archive ${widget.editIngredient.name}?'),
+          title: Text(actionText),
+          content: Text(alertContent),
           actions: [
             FlatButton(
               child: Text('Cancel'),
@@ -238,9 +259,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
               },
             ),
             RaisedButton(
-              child: Text('Archive'),
-              color: Colors.red,
-              onPressed: () => _archiveIngredient(context),
+              child: Text(actionText),
+              color: alreadyArchived ? Colors.green : Colors.red,
+              onPressed: () => _archiveIngredient(context, alreadyArchived),
             )
           ],
         );
@@ -249,10 +270,11 @@ class _CreateIngredientState extends State<CreateIngredient> {
   }
 
 //Archive ingredient and show error or succes messages
-  _archiveIngredient(BuildContext context) async {
+  _archiveIngredient(BuildContext context, bool alreadyArchived) async {
     bool archiveSuccess = false;
 
-    archiveSuccess = await _archiveIngredientFromFile(widget.editIngredient);
+    archiveSuccess = await _archiveIngredientFromFile(
+        widget.editIngredient, alreadyArchived);
 
     if (archiveSuccess) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -270,21 +292,21 @@ class _CreateIngredientState extends State<CreateIngredient> {
     }
   }
 
-//Delete ingredient from firestore database
-  Future<bool> _archiveIngredientFromFile(Ingredient editIngredient) async {
+//Archive ingredient from firestore database
+  Future<bool> _archiveIngredientFromFile(
+      Ingredient editIngredient, bool alreadyArchived) async {
     try {
-      String fileContent = await fileManagement.readFile('IngredientListJson');
-      Iterable tempIngredientIterable = json.decode(fileContent);
-      // print('all ingredients ${json.decode(ingredientSnapshot.data)}');
+      String fileContent = await fileManagement.readFile(ingredientJsonFile);
       List<Ingredient> allIngredients =
-          tempIngredientIterable?.map((e) => Ingredient.fromJson(e))?.toList();
+          objManager.jsonToListIngredient(fileContent);
       int archiveIndex = allIngredients
           .indexWhere((element) => element.id == editIngredient.id);
-      allIngredients[archiveIndex].archived = true;
-      fileManagement.writeFile(
-          'IngredientListJson', jsonEncode(allIngredients));
+      alreadyArchived
+          ? allIngredients[archiveIndex].archived = false
+          : allIngredients[archiveIndex].archived = true;
+      fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredients));
     } catch (error) {
-      print('Error saving ingredient: $error');
+      print('Error archiving ingredient: $error');
       return false;
     }
     return true;

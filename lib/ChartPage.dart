@@ -1,13 +1,11 @@
 // import 'dart:math';
-
-
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:flutter/material.dart';
-// import 'package:profit_calculator/Model/FirestoreRef.dart';
-
+// import 'package:profit_calculator/FileManagement.dart';
+// import 'package:profit_calculator/ObjectManager.dart';
 // import 'Model/Ingredient.dart';
 // import 'Model/Meal.dart';
-// import 'Model/Order Model/Order.dart';
+// import 'Model/EnvironmentConfig.dart' as config;
 
 // class ChartPage extends StatefulWidget {
 //   ChartPage({Key key}) : super(key: key);
@@ -24,22 +22,14 @@
 //   List<FlSpot> secoundaryChartList = List<FlSpot>();
 //   List<String> chartListTitles = List<String>();
 //   List<Meal> mealList;
-//   List<Order> orderList;
 //   String dropDownValue = "Profit Margin";
 //   String chartTitle = 'Profit Margin';
 //   String chartSubtitle;
-//   Stream<QuerySnapshot> firestoreData;
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _getInitialData();
-//   }
-
-// // Make firestore get into a stream of data
-//   _getInitialData() async {
-//     firestoreData = FirestoreRef.mealRef.get().asStream();
-//   }
+//   final FileManagement fileManagement = FileManagement();
+//   final ObjectManager objManager = ObjectManager();
+//   String mealJsonFile = config.mealJsonFile;
+//   String ingredientJsonFile = config.ingredientJsonFile;
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -47,35 +37,29 @@
 //       appBar: AppBar(title: Text('Charts')),
 //       backgroundColor: Colors.blueGrey[900],
 //       body: SingleChildScrollView(
-//         child: StreamBuilder<QuerySnapshot>(
-//           stream: firestoreData,
-//           builder:
-//               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//             if (snapshot.hasError) return Text('Something went wrong');
-//             if (snapshot.connectionState == ConnectionState.waiting)
-//               return Container(height: 400, child: Center(child: CircularProgressIndicator()));
+//         child: FutureBuilder(
+//           future: fileManagement.readFile(mealJsonFile),
+//           initialData: '',
+//           builder: (context, mealJsonSnapshot) {
+//             if (mealJsonSnapshot.hasError) return Text('Something went wrong');
+//             if (mealJsonSnapshot.connectionState == ConnectionState.waiting)
+//               return Container(
+//                   height: 400,
+//                   child: Center(child: CircularProgressIndicator()));
 
-// //Check if Leo's Wok Orders is selected because then Another map object is used. and then map data from firestore.
-//             if (dropDownValue == "Leo's Wok Orders")
-//               orderList = snapshot.data.docs
-//                   ?.map((e) => Order.fromJson(e.data()))
-//                   ?.toList();
-//             else
-//               mealList = snapshot.data.docs
-//                   ?.map((e) => Meal.fromJson(e.data()))
-//                   ?.toList();
+//             mealList = objManager.jsonToListMeal(mealJsonSnapshot.data);
 
-//             return StreamBuilder<QuerySnapshot>(
-//                 stream: FirestoreRef.ingredientRef.snapshots(),
-//                 builder: (context, ingredientSnapshot) {
-//                   if (ingredientSnapshot.hasError)
+//             return FutureBuilder(
+//                 future: fileManagement.readFile(ingredientJsonFile),
+//                 builder: (context, ingredientJsonSnapshot) {
+//                   if (ingredientJsonSnapshot.hasError)
 //                     return Center(child: Text('Something went wrong'));
-//                   if (ingredientSnapshot.connectionState ==
+//                   if (ingredientJsonSnapshot.connectionState ==
 //                       ConnectionState.waiting)
 //                     return Center(child: CircularProgressIndicator());
 
 // //Map data from firestore to list.
-//                   List<Ingredient> mealIngredients = ingredientSnapshot
+//                   List<Ingredient> mealIngredients = ingredientJsonSnapshot
 //                       .data.docs
 //                       ?.map((e) => Ingredient.fromJson(e.data()))
 //                       ?.toList();
@@ -116,7 +100,6 @@
 //   Widget _chartWidget(List<FlSpot> _chartList, List<String> _chartListTitles,
 //       double _maxy, double _miny, String _title,
 //       {List<FlSpot> secoundChartList, String subtitle}) {
-
 // // Check the max and min values for the charts
 //     _chartList.forEach((e) {
 //       if (_maxy < e.y + 1) _maxy = e.y.roundToDouble();
@@ -222,13 +205,12 @@
 //                       strokeWidth: 1,
 //                     );
 // //Draw thick line at 0
-//                     if(value == 0) {
+//                     if (value == 0) {
 //                       return FlLine(
 //                         color: Colors.white,
 //                         strokeWidth: 2,
 //                       );
-//                     }
-//                     else if (value % _nrInterval == 0) {
+//                     } else if (value % _nrInterval == 0) {
 //                       return thickLine;
 //                     } else {
 //                       return FlLine(
