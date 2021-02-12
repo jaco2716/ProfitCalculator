@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'package:profit_calculator/SingleMeal.dart';
 import 'Model/EnvironmentConfig.dart' as config;
@@ -60,106 +61,101 @@ class _MealListState extends State<MealList> {
         : SingleChildScrollView(
             child: Center(
               child: Container(
+            padding: EdgeInsets.only(top:100),
                 constraints: BoxConstraints(maxWidth: 700),
-                child: Column(children: [
-                  FutureBuilder(
-                    future: fileManagement.readFile(mealJsonFile),
-                    initialData: '',
-                    builder: (context, mealJsonSnapshot) {
-                      // print(mealFileSnapshot.data);
-                      if (mealJsonSnapshot.hasError) {
-                        return Center(child: Text('Something went wrong'));
-                      }
+                child: FutureBuilder(
+                  future: fileManagement.readFile(mealJsonFile),
+                  initialData: '',
+                  builder: (context, mealJsonSnapshot) {
+                    // print(mealFileSnapshot.data);
+                    if (mealJsonSnapshot.hasError) {
+                      return Center(child: Text('Something went wrong'));
+                    }
 
-                      if (mealJsonSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return Center(child: Text("Loading"));
-                      }
-                      if (mealJsonSnapshot.data.length == 0) {
-                        return Center(
-                            child: Text(
-                          "You have no meals.\nCreate some in the menu.",
-                          textAlign: TextAlign.center,
-                        ));
-                      }
-//Map data from firestore to list of objects
-                      List<Meal> meals = objManager.jsonToListMeal(mealJsonSnapshot.data);
+                    if (mealJsonSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    }
+                    if (mealJsonSnapshot.data.length == 0) {
+                      return InitialFutureWidget();
+                    }
+                    //Map data from firestore to list of objects
+                    List<Meal> meals =
+                        objManager.jsonToListMeal(mealJsonSnapshot.data);
 
-                      return FutureBuilder(
-                          future: fileManagement.readFile(mealJsonFile),
-                          initialData: '',
-                          builder: (context, ingredientJsonSnapshot) {
-                            if (ingredientJsonSnapshot.hasError)
-                              return Center(
-                                  child: Text('Something went wrong'));
-                            if (ingredientJsonSnapshot.connectionState ==
-                                ConnectionState.waiting)
-                              return Center(child: CircularProgressIndicator());
-//Mao ingredients from firestore to new list.
-                            List<Ingredient> allIngredients = objManager.jsonToListIngredient(ingredientJsonSnapshot.data);
+                    return FutureBuilder(
+                        future: fileManagement.readFile(mealJsonFile),
+                        initialData: '',
+                        builder: (context, ingredientJsonSnapshot) {
+                          if (ingredientJsonSnapshot.hasError)
+                            return Center(child: Text('Something went wrong'));
+                          if (ingredientJsonSnapshot.connectionState ==
+                              ConnectionState.waiting)
+                            return Center(child: CircularProgressIndicator());
+                          //Mao ingredients from firestore to new list.
+                          List<Ingredient> allIngredients =
+                              objManager.jsonToListIngredient(
+                                  ingredientJsonSnapshot.data);
 
-//JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
-                            meals.forEach((meal) {
-                              meal.ingredients.forEach((ingredient) {
-                                allIngredients.forEach((aIngredient) {
-                                  if (ingredient.id == aIngredient.id) {
-                                    ingredient.name = aIngredient.name;
-                                    ingredient.color = aIngredient.color;
-                                    ingredient.kgPrice = aIngredient.kgPrice;
-                                    ingredient.measureUnit =
-                                        aIngredient.measureUnit;
-                                  }
-                                });
+                          //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
+                          meals.forEach((meal) {
+                            meal.ingredients.forEach((ingredient) {
+                              allIngredients.forEach((aIngredient) {
+                                if (ingredient.id == aIngredient.id) {
+                                  ingredient.name = aIngredient.name;
+                                  ingredient.color = aIngredient.color;
+                                  ingredient.kgPrice = aIngredient.kgPrice;
+                                  ingredient.measureUnit =
+                                      aIngredient.measureUnit;
+                                }
                               });
                             });
-
-                            return Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30.0),
-                                  child: ListTile(
-                                    visualDensity: VisualDensity.compact,
-                                    title: Text('Name'),
-                                    trailing: Text('Cost/Profit'),
-                                    dense: true,
-                                  ),
-                                ),
-                                // Divider(
-                                //   thickness: 2,
-                                // ),
-                                ListView.builder(
-                                  itemCount: meals.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return mealListTile(meals[index]);
-                                  },
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                ),
-                                // SizedBox(height: 20,),
-                                SizedBox(
-                                  height: 90,
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20),
-                                    child: FlatButton(
-                                        shape: ContinuousRectangleBorder(),
-                                        color: Colors.blue,
-                                        child: Text('Set All Profit Margins'),
-                                        onPressed: () {
-                                          _showChangeProfitMargin(
-                                              context, meals);
-                                        }),
-                                  ),
-                                ),
-                              ],
-                            );
                           });
-                    },
-                  ),
-                ]),
+
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30.0),
+                                child: ListTile(
+                                  visualDensity: VisualDensity.compact,
+                                  title: Text('Name'),
+                                  trailing: Text('Cost/Profit'),
+                                  dense: true,
+                                ),
+                              ),
+                              // Divider(
+                              //   thickness: 2,
+                              // ),
+                              ListView.builder(
+                                itemCount: meals.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return mealListTile(meals[index]);
+                                },
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                              ),
+                              // SizedBox(height: 20,),
+                              SizedBox(
+                                height: 90,
+                                width: double.infinity,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 20),
+                                  child: FlatButton(
+                                      shape: ContinuousRectangleBorder(),
+                                      color: Colors.blue,
+                                      child: Text('Set All Profit Margins'),
+                                      onPressed: () {
+                                        _showChangeProfitMargin(context, meals);
+                                      }),
+                                ),
+                              ),
+                            ],
+                          );
+                        });
+                  },
+                ),
               ),
             ),
           );

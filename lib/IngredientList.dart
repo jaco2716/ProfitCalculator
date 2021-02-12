@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
@@ -41,17 +42,9 @@ class _IngredientListState extends State<IngredientList> {
       body: SingleChildScrollView(
         child: Center(
           child: Container(
+            padding: EdgeInsets.only(top:100),
             constraints: BoxConstraints(maxWidth: 700),
             child: Column(children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 45.0),
-                child: ListTile(
-                  visualDensity: VisualDensity.compact,
-                  title: Text('Name'),
-                  trailing: Text('Kg/Liter Cost'),
-                  dense: true,
-                ),
-              ),
               // Divider(
               //   thickness: 2,
               // ),
@@ -68,24 +61,31 @@ class _IngredientListState extends State<IngredientList> {
                     return Center(child: Text("Loading"));
                   }
                   if (ingredientJsonSnapshot.data.length == 0) {
-                    return Center(
-                        child: Text(
-                      "You have no meals.\nCreate some in the menu.",
-                      textAlign: TextAlign.center,
-                    ));
+                    return InitialFutureWidget();
                   }
 //Map data from firestore to objects in list.
                   List<Ingredient> ingredients = objManager
                       .jsonToListIngredient(ingredientJsonSnapshot.data);
 
-                  return new ListView.builder(
-                    itemCount: ingredients.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ingredientListTile(ingredients[index]);
-                    },
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                  );
+                  return Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 45.0),
+                      child: ListTile(
+                        visualDensity: VisualDensity.compact,
+                        title: Text('Name'),
+                        trailing: Text('Kg/Liter Cost'),
+                        dense: true,
+                      ),
+                    ),
+                    ListView.builder(
+                      itemCount: ingredients.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ingredientListTile(ingredients[index]);
+                      },
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                    ),
+                  ]);
                 },
               ),
               SizedBox(

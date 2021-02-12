@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:profit_calculator/ChartPage.dart';
+import 'package:profit_calculator/ChartPage.dart';
 import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/CreateMeal.dart';
 import 'package:profit_calculator/IngredientList.dart';
@@ -34,7 +34,7 @@ class MyDrawer extends StatelessWidget {
           // Divider(),
           drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
           // Divider(),
-          // drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
+          drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
           // Divider(),
         ],
       ),
