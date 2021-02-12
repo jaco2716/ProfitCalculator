@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/ObjectManager.dart';
+import 'InitialFutureWidget.dart';
 import 'Model/Ingredient.dart';
 import 'Model/Meal.dart';
 import 'Model/EnvironmentConfig.dart' as config;
@@ -37,56 +38,60 @@ class _ChartPageState extends State<ChartPage> {
       appBar: AppBar(title: Text('Charts')),
       backgroundColor: Colors.blueGrey[900],
       body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: fileManagement.readFile(mealJsonFile),
-          initialData: '',
-          builder: (context, mealJsonSnapshot) {
-            if (mealJsonSnapshot.hasError) return Text('Something went wrong');
-            if (mealJsonSnapshot.connectionState == ConnectionState.waiting)
-              return Container(
-                  height: 400,
-                  child: Center(child: CircularProgressIndicator()));
+        child: Center(
+          child: FutureBuilder(
+            future: fileManagement.readFile(mealJsonFile),
+            initialData: '',
+            builder: (context, mealJsonSnapshot) {
+              if (mealJsonSnapshot.hasError) return Text('Something went wrong');
+              if (mealJsonSnapshot.connectionState == ConnectionState.waiting)
+                return Container(
+                    height: 400,
+                    child: Center(child: CircularProgressIndicator()));
+              if (mealJsonSnapshot.data.length == 0) {
+                        return InitialFutureWidget();
+                      }
+              mealList = objManager.jsonToListMeal(mealJsonSnapshot.data);
 
-            mealList = objManager.jsonToListMeal(mealJsonSnapshot.data);
-
-            return FutureBuilder(
-                future: fileManagement.readFile(ingredientJsonFile),
-                builder: (context, ingredientJsonSnapshot) {
-                  if (ingredientJsonSnapshot.hasError)
-                    return Center(child: Text('Something went wrong'));
-                  if (ingredientJsonSnapshot.connectionState ==
-                      ConnectionState.waiting)
-                    return Center(child: CircularProgressIndicator());
+              return FutureBuilder(
+                  future: fileManagement.readFile(ingredientJsonFile),
+                  builder: (context, ingredientJsonSnapshot) {
+                    if (ingredientJsonSnapshot.hasError)
+                      return Center(child: Text('Something went wrong'));
+                    if (ingredientJsonSnapshot.connectionState ==
+                        ConnectionState.waiting)
+                      return Center(child: CircularProgressIndicator());
 
 //Map data from firestore to list.
-                  List<Ingredient> mealIngredients = objManager
-                      .jsonToListIngredient(ingredientJsonSnapshot.data);
+                    List<Ingredient> mealIngredients = objManager
+                        .jsonToListIngredient(ingredientJsonSnapshot.data);
 
 //Change to updated Kgprice - Like JOIN
-                  mealList.forEach((m) {
-                    m.ingredients.forEach((i) {
-                      mealIngredients.forEach((mi) {
-                        if (i.id == mi.id) {
-                          i.kgPrice = mi.kgPrice;
-                        }
+                    mealList.forEach((m) {
+                      m.ingredients.forEach((i) {
+                        mealIngredients.forEach((mi) {
+                          if (i.id == mi.id) {
+                            i.kgPrice = mi.kgPrice;
+                          }
+                        });
                       });
                     });
-                  });
 
 //Check what chart is selected
-                  if (dropDownValue == "Total Cost / Sale Price")
-                    _changeToSaleCost();
-                  else if (dropDownValue == "Profit Margin")
-                    _changeToProfitMargin();
-                  else
-                    _changeToProfit();
+                    if (dropDownValue == "Total Cost / Sale Price")
+                      _changeToSaleCost();
+                    else if (dropDownValue == "Profit Margin")
+                      _changeToProfitMargin();
+                    else
+                      _changeToProfit();
 
-                  return _chartWidget(
-                      chartList, chartListTitles, maxy, miny, chartTitle,
-                      secoundChartList: secoundaryChartList,
-                      subtitle: chartSubtitle);
-                });
-          },
+                    return _chartWidget(
+                        chartList, chartListTitles, maxy, miny, chartTitle,
+                        secoundChartList: secoundaryChartList,
+                        subtitle: chartSubtitle);
+                  });
+            },
+          ),
         ),
       ),
     );

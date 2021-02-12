@@ -42,7 +42,6 @@ class _IngredientListState extends State<IngredientList> {
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            padding: EdgeInsets.only(top:100),
             constraints: BoxConstraints(maxWidth: 700),
             child: Column(children: [
               // Divider(
@@ -53,12 +52,20 @@ class _IngredientListState extends State<IngredientList> {
                 initialData: '',
                 builder: (context, ingredientJsonSnapshot) {
                   if (ingredientJsonSnapshot.hasError) {
-                    return Center(child: Text('Something went wrong'));
+                    return Container(
+                        height: 400,
+                        child: Center(
+                            child: Text(
+                          'Something went wrong.\nPlease try restarting your app.',
+                          textAlign: TextAlign.center,
+                        )));
                   }
 
                   if (ingredientJsonSnapshot.connectionState ==
                       ConnectionState.waiting) {
-                    return Center(child: Text("Loading"));
+                    return Container(
+                        height: 400,
+                        child: Center(child: CircularProgressIndicator()));
                   }
                   if (ingredientJsonSnapshot.data.length == 0) {
                     return InitialFutureWidget();

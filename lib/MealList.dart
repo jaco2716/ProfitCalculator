@@ -61,7 +61,6 @@ class _MealListState extends State<MealList> {
         : SingleChildScrollView(
             child: Center(
               child: Container(
-            padding: EdgeInsets.only(top:100),
                 constraints: BoxConstraints(maxWidth: 700),
                 child: FutureBuilder(
                   future: fileManagement.readFile(mealJsonFile),
@@ -69,12 +68,20 @@ class _MealListState extends State<MealList> {
                   builder: (context, mealJsonSnapshot) {
                     // print(mealFileSnapshot.data);
                     if (mealJsonSnapshot.hasError) {
-                      return Center(child: Text('Something went wrong'));
+                      return Container(
+                          height: 400,
+                          child: Center(
+                              child: Text(
+                            'Something went wrong.\nPlease try restarting your app.',
+                            textAlign: TextAlign.center,
+                          )));
                     }
 
                     if (mealJsonSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return Container(
+                          height: 400,
+                          child: Center(child: CircularProgressIndicator()));
                     }
                     if (mealJsonSnapshot.data.length == 0) {
                       return InitialFutureWidget();

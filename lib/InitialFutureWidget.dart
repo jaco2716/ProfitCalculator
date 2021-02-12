@@ -4,6 +4,7 @@ class InitialFutureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      SizedBox(height: 100),
       Padding(
         padding: const EdgeInsets.only(bottom: 20.0),
         child: Icon(
