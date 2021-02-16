@@ -91,33 +91,47 @@ class _MealListState extends State<MealList> {
                         objManager.jsonToListMeal(mealJsonSnapshot.data);
 
                     return FutureBuilder(
-                        future: fileManagement.readFile(mealJsonFile),
+                        future: fileManagement.readFile(ingredientJsonFile),
                         initialData: '',
                         builder: (context, ingredientJsonSnapshot) {
-                          if (ingredientJsonSnapshot.hasError)
-                            return Center(child: Text('Something went wrong'));
+                          if (ingredientJsonSnapshot.hasError) {
+                            return Container(
+                                height: 400,
+                                child: Center(
+                                    child: Text(
+                                  'Something went wrong.\nPlease try restarting your app.',
+                                  textAlign: TextAlign.center,
+                                )));
+                          }
                           if (ingredientJsonSnapshot.connectionState ==
-                              ConnectionState.waiting)
-                            return Center(child: CircularProgressIndicator());
+                              ConnectionState.waiting) {
+                            return Container(
+                                height: 400,
+                                child:
+                                    Center(child: CircularProgressIndicator()));
+                          }
                           //Mao ingredients from firestore to new list.
                           List<Ingredient> allIngredients =
                               objManager.jsonToListIngredient(
                                   ingredientJsonSnapshot.data);
-
+                                  // print(ingredientJsonSnapshot.data);
+// print('1st: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
                           //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
                           meals.forEach((meal) {
-                            meal.ingredients.forEach((ingredient) {
+                            meal.ingredients.forEach((mIngredient) {
                               allIngredients.forEach((aIngredient) {
-                                if (ingredient.id == aIngredient.id) {
-                                  ingredient.name = aIngredient.name;
-                                  ingredient.color = aIngredient.color;
-                                  ingredient.kgPrice = aIngredient.kgPrice;
-                                  ingredient.measureUnit =
+                                if (mIngredient.id == aIngredient.id) {
+                                  mIngredient.name = aIngredient.name;
+                                  mIngredient.color = aIngredient.color;
+                                  mIngredient.kgPrice = aIngredient.kgPrice;
+                                  mIngredient.measureUnit =
                                       aIngredient.measureUnit;
                                 }
+                                      // print('id ${mIngredient.kgPrice} + ${aIngredient.kgPrice}');
                               });
                             });
                           });
+// print('2nd: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
 
                           return Column(
                             children: [
