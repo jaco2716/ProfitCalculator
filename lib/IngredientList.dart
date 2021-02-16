@@ -27,20 +27,23 @@ class _IngredientListState extends State<IngredientList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: showArchived ? Colors.red : Colors. blue,
-        title: Text(appBarTitle), actions: [
-        IconButton(
-            icon: showArchived ? Icon(Icons.archive_outlined) : Icon(Icons.archive),
-            onPressed: () {
-              setState(() {
-                showArchived = !showArchived;
-                if (showArchived)
-                  appBarTitle = 'Archived Ingredients';
-                else
-                  appBarTitle = 'All Ingredients';
-              });
-            }),
-      ]),
+          backgroundColor: showArchived ? Colors.red : Colors.blue,
+          title: Text(appBarTitle),
+          actions: [
+            IconButton(
+                icon: showArchived
+                    ? Icon(Icons.archive_outlined)
+                    : Icon(Icons.archive),
+                onPressed: () {
+                  setState(() {
+                    showArchived = !showArchived;
+                    if (showArchived)
+                      appBarTitle = 'Archived Ingredients';
+                    else
+                      appBarTitle = 'All Ingredients';
+                  });
+                }),
+          ]),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -140,10 +143,14 @@ class _IngredientListState extends State<IngredientList> {
         ),
         onTap: () {
 //when tapped go to edit page.
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context)
+              .push(MaterialPageRoute(
             builder: (context) =>
                 CreateIngredient(editMode: true, editIngredient: ingredient),
-          ));
+          ))
+              .then((context) {
+            setState(() {});
+          });
         },
       ),
     );

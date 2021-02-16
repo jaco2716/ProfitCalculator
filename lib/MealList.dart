@@ -208,7 +208,11 @@ class _MealListState extends State<MealList> {
 //Go to meal page when tapped.
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => SingleMeal(meal.name, meal),
-          ));
+          )).then((context) {
+            setState(() {
+              
+            });
+          });
           print(meal.name + ' Tapped!');
         },
       ),

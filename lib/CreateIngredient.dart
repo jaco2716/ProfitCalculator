@@ -282,9 +282,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
     if (archiveSuccess) {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => IngredientList(),
-      ));
+      // Navigator.of(context).pushReplacement(MaterialPageRoute(
+      //   builder: (context) => IngredientList(),
+      // ));
 
       // Navigator.of(context).pushAndRemoveUntil(
       //     MaterialPageRoute(
