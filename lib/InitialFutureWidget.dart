@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/CreateIngredient.dart';
+import 'package:profit_calculator/CreateMeal.dart';
 
 class InitialFutureWidget extends StatelessWidget {
   @override
@@ -25,7 +27,10 @@ class InitialFutureWidget extends StatelessWidget {
           padding: EdgeInsets.all(10),
           icon: Icon(Icons.add),
           label: Text('Create Ingredient'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CreateIngredient()));
+          },
         ),
       ),
       SizedBox(height: 10),
@@ -35,7 +40,10 @@ class InitialFutureWidget extends StatelessWidget {
           padding: EdgeInsets.all(10),
           icon: Icon(Icons.add),
           label: Text('Create Meal'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => CreateMeal()));
+          },
         ),
       ),
       SizedBox(height: 200),

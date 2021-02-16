@@ -26,9 +26,11 @@ class _IngredientListState extends State<IngredientList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(appBarTitle), actions: [
+      appBar: AppBar(
+        backgroundColor: showArchived ? Colors.red : Colors. blue,
+        title: Text(appBarTitle), actions: [
         IconButton(
-            icon: Icon(Icons.archive),
+            icon: showArchived ? Icon(Icons.archive_outlined) : Icon(Icons.archive),
             onPressed: () {
               setState(() {
                 showArchived = !showArchived;
