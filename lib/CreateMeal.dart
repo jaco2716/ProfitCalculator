@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/FileManagement.dart';
@@ -39,8 +37,11 @@ class _CreateMealState extends State<CreateMeal> {
 //Get all ingredients from firestore
   getIngredientsFromFile() async {
     String fileContent = await fileManagement.readFile(ingredientJsonFile);
+    List<Ingredient> tempIngredients = List<Ingredient>();
 
-    ingredients = objManager.jsonToListIngredient(fileContent);
+    tempIngredients = objManager.jsonToListIngredient(fileContent);
+    ingredients =
+        tempIngredients.where((element) => element.archived == false).toList();
   }
 
 //Check if meal is being edited and insert object.
@@ -240,13 +241,22 @@ class _CreateMealState extends State<CreateMeal> {
                 ),
                 Container(
                   height: (MediaQuery.of(context).size.height - 200),
-                  child: ListView.builder(
-                    itemCount: ingredients.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return addIngredientListTile(
-                          ingredients[index], setModalState);
-                    },
-                  ),
+                  child: ingredients.length == 0
+                      ? Center(
+                          child: Text(
+                              'You have no ingredients.\nCreate ingredients in the menu.\n\n\n',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              )))
+                      : ListView.builder(
+                          itemCount: ingredients.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return addIngredientListTile(
+                                ingredients[index], setModalState);
+                          },
+                        ),
                 ),
                 Container(
                   width: double.infinity,
@@ -273,6 +283,12 @@ class _CreateMealState extends State<CreateMeal> {
 // Create final meal object and save it
   _saveMeal(bool dublicate) async {
     if (_formKey.currentState.validate()) {
+      if (_selectedIngredients.length == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('No ingredients added.'),
+        ));
+        return;
+      }
       int nullIndex = _selectedIngredients
           .indexWhere((ingredient) => ingredient.amountInGrams == null);
 
@@ -302,17 +318,13 @@ class _CreateMealState extends State<CreateMeal> {
         } else
           newID = DateTime.now().millisecondsSinceEpoch;
 
-        // print(newID);
         Meal newMeal =
             Meal(newID, _name, _finalSalePrice, _selectedIngredients);
+        // print('${newMeal.id}, ${newMeal.ingredients}, ${newMeal.name}, ${newMeal.salePrice},');
 
         bool saveSucess = false;
-       
 
-          
         saveSucess = await _saveMealToFile(newMeal);
-          
-        
 
         if (saveSucess) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -342,25 +354,23 @@ class _CreateMealState extends State<CreateMeal> {
           content: Text('Please fill out all ingredients.'),
         ));
       }
-      print(nullIndex.toString());
     }
   }
 
 // Save object to json File
   Future<bool> _saveMealToFile(Meal newMeal) async {
-    try{
+    try {
       String fileContent = await fileManagement.readFile(mealJsonFile);
       List<Meal> allMealsFromFile = objManager.jsonToListMeal(fileContent);
       if (widget.editMode ?? false) {
-        int editIndex = allMealsFromFile
-            .indexWhere((element) => element.id == newMeal.id);
+        int editIndex =
+            allMealsFromFile.indexWhere((element) => element.id == newMeal.id);
         allMealsFromFile[editIndex] = newMeal;
       } else {
         allMealsFromFile.add(newMeal);
       }
-      fileManagement.writeFile(
-          mealJsonFile, jsonEncode(allMealsFromFile));
-    }catch(error){
+      fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
+    } catch (error) {
       print('Error saving meal: $error');
       return false;
     }

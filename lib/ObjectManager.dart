@@ -4,17 +4,23 @@ import 'Model/Meal.dart';
 
 class ObjectManager {
   List<Meal> jsonToListMeal(String mealJsonSnapshot) {
-    Iterable tempMealIterable = json.decode(mealJsonSnapshot);
     List<Meal> meals = List<Meal>();
-    meals = tempMealIterable?.map((e) => Meal.fromJson(e))?.toList();
+    Iterable tempMealIterable;
+    if (mealJsonSnapshot.length != 0) {
+      tempMealIterable = json.decode(mealJsonSnapshot);
+      meals = tempMealIterable?.map((e) => Meal.fromJson(e))?.toList();
+    }
     return meals;
   }
-  
+
   List<Ingredient> jsonToListIngredient(String ingredientJsonSnapshot) {
-    Iterable tempIngredientIterable = json.decode(ingredientJsonSnapshot);
     List<Ingredient> ingredients = List<Ingredient>();
-    ingredients = tempIngredientIterable?.map((e) => Ingredient.fromJson(e))?.toList();
+    Iterable tempIngredientIterable;
+    if (ingredientJsonSnapshot.length != 0) {
+      tempIngredientIterable = json.decode(ingredientJsonSnapshot);
+      ingredients =
+          tempIngredientIterable?.map((e) => Ingredient.fromJson(e))?.toList();
+    }
     return ingredients;
   }
-
 }

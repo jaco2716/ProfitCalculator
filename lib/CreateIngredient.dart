@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/IngredientList.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
@@ -272,18 +273,26 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //Archive ingredient and show error or succes messages
   _archiveIngredient(BuildContext context, bool alreadyArchived) async {
     bool archiveSuccess = false;
+    String archiveText;
+    alreadyArchived ? archiveText = 'unarchived' : archiveText = 'archived';
 
     archiveSuccess = await _archiveIngredientFromFile(
         widget.editIngredient, alreadyArchived);
 
     if (archiveSuccess) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(),
-          ),
-          (route) => false);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => IngredientList(),
+      ));
+
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(
+      //       builder: (context) => IngredientList(),
+      //     ),
+      //     (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${widget.editIngredient.name} was archived.'),
+        content: Text('${widget.editIngredient.name} was $archiveText.'),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
