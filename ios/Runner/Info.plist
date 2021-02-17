@@ -41,5 +41,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<!-- To allow filepicker to use Filetype.any & Filetype.custom -->
+	<key>UIBackgroundModes</key>
+	<array>
+   		<string>fetch</string>
+   		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

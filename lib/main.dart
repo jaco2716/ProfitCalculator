@@ -1,44 +1,14 @@
-
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/MealList.dart';
 import 'package:profit_calculator/MyDrawer.dart';
+import 'Model/EnvironmentConfig.dart' as config;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
-
-// class App extends StatelessWidget {
-//   // Create the initialization Future outside of `build`:
-//   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return FutureBuilder(
-//       // Initialize FlutterFire:
-//       future: _initialization,
-//       builder: (context, snapshot) {
-//         // Check for errors
-//         if (snapshot.hasError) {
-//           print(snapshot.error);
-//           return Center(
-//             child: Text('Error'),
-//           );
-//         }
-
-//         // Once complete, show your application
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           return MyApp();
-//         }
-
-//         // Otherwise, show something whilst waiting for initialization to complete
-//         return Center(
-//           child: CircularProgressIndicator(),
-//         );
-//       },
-//     );
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -66,43 +36,34 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-//   FirebaseAuth auth = FirebaseAuth.instance;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _authSubscribe();
-//     _signInToFirebase();
-//   }
-
-// //Check if user is signed in.
-//   _authSubscribe() {
-//     FirebaseAuth.instance.authStateChanges().listen((User user) {
-//       if (user == null) {
-//         print('User is currently signed out!');
-//       } else {
-//         print('User is signed in!');
-//       }
-//     });
-//   }
-
-// //Sign in anonymously to firebase to access data from database
-//   _signInToFirebase() async {
-//     try {
-//       await FirebaseAuth.instance
-//           .signInAnonymously()
-//           .then((value) => build(context));
-//     } catch (e) {
-//       print('Failed to login with error code: ${e.code}');
-//       print(e.message);
-//     }
-//   }
-
+  final FileManagement fileManagement = FileManagement();
+  final String ingredientJsonFile = config.ingredientJsonFile;
+  final String mealJsonFile = config.mealJsonFile;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text('All Meals'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.save),
+              onPressed: () {
+                fileManagement.exportData(
+                    context, ingredientJsonFile, mealJsonFile);
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.download_rounded),
+              onPressed: () async {
+                await fileManagement.importData();
+                setState(() {
+                  
+                });
+                // FilePickerResult result =
+                //     await FilePicker.platform.pickFiles();
+              },
+            )
+          ],
         ),
         drawer: MyDrawer(),
         body: MealList());

@@ -20,8 +20,8 @@ class MealList extends StatefulWidget {
 
 class _MealListState extends State<MealList> {
   bool isLoading = false;
-  String ingredientJsonFile = config.ingredientJsonFile;
-  String mealJsonFile = config.mealJsonFile;
+  final String ingredientJsonFile = config.ingredientJsonFile;
+  final String mealJsonFile = config.mealJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
 
