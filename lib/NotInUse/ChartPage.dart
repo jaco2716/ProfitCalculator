@@ -3,10 +3,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/ObjectManager.dart';
-import 'InitialFutureWidget.dart';
-import 'Model/Ingredient.dart';
-import 'Model/Meal.dart';
-import 'Model/EnvironmentConfig.dart' as config;
+import '../InitialFutureWidget.dart';
+import '../Model/Ingredient.dart';
+import '../Model/Meal.dart';
+import '../Model/EnvironmentConfig.dart' as config;
 
 class ChartPage extends StatefulWidget {
   ChartPage({Key key}) : super(key: key);

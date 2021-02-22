@@ -54,132 +54,139 @@ class _MealListState extends State<MealList> {
     // fileManagement.writeFile(mealJsonFile, jsonEncode(mealsnew));
 
 //Show a loading circle if isLoading is true.
-    return isLoading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : SingleChildScrollView(
-            child: Center(
-              child: Container(
-                constraints: BoxConstraints(maxWidth: 700),
-                child: FutureBuilder(
-                  future: fileManagement.readFile(mealJsonFile),
-                  initialData: '',
-                  builder: (context, mealJsonSnapshot) {
-                    // print(mealFileSnapshot.data);
-                    if (mealJsonSnapshot.hasError) {
-                      return Container(
-                          height: 400,
-                          child: Center(
-                              child: Text(
-                            'Something went wrong.\nPlease try restarting your app.',
-                            textAlign: TextAlign.center,
-                          )));
-                    }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('All Meals'),
+      ),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Center(
+                child: Container(
+                  constraints: BoxConstraints(maxWidth: 700),
+                  child: FutureBuilder(
+                    future: fileManagement.readFile(mealJsonFile),
+                    initialData: '',
+                    builder: (context, mealJsonSnapshot) {
+                      // print(mealFileSnapshot.data);
+                      if (mealJsonSnapshot.hasError) {
+                        return Container(
+                            height: 400,
+                            child: Center(
+                                child: Text(
+                              'Something went wrong.\nPlease try restarting your app.',
+                              textAlign: TextAlign.center,
+                            )));
+                      }
 
-                    if (mealJsonSnapshot.connectionState ==
-                        ConnectionState.waiting) {
-                      return Container(
-                          height: 400,
-                          child: Center(child: CircularProgressIndicator()));
-                    }
-                    if (mealJsonSnapshot.data.length == 0) {
-                      return InitialFutureWidget();
-                    }
-                    //Map data from firestore to list of objects
-                    List<Meal> meals =
-                        objManager.jsonToListMeal(mealJsonSnapshot.data);
+                      if (mealJsonSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return Container(
+                            height: 400,
+                            child: Center(child: CircularProgressIndicator()));
+                      }
+                      if (mealJsonSnapshot.data.length == 0) {
+                        return InitialFutureWidget();
+                      }
+                      //Map data from firestore to list of objects
+                      List<Meal> meals =
+                          objManager.jsonToListMeal(mealJsonSnapshot.data);
 
-                    return FutureBuilder(
-                        future: fileManagement.readFile(ingredientJsonFile),
-                        initialData: '',
-                        builder: (context, ingredientJsonSnapshot) {
-                          if (ingredientJsonSnapshot.hasError) {
-                            return Container(
-                                height: 400,
-                                child: Center(
-                                    child: Text(
-                                  'Something went wrong.\nPlease try restarting your app.',
-                                  textAlign: TextAlign.center,
-                                )));
-                          }
-                          if (ingredientJsonSnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                                height: 400,
-                                child:
-                                    Center(child: CircularProgressIndicator()));
-                          }
-                          //Mao ingredients from firestore to new list.
-                          List<Ingredient> allIngredients =
-                              objManager.jsonToListIngredient(
-                                  ingredientJsonSnapshot.data);
-                                  // print(ingredientJsonSnapshot.data);
+                      return FutureBuilder(
+                          future: fileManagement.readFile(ingredientJsonFile),
+                          initialData: '',
+                          builder: (context, ingredientJsonSnapshot) {
+                            if (ingredientJsonSnapshot.hasError) {
+                              return Container(
+                                  height: 400,
+                                  child: Center(
+                                      child: Text(
+                                    'Something went wrong.\nPlease try restarting your app.',
+                                    textAlign: TextAlign.center,
+                                  )));
+                            }
+                            if (ingredientJsonSnapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Container(
+                                  height: 400,
+                                  child: Center(
+                                      child: CircularProgressIndicator()));
+                            }
+                            //Mao ingredients from firestore to new list.
+                            List<Ingredient> allIngredients =
+                                objManager.jsonToListIngredient(
+                                    ingredientJsonSnapshot.data);
+                            // print(ingredientJsonSnapshot.data);
 // print('1st: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
-                          //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
-                          meals.forEach((meal) {
-                            meal.ingredients.forEach((mIngredient) {
-                              allIngredients.forEach((aIngredient) {
-                                if (mIngredient.id == aIngredient.id) {
-                                  mIngredient.name = aIngredient.name;
-                                  mIngredient.color = aIngredient.color;
-                                  mIngredient.kgPrice = aIngredient.kgPrice;
-                                  mIngredient.measureUnit =
-                                      aIngredient.measureUnit;
-                                }
-                                      // print('id ${mIngredient.kgPrice} + ${aIngredient.kgPrice}');
+                            //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
+                            meals.forEach((meal) {
+                              meal.ingredients.forEach((mIngredient) {
+                                allIngredients.forEach((aIngredient) {
+                                  if (mIngredient.id == aIngredient.id) {
+                                    mIngredient.name = aIngredient.name;
+                                    mIngredient.color = aIngredient.color;
+                                    mIngredient.kgPrice = aIngredient.kgPrice;
+                                    mIngredient.measureUnit =
+                                        aIngredient.measureUnit;
+                                  }
+                                  // print('id ${mIngredient.kgPrice} + ${aIngredient.kgPrice}');
+                                });
                               });
                             });
-                          });
 // print('2nd: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
 
-                          return Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0),
-                                child: ListTile(
-                                  visualDensity: VisualDensity.compact,
-                                  title: Text('Name'),
-                                  trailing: Text('Cost/Profit'),
-                                  dense: true,
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30.0),
+                                  child: ListTile(
+                                    visualDensity: VisualDensity.compact,
+                                    title: Text('Name'),
+                                    trailing: Text('Cost/Profit'),
+                                    dense: true,
+                                  ),
                                 ),
-                              ),
-                              // Divider(
-                              //   thickness: 2,
-                              // ),
-                              ListView.builder(
-                                itemCount: meals.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return mealListTile(meals[index]);
-                                },
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                              ),
-                              // SizedBox(height: 20,),
-                              SizedBox(
-                                height: 90,
-                                width: double.infinity,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 20),
-                                  child: FlatButton(
-                                      shape: ContinuousRectangleBorder(),
-                                      color: Colors.blue,
-                                      child: Text('Set All Profit Margins'),
-                                      onPressed: () {
-                                        _showChangeProfitMargin(context, meals);
-                                      }),
+                                // Divider(
+                                //   thickness: 2,
+                                // ),
+                                ListView.builder(
+                                  itemCount: meals.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return mealListTile(meals[index]);
+                                  },
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
                                 ),
-                              ),
-                            ],
-                          );
-                        });
-                  },
+                                // SizedBox(height: 20,),
+                                SizedBox(
+                                  height: 90,
+                                  width: double.infinity,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20),
+                                    child: FlatButton(
+                                        shape: ContinuousRectangleBorder(),
+                                        color: Colors.blue,
+                                        child: Text('Set All Profit Margins'),
+                                        onPressed: () {
+                                          _showChangeProfitMargin(
+                                              context, meals);
+                                        }),
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                  ),
                 ),
               ),
             ),
-          );
+    );
   }
 
 //List Tile for every meal
@@ -206,12 +213,12 @@ class _MealListState extends State<MealList> {
         ),
         onTap: () {
 //Go to meal page when tapped.
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context)
+              .push(MaterialPageRoute(
             builder: (context) => SingleMeal(meal.name, meal),
-          )).then((context) {
-            setState(() {
-              
-            });
+          ))
+              .then((context) {
+            setState(() {});
           });
           print(meal.name + ' Tapped!');
         },

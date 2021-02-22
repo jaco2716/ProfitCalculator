@@ -67,8 +67,9 @@ class _CreateMealState extends State<CreateMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Meal'),
-      ),
+          title: widget.editMode ?? false
+              ? Text('Edit Meal')
+              : Text('Create Meal')),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -202,16 +203,16 @@ class _CreateMealState extends State<CreateMeal> {
                   SizedBox(
                     height: 20,
                   ),
-                  widget.editMode ?? false
-                      ? Container(
-                          width: 200,
-                          child: FlatButton.icon(
-                              icon: Icon(Icons.copy),
-                              padding: EdgeInsets.all(15),
-                              label: Text('Dublicate'),
-                              onPressed: () => _saveMeal(true)),
-                        )
-                      : Center(),
+                  // widget.editMode ?? false
+                  //     ? Container(
+                  //         width: 200,
+                  //         child: FlatButton.icon(
+                  //             icon: Icon(Icons.copy),
+                  //             padding: EdgeInsets.all(15),
+                  //             label: Text('Dublicate'),
+                  //             onPressed: () => _saveMeal(true)),
+                  //       )
+                  //     : Center(),
                   SizedBox(
                     height: 50,
                   ),
@@ -334,8 +335,8 @@ class _CreateMealState extends State<CreateMeal> {
           if (!dublicate) {
             if (widget.editMode ?? false) {
               Navigator.of(context).pop();
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => SingleMeal(newMeal.name, newMeal)));
+              // Navigator.of(context).pushReplacement(MaterialPageRoute(
+              //     builder: (context) => SingleMeal(newMeal.name, newMeal)));
             } else {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(

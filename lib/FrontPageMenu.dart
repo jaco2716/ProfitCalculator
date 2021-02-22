@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/ChartPage.dart';
+import 'package:profit_calculator/NotInUse/ChartPage.dart';
 import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/CreateMeal.dart';
 import 'package:profit_calculator/IngredientList.dart';
+import 'package:profit_calculator/MealList.dart';
+import 'package:profit_calculator/SettingsPage.dart';
 
-
-
-class MyDrawer extends StatelessWidget {
-  const MyDrawer({Key key}) : super(key: key);
+class FrontPageMenu extends StatelessWidget {
+  const FrontPageMenu({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 30),
       child: ListView(
         children: <Widget>[
 //Show user at top of app drawer
@@ -22,19 +22,21 @@ class MyDrawer extends StatelessWidget {
           //   accountName: Text('Guest'),
           // ),
           Container(
-            padding: const EdgeInsets.only(top:60.0),
+            padding: const EdgeInsets.only(top:50.0),
             child: Center(child: Icon(Icons.accessibility_new, size: 80, color: Colors.blue,),),
           ),
           Container(
-            padding: EdgeInsets.all(40),
+            padding: EdgeInsets.all(30),
             child: Center(child: Text('Welcome', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200,)))),
           drawerListTile(Icon(Icons.list), "All Ingredients", IngredientList(), context),
-          // Divider(),
+          drawerListTile(Icon(Icons.list), "All Meals", MealList(), context),
+          Divider(),
           drawerListTile(Icon(Icons.add), "Create Ingredient", CreateIngredient(), context),
           // Divider(),
           drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
-          // Divider(),
-          drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
+          Divider(),
+          drawerListTile(Icon(Icons.settings), "Settings", SettingsPage(), context),
+          // drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
           // Divider(),
         ],
       ),
@@ -54,7 +56,7 @@ class MyDrawer extends StatelessWidget {
               title: Text(_tileTitle),
               trailing: Icon(Icons.keyboard_arrow_right),
               onTap: () {
-                Navigator.pop(context);
+                // Navigator.pop(context);
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => _navigationPage));
               }),

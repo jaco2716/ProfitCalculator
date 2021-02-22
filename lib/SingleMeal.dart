@@ -9,28 +9,39 @@ import 'Model/EnvironmentConfig.dart' as config;
 import 'Model/Meal.dart';
 import 'main.dart';
 
-class SingleMeal extends StatelessWidget {
+class SingleMeal extends StatefulWidget {
   String title;
   Meal meal;
 
   SingleMeal(this.title, this.meal);
 
+  @override
+  _SingleMealState createState() => _SingleMealState();
+}
+
+class _SingleMealState extends State<SingleMeal> {
   final FileManagement fileManagement = FileManagement();
+
   final ObjectManager objManager = ObjectManager();
-  String mealJsonFile = config.mealJsonFile;  
+
+  String mealJsonFile = config.mealJsonFile;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         actions: [
           IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () async {
-                title = await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        CreateMeal(editMode: true, editMeal: meal)));
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (context) =>
+                            CreateMeal(editMode: true, editMeal: widget.meal)))
+                    .then((context) {
+                  setState(() {});
+                });
               })
         ],
       ),
@@ -49,7 +60,7 @@ class SingleMeal extends StatelessWidget {
                     style: TextStyle(color: Colors.red[700]),
                   ),
                   trailing: Text(
-                    '${meal.totalCost.toStringAsFixed(2)},- kr',
+                    '${widget.meal.totalCost.toStringAsFixed(2)},- kr',
                     style: TextStyle(color: Colors.red[700]),
                   ),
                 )),
@@ -66,14 +77,16 @@ class SingleMeal extends StatelessWidget {
                     style: TextStyle(color: Colors.blue[700]),
                   ),
                   trailing: Text(
-                    '${meal.salePrice.toStringAsFixed(2)},- kr',
+                    '${widget.meal.salePrice.toStringAsFixed(2)},- kr',
                     style: TextStyle(color: Colors.blue[700]),
                   ),
                 )),
           ),
           Card(
             elevation: 5,
-            color: meal.profitMargin > 0 ? Colors.green[50] : Colors.orange[50],
+            color: widget.meal.profitMargin > 0
+                ? Colors.green[50]
+                : Colors.orange[50],
             margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
             child: Container(
                 width: double.infinity,
@@ -81,22 +94,24 @@ class SingleMeal extends StatelessWidget {
                   title: Text(
                     'Profit:',
                     style: TextStyle(
-                        color: meal.profitMargin > 0
+                        color: widget.meal.profitMargin > 0
                             ? Colors.green[700]
                             : Colors.orange[700]),
                   ),
                   trailing: Text(
-                    '${meal.profit.toStringAsFixed(2)},- kr',
+                    '${widget.meal.profit.toStringAsFixed(2)},- kr',
                     style: TextStyle(
-                        color: meal.profitMargin > 0
+                        color: widget.meal.profitMargin > 0
                             ? Colors.green[700]
                             : Colors.orange[700]),
                   ),
                 )),
           ),
-          meal.profitMargin < 0
-              ? _profitMarginWidget(-meal.profitMargin, Colors.orange[700], '-')
-              : _profitMarginWidget(meal.profitMargin, Colors.green[700], ''),
+          widget.meal.profitMargin < 0
+              ? _profitMarginWidget(
+                  -widget.meal.profitMargin, Colors.orange[700], '-')
+              : _profitMarginWidget(
+                  widget.meal.profitMargin, Colors.green[700], ''),
           // RaisedButton(
           //     child: Text('Choose Profit Margin'),
           //     onPressed: () {
@@ -126,26 +141,27 @@ class SingleMeal extends StatelessWidget {
                       thickness: 2,
                     );
                   },
-                  itemCount: meal.ingredients.length,
+                  itemCount: widget.meal.ingredients.length,
                   itemBuilder: (BuildContext context, int index) {
                     String _lowMeasureUnit =
-                        meal.ingredients[index].measureUnit == 'Kg'
+                        widget.meal.ingredients[index].measureUnit == 'Kg'
                             ? 'g'
                             : 'ml';
                     // print(Color(meal.ingredients[index].color));
                     return ListTile(
                       title: Row(children: [
                         CircleAvatar(
-                          backgroundColor: Color(meal.ingredients[index].color),
+                          backgroundColor:
+                              Color(widget.meal.ingredients[index].color),
                           radius: 10,
                         ),
-                        Text('   ' + meal.ingredients[index].name),
+                        Text('   ' + widget.meal.ingredients[index].name),
                       ]),
                       subtitle: Text(
-                          '         ${meal.ingredients[index].amountInGrams.round()} ' +
+                          '         ${widget.meal.ingredients[index].amountInGrams.round()} ' +
                               _lowMeasureUnit),
                       trailing: Text(
-                          '${(meal.ingredients[index].kgPrice * meal.ingredients[index].amountInGrams / 1000).toStringAsFixed(2)} kr,-'),
+                          '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / 1000).toStringAsFixed(2)} kr,-'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),
@@ -169,14 +185,13 @@ class SingleMeal extends StatelessWidget {
     );
   }
 
-//Show menu to delete meal.
   _deleteMealDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Delete'),
-          content: Text('Are you sure you want to delete ${meal.name}?'),
+          content: Text('Are you sure you want to delete ${widget.meal.name}?'),
           actions: [
             FlatButton(
               child: Text('cancel'),
@@ -195,11 +210,10 @@ class SingleMeal extends StatelessWidget {
     );
   }
 
-//delete meal and show error/ succes message
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-    deleteSuccess = await _deleteMealFromFile(meal);
+    deleteSuccess = await _deleteMealFromFile(widget.meal);
 
     if (deleteSuccess) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -208,7 +222,7 @@ class SingleMeal extends StatelessWidget {
           ),
           (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${meal.name} was deleted.'),
+        content: Text('${widget.meal.name} was deleted.'),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -217,7 +231,6 @@ class SingleMeal extends StatelessWidget {
     }
   }
 
-//delete meal from firestore database
   Future<bool> _deleteMealFromFile(Meal newMeal) async {
     try {
       String fileContent = await fileManagement.readFile(mealJsonFile);
@@ -225,8 +238,7 @@ class SingleMeal extends StatelessWidget {
       int deleteIndex =
           allMeals.indexWhere((element) => element.id == newMeal.id);
       allMeals.removeAt(deleteIndex);
-      fileManagement.writeFile(
-          mealJsonFile, jsonEncode(allMeals));
+      fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
     } catch (error) {
       print('Error deleting meal: $error');
       return false;
@@ -234,20 +246,6 @@ class SingleMeal extends StatelessWidget {
     return true;
   }
 
-//save new price from profit margin to database
-  // Future<bool> _saveProfitMarginToDB(String id, double salePrice) {
-  //   return FirestoreRef.mealRef
-  //       .doc(id)
-  //       .update({"salePrice": salePrice}).then((value) {
-  //     print("DB updated");
-  //     return true;
-  //   }).catchError((error) {
-  //     print("Failed to update salePrice in DB: $error");
-  //     return false;
-  //   });
-  // }
-
-//Round widget to show profit margin in percent.
   Widget _profitMarginWidget(
       double localProfitMargin, Color indicatorColor, String negative) {
     localProfitMargin /= 100;

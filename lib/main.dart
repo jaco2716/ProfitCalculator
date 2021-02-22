@@ -1,8 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/FrontPageMenu.dart';
 import 'package:profit_calculator/MealList.dart';
-import 'package:profit_calculator/MyDrawer.dart';
+import 'package:profit_calculator/NotInUse/MyDrawer.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
 void main() {
@@ -43,29 +44,31 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('All Meals'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.save),
-              onPressed: () {
-                fileManagement.exportData(
-                    context, ingredientJsonFile, mealJsonFile);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.download_rounded),
-              onPressed: () async {
-                await fileManagement.importData();
-                setState(() {
+          // centerTitle: true,
+          title: Text('Profit Calculator'),
+          // actions: [
+          //   IconButton(
+          //     icon: Icon(Icons.save),
+          //     onPressed: () {
+          //       fileManagement.exportData(
+          //           context, ingredientJsonFile, mealJsonFile);
+          //     },
+          //   ),
+          //   IconButton(
+          //     icon: Icon(Icons.download_rounded),
+          //     onPressed: () async {
+          //       await fileManagement.importData();
+          //       setState(() {
                   
-                });
-                // FilePickerResult result =
-                //     await FilePicker.platform.pickFiles();
-              },
-            )
-          ],
+          //       });
+          //       // FilePickerResult result =
+          //       //     await FilePicker.platform.pickFiles();
+          //     },
+          //   )
+          // ],
         ),
-        drawer: MyDrawer(),
-        body: MealList());
+        // drawer: MyDrawer(),
+        // body: MealList());
+        body: FrontPageMenu());
   }
 }
