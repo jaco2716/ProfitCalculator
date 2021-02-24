@@ -34,8 +34,8 @@ class _SingleMealState extends State<SingleMeal> {
         actions: [
           IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {
-                Navigator.of(context)
+              onPressed: () async {
+                widget.meal = await Navigator.of(context)
                     .push(MaterialPageRoute(
                         builder: (context) =>
                             CreateMeal(editMode: true, editMeal: widget.meal)))

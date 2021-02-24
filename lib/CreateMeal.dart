@@ -334,7 +334,7 @@ class _CreateMealState extends State<CreateMeal> {
           // Navigator.of(context).pop('newMealsss');
           if (!dublicate) {
             if (widget.editMode ?? false) {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(widget.editMeal);
               // Navigator.of(context).pushReplacement(MaterialPageRoute(
               //     builder: (context) => SingleMeal(newMeal.name, newMeal)));
             } else {

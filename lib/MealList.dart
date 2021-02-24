@@ -162,22 +162,22 @@ class _MealListState extends State<MealList> {
                                   physics: NeverScrollableScrollPhysics(),
                                 ),
                                 // SizedBox(height: 20,),
-                                SizedBox(
-                                  height: 90,
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 20),
-                                    child: FlatButton(
-                                        shape: ContinuousRectangleBorder(),
-                                        color: Colors.blue,
-                                        child: Text('Set All Profit Margins'),
-                                        onPressed: () {
-                                          _showChangeProfitMargin(
-                                              context, meals);
-                                        }),
-                                  ),
-                                ),
+                                // SizedBox(
+                                //   height: 90,
+                                //   width: double.infinity,
+                                //   child: Padding(
+                                //     padding: const EdgeInsets.symmetric(
+                                //         vertical: 20),
+                                //     child: FlatButton(
+                                //         shape: ContinuousRectangleBorder(),
+                                //         color: Colors.blue,
+                                //         child: Text('Set All Profit Margins'),
+                                //         onPressed: () {
+                                //           _showChangeProfitMargin(
+                                //               context, meals);
+                                //         }),
+                                //   ),
+                                // ),
                               ],
                             );
                           });
@@ -225,99 +225,101 @@ class _MealListState extends State<MealList> {
       ),
     );
   }
+//TODO delete or fix change all profit margins.
 
 //Show menu to change all profit margins
-  _showChangeProfitMargin(BuildContext context, List<Meal> meals) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        TextEditingController tec = TextEditingController();
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('Calculate the Sale Price from a Profit Margin'),
-              Container(
-                  padding: EdgeInsets.all(5),
-                  width: 100,
-                  child: TextField(
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                    ],
-                    keyboardType: TextInputType.phone,
-                    maxLength: 2,
-                    maxLengthEnforced: true,
-                    controller: tec,
-                    decoration: InputDecoration(
-                        hintText: '%',
-                        border: OutlineInputBorder(),
-                        counterText: ''),
-                  )),
-            ],
-          ),
-          actions: [
-            FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Cancel')),
-            RaisedButton(
-              onPressed: () async {
-                Navigator.pop(context);
-//set isLeading to true and update page so it shows a loading screen. then set to false again after async call.
-                setState(() {
-                  isLoading = true;
-                });
-                await _changeAllProfitMargin(tec.text, meals);
-                setState(() {
-                  isLoading = false;
-                });
-              },
-              child: Text('Accept'),
-            )
-          ],
-        );
-      },
-    );
-  }
+//   _showChangeProfitMargin(BuildContext context, List<Meal> meals) {
+//     showDialog(
+//       context: context,
+//       builder: (context) {
+//         TextEditingController tec = TextEditingController();
+//         return AlertDialog(
+//           content: Column(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Text('Calculate the Sale Price from a Profit Margin'),
+//               Container(
+//                   padding: EdgeInsets.all(5),
+//                   width: 100,
+//                   child: TextField(
+//                     inputFormatters: <TextInputFormatter>[
+//                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+//                     ],
+//                     keyboardType: TextInputType.phone,
+//                     maxLength: 2,
+//                     maxLengthEnforced: true,
+//                     controller: tec,
+//                     decoration: InputDecoration(
+//                         hintText: '%',
+//                         border: OutlineInputBorder(),
+//                         counterText: ''),
+//                   )),
+//             ],
+//           ),
+//           actions: [
+//             FlatButton(
+//                 onPressed: () {
+//                   Navigator.of(context).pop();
+//                 },
+//                 child: Text('Cancel')),
+//             RaisedButton(
+//               onPressed: () async {
+//                 Navigator.pop(context);
+// //set isLeading to true and update page so it shows a loading screen. then set to false again after async call.
+//                 setState(() {
+//                   isLoading = true;
+//                 });
+//                 await _changeAllProfitMargin(tec.text, meals);
+//                 setState(() {
+//                   isLoading = false;
+//                 });
+//               },
+//               child: Text('Accept'),
+//             )
+//           ],
+//         );
+//       },
+//     );
+//   }
 
+//TODO delete or fix change all profit margins.
 //function to calculate all prices from profit margin and then save.
-  Future<bool> _changeAllProfitMargin(
-      String textFieldText, List<Meal> meals) async {
-    String textfield = textFieldText;
-    double profitMargin;
-    bool dbSucess = false;
-    if (textfield != null) profitMargin = double.tryParse(textfield);
-    if (profitMargin != null) {
-      for (var meal in meals) {
-        double newSalePrice =
-            ((meal.totalCost / (1 - profitMargin / 100)) * 100)
-                    .roundToDouble() /
-                100;
-        print(newSalePrice);
-        // dbSucess =
-        //     await _saveProfitMarginToDB(meal.id.toString(), newSalePrice);
-        meal.salePrice = newSalePrice;
-        print(dbSucess);
-      }
-//show error or success message
-      if (dbSucess) {
-        // setState(() {});
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Profit Margin has been saved.'),
-        ));
-        print('success: ' + dbSucess.toString());
-        return true;
-      } else {
-        print('error: ' + dbSucess.toString());
-        // setState(() {});
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Something went wrong, please try again.'),
-        ));
-      }
-    }
-    return false;
-  }
+//   Future<bool> _changeAllProfitMargin(
+//       String textFieldText, List<Meal> meals) async {
+//     String textfield = textFieldText;
+//     double profitMargin;
+//     bool dbSucess = false;
+//     if (textfield != null) profitMargin = double.tryParse(textfield);
+//     if (profitMargin != null) {
+//       for (var meal in meals) {
+//         double newSalePrice =
+//             ((meal.totalCost / (1 - profitMargin / 100)) * 100)
+//                     .roundToDouble() /
+//                 100;
+//         print(newSalePrice);
+//         // dbSucess =
+//         //     await _saveProfitMarginToDB(meal.id.toString(), newSalePrice);
+//         meal.salePrice = newSalePrice;
+//         print(dbSucess);
+//       }
+// //show error or success message
+//       if (dbSucess) {
+//         // setState(() {});
+//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//           content: Text('Profit Margin has been saved.'),
+//         ));
+//         print('success: ' + dbSucess.toString());
+//         return true;
+//       } else {
+//         print('error: ' + dbSucess.toString());
+//         // setState(() {});
+//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+//           content: Text('Something went wrong, please try again.'),
+//         ));
+//       }
+//     }
+//     return false;
+//   }
 
 //Save the profitmargins calculated to firestore database
   // Future<bool> _saveProfitMarginToDB(String id, double salePrice) {
