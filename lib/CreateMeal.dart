@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/ObjectManager.dart';
-import 'package:profit_calculator/SingleMeal.dart';
 import 'package:profit_calculator/main.dart';
 import 'Model/Ingredient.dart';
 import 'Model/EnvironmentConfig.dart' as config;
@@ -28,20 +27,20 @@ class _CreateMealState extends State<CreateMeal> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
 
-  List<Ingredient> _selectedIngredients = List<Ingredient>();
-  List<Ingredient> ingredients = List<Ingredient>();
+  List<Ingredient> _selectedIngredients = <Ingredient>[];
+  List<Ingredient> ingredients = <Ingredient>[];
 
   String mealJsonFile = config.mealJsonFile;
   String ingredientJsonFile = config.ingredientJsonFile;
 
-//Get all ingredients from firestore
+  //Get all ingredients from firestore
   getIngredientsFromFile() async {
     String fileContent = await fileManagement.readFile(ingredientJsonFile);
-    List<Ingredient> tempIngredients = List<Ingredient>();
+    List<Ingredient> tempIngredients = <Ingredient>[];
 
     tempIngredients = objManager.jsonToListIngredient(fileContent);
-    ingredients =
-        tempIngredients.where((element) => element.archived == false).toList();
+    ingredients = tempIngredients;
+    // tempIngredients.where((element) => element.archived == false).toList();
   }
 
 //Check if meal is being edited and insert object.
@@ -227,6 +226,7 @@ class _CreateMealState extends State<CreateMeal> {
 
   //Show a menu to choose wich ingredients are in the meal
   _showEditIngredients(List<Ingredient> ingredients) {
+    bool showArchived = false;
     showModalBottomSheet(
       enableDrag: false,
       isScrollControlled: true,
@@ -239,6 +239,18 @@ class _CreateMealState extends State<CreateMeal> {
                 AppBar(
                   title: Text('Add ingredients'),
                   backgroundColor: Colors.pink,
+                  actions: [
+                    IconButton(
+                        icon: showArchived
+                            ? Icon(Icons.archive_outlined)
+                            : Icon(Icons.archive),
+                        onPressed: () {
+                          setModalState(() {
+                            showArchived = !showArchived;
+                          });
+                          print(showArchived);
+                        })
+                  ],
                 ),
                 Container(
                   height: (MediaQuery.of(context).size.height - 200),
@@ -254,8 +266,8 @@ class _CreateMealState extends State<CreateMeal> {
                       : ListView.builder(
                           itemCount: ingredients.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return addIngredientListTile(
-                                ingredients[index], setModalState);
+                            return addIngredientListTile(ingredients[index],
+                                setModalState, showArchived);
                           },
                         ),
                 ),
@@ -284,12 +296,12 @@ class _CreateMealState extends State<CreateMeal> {
 // Create final meal object and save it
   _saveMeal(bool dublicate) async {
     if (_formKey.currentState.validate()) {
-      if (_selectedIngredients.length == 0) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('No ingredients added.'),
-        ));
-        return;
-      }
+      // if (_selectedIngredients.length == 0) {
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     content: Text('No ingredients added.'),
+      //   ));
+      //   return;
+      // }
       int nullIndex = _selectedIngredients
           .indexWhere((ingredient) => ingredient.amountInGrams == null);
 
@@ -334,7 +346,7 @@ class _CreateMealState extends State<CreateMeal> {
           // Navigator.of(context).pop('newMealsss');
           if (!dublicate) {
             if (widget.editMode ?? false) {
-              Navigator.of(context).pop(widget.editMeal);
+              Navigator.of(context).pop(newMeal);
               // Navigator.of(context).pushReplacement(MaterialPageRoute(
               //     builder: (context) => SingleMeal(newMeal.name, newMeal)));
             } else {
@@ -431,7 +443,13 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
 // Each ingredient widget in the menu to choose ingredients
-  Widget addIngredientListTile(Ingredient ingredient, Function setModalState) {
+  Widget addIngredientListTile(
+      Ingredient ingredient, Function setModalState, bool showArchived) {
+    if (!showArchived) {
+      if (ingredient.archived) return Center();
+    } else {
+      if (!ingredient.archived) return Center();
+    }
     return Card(
       child: CheckboxListTile(
         // tileColor: ingredient.color,

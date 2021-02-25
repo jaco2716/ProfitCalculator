@@ -4,7 +4,7 @@ import 'Model/Meal.dart';
 
 class ObjectManager {
   List<Meal> jsonToListMeal(String mealJsonSnapshot) {
-    List<Meal> meals = List<Meal>();
+    List<Meal> meals = <Meal>[];
     Iterable tempMealIterable;
     if (mealJsonSnapshot.length != 0) {
       tempMealIterable = json.decode(mealJsonSnapshot);
@@ -14,7 +14,7 @@ class ObjectManager {
   }
 
   List<Ingredient> jsonToListIngredient(String ingredientJsonSnapshot) {
-    List<Ingredient> ingredients = List<Ingredient>();
+    List<Ingredient> ingredients = <Ingredient>[];
     Iterable tempIngredientIterable;
     if (ingredientJsonSnapshot.length != 0) {
       tempIngredientIterable = json.decode(ingredientJsonSnapshot);

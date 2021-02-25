@@ -35,13 +35,15 @@ class _SingleMealState extends State<SingleMeal> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-                widget.meal = await Navigator.of(context)
-                    .push(MaterialPageRoute(
+                Meal newEditedMeal;
+                newEditedMeal = await Navigator.of(context).push(
+                    MaterialPageRoute(
                         builder: (context) =>
-                            CreateMeal(editMode: true, editMeal: widget.meal)))
-                    .then((context) {
-                  setState(() {});
-                });
+                            CreateMeal(editMode: true, editMeal: widget.meal)));
+                if (newEditedMeal != null) {
+                  widget.meal = newEditedMeal;
+                }
+                setState(() {});
               })
         ],
       ),

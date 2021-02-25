@@ -13,9 +13,11 @@ class Meal {
   double get totalCost {
     double totalPrice = 0;
     // print(ingredients);
-    ingredients.forEach((e) {
-      totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
-    });
+    // if (ingredients.length != 0 || ingredients != null) {
+      ingredients?.forEach((e) {
+        totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
+      });
+    // }
     return totalPrice;
   }
 
@@ -25,11 +27,12 @@ class Meal {
   }
 
   double get profitMargin {
-    if(salePrice != 0){
+    if (salePrice != 0) {
       return (profit / salePrice * 100);
-    }
-    else return 0;
+    } else
+      return 0;
   }
+
   //Json convert function, fromJson and toJson
   Meal.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -46,4 +49,3 @@ class Meal {
         'ingredients': ingredients.map((e) => e.toJson()).toList(),
       };
 }
-

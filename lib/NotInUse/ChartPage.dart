@@ -20,8 +20,8 @@ class _ChartPageState extends State<ChartPage> {
   double maxy = 10;
   double miny = 50;
   List<FlSpot> chartList;
-  List<FlSpot> secoundaryChartList = List<FlSpot>();
-  List<String> chartListTitles = List<String>();
+  List<FlSpot> secoundaryChartList = <FlSpot>[];
+  List<String> chartListTitles = <String>[];
   List<Meal> mealList;
   String dropDownValue = "Profit Margin";
   String chartTitle = 'Profit Margin';

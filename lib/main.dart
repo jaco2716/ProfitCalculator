@@ -1,9 +1,7 @@
-import 'package:file_picker/file_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/FrontPageMenu.dart';
-import 'package:profit_calculator/MealList.dart';
-import 'package:profit_calculator/NotInUse/MyDrawer.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
 void main() {

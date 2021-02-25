@@ -51,7 +51,6 @@ class FileManagement {
   exportData(BuildContext context, String ingredientFileName,
       String mealFileName) async {
     final path = await _localPath;
-    List<String> fileJsons = [];
     String mergedJson = '';
 
     String ingredientJson = await readFile(ingredientFileName);

@@ -1,15 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:profit_calculator/FileManagement.dart';
-import 'package:profit_calculator/IngredientList.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
-import 'main.dart';
 
 class CreateIngredient extends StatefulWidget {
   final bool editMode;
@@ -29,7 +26,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   Color currentColor = Colors.red;
 
   String ingredientJsonFile = config.ingredientJsonFile;
-  List<Ingredient> ingredientsList = List<Ingredient>();
+  List<Ingredient> ingredientsList = <Ingredient>[];
 
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
