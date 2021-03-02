@@ -46,77 +46,93 @@ class _IngredientListState extends State<IngredientList> {
                   });
                 }),
             IconButton(
-            icon: Icon(CupertinoIcons.plus_slash_minus),
-            onPressed: () {
-              // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
-              ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: CalculatorPage(),duration: Duration(hours: 24),behavior: SnackBarBehavior.floating,));
-              
-            }),
+                icon: Icon(CupertinoIcons.plus_slash_minus),
+                onPressed: () {
+                  // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: CalculatorPage(),
+                    duration: Duration(hours: 24),
+                    behavior: SnackBarBehavior.floating,
+                  ));
+                }),
           ]),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 700),
-            child: Column(children: [
-              // Divider(
-              //   thickness: 2,
-              // ),
-              FutureBuilder(
-                future: fileManagement.readFile(ingredientJsonFile),
-                initialData: '',
-                builder: (context, ingredientJsonSnapshot) {
-                  if (ingredientJsonSnapshot.hasError) {
-                    return Container(
-                        height: 400,
-                        child: Center(
-                            child: Text(
-                          'Something went wrong.\nPlease try restarting your app.',
-                          textAlign: TextAlign.center,
-                        )));
-                  }
+      body: Stack(children: [
+        SingleChildScrollView(
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 700),
+              child: Column(children: [
+                // Divider(
+                //   thickness: 2,
+                // ),
+                FutureBuilder(
+                  future: fileManagement.readFile(ingredientJsonFile),
+                  initialData: '',
+                  builder: (context, ingredientJsonSnapshot) {
+                    if (ingredientJsonSnapshot.hasError) {
+                      return Container(
+                          height: 400,
+                          child: Center(
+                              child: Text(
+                            'Something went wrong.\nPlease try restarting your app.',
+                            textAlign: TextAlign.center,
+                          )));
+                    }
 
-                  if (ingredientJsonSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return Container(
-                        height: 400,
-                        child: Center(child: CircularProgressIndicator()));
-                  }
-                  if (ingredientJsonSnapshot.data.length == 0) {
-                    return InitialFutureWidget();
-                  }
+                    if (ingredientJsonSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Container(
+                          height: 400,
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                    if (ingredientJsonSnapshot.data.length == 0) {
+                      return InitialFutureWidget();
+                    }
 //Map data from firestore to objects in list.
-                  List<Ingredient> ingredients = objManager
-                      .jsonToListIngredient(ingredientJsonSnapshot.data);
+                    List<Ingredient> ingredients = objManager
+                        .jsonToListIngredient(ingredientJsonSnapshot.data);
 
-                  return Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 45.0),
-                      child: ListTile(
-                        visualDensity: VisualDensity.compact,
-                        title: Text('Name'),
-                        trailing: Text('Kg/Liter Cost'),
-                        dense: true,
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 40),
+                      child: ListView.builder(
+                        itemCount: ingredients.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ingredientListTile(ingredients[index]);
+                        },
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
                       ),
-                    ),
-                    ListView.builder(
-                      itemCount: ingredients.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ingredientListTile(ingredients[index]);
-                      },
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                    ),
-                  ]);
-                },
-              ),
-              SizedBox(
-                height: 50,
-              )
-            ]),
+                    );
+                  },
+                ),
+                SizedBox(height: 400),
+              ]),
+            ),
           ),
         ),
-      ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 45.0),
+              child: ListTile(
+                visualDensity: VisualDensity.compact,
+                title: Text(
+                  'Name',
+                  style: TextStyle(fontSize: 16),
+                ),
+                trailing: Text(
+                  'Kg/Liter Cost',
+                  style: TextStyle(fontSize: 16),
+                ),
+                dense: true,
+              ),
+            ),
+          ),
+        ),
+      ]),
     );
   }
 

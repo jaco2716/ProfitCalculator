@@ -25,33 +25,43 @@ class FrontPageMenu extends StatelessWidget {
           //   child: Center(child: Icon(Icons.accessibility_new, size: 80, color: Colors.blue,),),
           // ),
           Container(
-            padding: EdgeInsets.all(30),
-            child: Center(child: Text('Menu', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200,)))),
-          drawerListTile(Icon(Icons.add), "Create Ingredient", CreateIngredient(), context),
+              padding: EdgeInsets.all(30),
+              child: Center(
+                  child: Text('Menu',
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w200,
+                      )))),
+          drawerListTile(Icon(Icons.add), "Create Ingredient",
+              CreateIngredient(), context),
           drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
           Divider(),
-          drawerListTile(Icon(Icons.list), "All Ingredients", IngredientList(), context),
+          drawerListTile(
+              Icon(Icons.list), "All Ingredients", IngredientList(), context),
           drawerListTile(Icon(Icons.list), "All Meals", MealList(), context),
           Divider(),
-          drawerListTile(Icon(Icons.settings), "Settings", SettingsPage(), context),
+          drawerListTile(
+              Icon(Icons.settings), "Settings", SettingsPage(), context),
           // Divider(),
           // drawerListTile(Icon(Icons.settings), "Settings", SettingsPage(), context),
-          
+
           // drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
+          SizedBox(height: 400),
         ],
       ),
     );
   }
 
 //List tile for every page to go to.
-  Widget drawerListTile(Icon _tileIcon, String _tileTitle, Widget _navigationPage, BuildContext context){
+  Widget drawerListTile(Icon _tileIcon, String _tileTitle,
+      Widget _navigationPage, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Theme(
         data: ThemeData.dark(),
-              child: Card(
+        child: Card(
           color: Colors.blue,
-                child: ListTile(
+          child: ListTile(
               leading: _tileIcon,
               title: Text(_tileTitle),
               trailing: Icon(Icons.keyboard_arrow_right),

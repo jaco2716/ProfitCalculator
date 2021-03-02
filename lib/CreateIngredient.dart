@@ -196,6 +196,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
                                     _archiveIngredientDialog(context, true),
                               )
                         : Center(),
+                        SizedBox(height: 400,),
+
                   ],
                 ),
               ),

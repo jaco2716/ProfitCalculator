@@ -217,9 +217,8 @@ class _CreateMealState extends State<CreateMeal> {
                   //             onPressed: () => _saveMeal(true)),
                   //       )
                   //     : Center(),
-                  SizedBox(
-                    height: 50,
-                  ),
+                  SizedBox(height: 40),
+                  SizedBox(height: 400),
                 ],
               ),
             ),
