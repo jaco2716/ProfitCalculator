@@ -46,9 +46,11 @@ class _CreateMealState extends State<CreateMeal> {
 
 //Check if meal is being edited and insert object.
   initEditMode() {
+    String tempSale;
     if (widget.editMode ?? false) {
       _name = widget.editMeal.name;
-      _salePrice = widget.editMeal.salePrice.toString();
+      tempSale = widget.editMeal.salePrice.toString();
+      _salePrice = tempSale.replaceAll('.', ',');
       _selectedIngredients = widget.editMeal.ingredients
           ?.map((e) => Ingredient.clone(e))
           ?.toList();
@@ -119,9 +121,9 @@ class _CreateMealState extends State<CreateMeal> {
                                 initialValue: _salePrice,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9.]'))
+                                      RegExp(r'[0-9.,]'))
                                 ],
-                                keyboardType: TextInputType.phone,
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                                 validator: (value) => validateDouble(value),
                                 onSaved: (value) => _salePrice = value,
                                 onFieldSubmitted: (value) => changeFocus(),
@@ -158,9 +160,9 @@ class _CreateMealState extends State<CreateMeal> {
                                 initialValue: _profitMargin,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9.]'))
+                                      RegExp(r'[0-9.,]'))
                                 ],
-                                keyboardType: TextInputType.phone,
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                                 validator: (value) => validateDouble(value),
                                 onSaved: (value) => _profitMargin = value,
                                 onFieldSubmitted: (value) => changeFocus(),
@@ -321,11 +323,15 @@ class _CreateMealState extends State<CreateMeal> {
             _totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
         });
 
-        if (_salePriceChosen)
-          _finalSalePrice = double.parse(_salePrice);
-        else
+        if (_salePriceChosen) {
+          String tempSale = _salePrice.replaceAll(',', '.');
+          _finalSalePrice = double.parse(tempSale);
+        } else{
+          String tempProfit = _profitMargin.replaceAll(',', '.');
+
           _finalSalePrice =
-              _totalPrice / (1 - double.parse(_profitMargin) / 100);
+              _totalPrice / (1 - double.parse(tempProfit) / 100);
+        }
 
         _finalSalePrice = (_finalSalePrice * 100).roundToDouble() / 100;
 
@@ -503,6 +509,7 @@ class _CreateMealState extends State<CreateMeal> {
 // Check if the number value is valid
   String validateDouble(String value) {
     try {
+      value = value.replaceAll(',', '.');
       double.parse(value);
       return null;
     } catch (error) {

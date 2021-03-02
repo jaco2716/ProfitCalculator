@@ -371,7 +371,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
       double.parse(value);
       return null;
     } catch (error) {
-      return "Invalid number. Use '.' as komma.";
+      return "Invalid number.";
     }
   }
 
