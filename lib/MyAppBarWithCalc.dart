@@ -1,0 +1,28 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:profit_calculator/CalculatorPage.dart';
+
+class MyAppBarWithCalc extends StatelessWidget implements PreferredSizeWidget {
+  final String _title;
+  MyAppBarWithCalc(this._title);
+
+  @override
+  Size get preferredSize => const Size.fromHeight(54);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(_title),
+      actions: [
+        IconButton(
+            icon: Icon(CupertinoIcons.plus_slash_minus),
+            onPressed: () {
+              // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: CalculatorPage(),duration: Duration(hours: 24),behavior: SnackBarBehavior.floating,));
+              
+            })
+      ],
+    );
+  }
+}

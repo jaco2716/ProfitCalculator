@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
+import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
 
@@ -40,10 +41,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
 //Check if ingredient is being edited and then insert object
   initEditMode() {
+    String tempKg;
     if (widget.editMode ?? false) {
       currentColor = Color(widget.editIngredient.color);
       _name = widget.editIngredient.name;
-      _kgPrice = widget.editIngredient.kgPrice.toString();
+      tempKg = widget.editIngredient.kgPrice.toString();
+      _kgPrice = tempKg.replaceAll('.', ',');
       _measureUnit = widget.editIngredient.measureUnit;
     }
   }
@@ -51,120 +54,150 @@ class _CreateIngredientState extends State<CreateIngredient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Ingredient'),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 400),
-            padding: EdgeInsets.all(30),
-            child: Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Name',
+      appBar: MyAppBarWithCalc('Create Ingredient'),
+      // AppBar(
+      //   title: Text('Create Ingredient'),
+      // ),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 400),
+              padding: EdgeInsets.all(30),
+              child: Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Name',
+                      ),
+                      initialValue: _name,
+                      keyboardType: TextInputType.name,
+                      validator: (value) => validateString(value),
+                      onSaved: (value) => _name = value,
+                      onFieldSubmitted: (value) => changeFocus(),
                     ),
-                    initialValue: _name,
-                    keyboardType: TextInputType.name,
-                    validator: (value) => validateString(value),
-                    onSaved: (value) => _name = value,
-                    onFieldSubmitted: (value) => changeFocus(),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 180,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Price per Kg/Liter',
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 180,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Price per Kg/Liter',
+                            ),
+                            initialValue: _kgPrice,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[0-9,.]'))
+                            ],
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            validator: (value) => validateDouble(value),
+                            onSaved: (value) => _kgPrice = value,
+                            onFieldSubmitted: (value) => changeFocus(),
                           ),
-                          initialValue: _kgPrice,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                        ),
+                        Container(
+                            width: 70,
+                            // height: 70,
+                            padding: EdgeInsets.only(top: 20),
+                            child: DropdownButton(
+                                value: _measureUnit,
+                                // style: TextStyle(color: Colors.white),
+                                // iconEnabledColor: Colors.white,
+                                // dropdownColor: Colors.blue,
+                                items: <String>[
+                                  "Kg",
+                                  "Liter",
+                                  "g",
+                                  "ml",
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _measureUnit = newValue;
+                                  });
+                                }))
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                        width: 200,
+                        child: RaisedButton.icon(
+                            icon: Icon(Icons.save),
+                            padding: EdgeInsets.all(15),
+                            label: Text('Save Ingredient'),
+                            onPressed: () => _saveIngredient())),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      '\nPick a color as your category',
+                      style: TextStyle(
+                          fontSize: 15,
+                          // fontWeight: FontWeight.w300,
+                          fontStyle: FontStyle.italic),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 20),
+                      child: Container(
+                        // color: Colors.blue[100],
+                        padding: EdgeInsets.only(top: 0, right: 20, left: 20),
+                        height: 150,
+                        width: 320,
+                        child: BlockPicker(
+                          availableColors: [
+                            Colors.red,
+                            Colors.orange,
+                            Colors.yellow,
+                            Colors.purple,
+                            Colors.blue,
+                            Colors.cyan,
+                            Colors.green,
+                            Colors.lime,
+                            Colors.grey[300],
+                            Colors.grey,
+                            Colors.black,
+                            Colors.brown,
                           ],
-                          keyboardType: TextInputType.phone,
-                          validator: (value) => validateDouble(value),
-                          onSaved: (value) => _kgPrice = value,
-                          onFieldSubmitted: (value) => changeFocus(),
+                          pickerColor: currentColor,
+                          onColorChanged: changeColor,
                         ),
                       ),
-                      Container(
-                          width: 70,
-                          // height: 70,
-                          padding: EdgeInsets.only(top: 20),
-                          child: DropdownButton(
-                              value: _measureUnit,
-                              // style: TextStyle(color: Colors.white),
-                              // iconEnabledColor: Colors.white,
-                              // dropdownColor: Colors.blue,
-                              items: <String>[
-                                "Kg",
-                                "Liter",
-                              ].map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  _measureUnit = newValue;
-                                });
-                              }))
-                    ],
-                  ),
-                  Text(
-                    '\nPick a color identifier',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w300,
-                        fontStyle: FontStyle.italic),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 0, right: 50, left: 50),
-                    height: 290,
-                    width: 320,
-                    child: BlockPicker(
-                      pickerColor: currentColor,
-                      onColorChanged: changeColor,
                     ),
-                  ),
-                  Container(
-                      width: 200,
-                      child: RaisedButton.icon(
-                          icon: Icon(Icons.save),
-                          padding: EdgeInsets.all(15),
-                          label: Text('Save Ingredient'),
-                          onPressed: () => _saveIngredient())),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  widget.editMode ?? false
-                      ? !widget.editIngredient.archived
-                          ? IconButton(
-                              padding: EdgeInsets.all(20),
-                              iconSize: 40,
-                              color: Colors.red,
-                              icon: Icon(Icons.archive),
-                              onPressed: () =>
-                                  _archiveIngredientDialog(context, false),
-                            )
-                          : IconButton(
-                              padding: EdgeInsets.all(20),
-                              iconSize: 40,
-                              color: Colors.green,
-                              icon: Icon(Icons.archive),
-                              onPressed: () =>
-                                  _archiveIngredientDialog(context, true),
-                            )
-                      : Center(),
-                ],
+                    widget.editMode ?? false
+                        ? !widget.editIngredient.archived
+                            ? IconButton(
+                                padding: EdgeInsets.all(20),
+                                iconSize: 40,
+                                color: Colors.red,
+                                icon: Icon(Icons.archive),
+                                onPressed: () =>
+                                    _archiveIngredientDialog(context, false),
+                              )
+                            : IconButton(
+                                padding: EdgeInsets.all(20),
+                                iconSize: 40,
+                                color: Colors.green,
+                                icon: Icon(Icons.archive),
+                                onPressed: () =>
+                                    _archiveIngredientDialog(context, true),
+                              )
+                        : Center(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -178,7 +211,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      double finalKgPrice = double.parse(_kgPrice);
+      String tempKgPrice = _kgPrice.replaceAll(',', '.');
+      double finalKgPrice = double.parse(tempKgPrice);
 //Create new id or use edit ingredient id
       int newID;
       if (widget.editMode ?? false)
@@ -331,6 +365,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //validate that the number is valid
   String validateDouble(String value) {
     try {
+      value = value.replaceAll(',', '.');
       double.parse(value);
       return null;
     } catch (error) {

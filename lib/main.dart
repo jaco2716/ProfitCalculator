@@ -1,7 +1,10 @@
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/CalculatorPage.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/FrontPageMenu.dart';
+import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
 void main() {
@@ -41,9 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          // centerTitle: true,
-          title: Text('Profit Calculator'),
+        appBar: MyAppBarWithCalc('Profit Calculator'),
+        // appBar: AppBar(//MyAppBarWithCalc('Profit Calculator'),
+          // title: Text('Profit Calculator'),
           // actions: [
           //   IconButton(
           //     icon: Icon(Icons.save),
@@ -64,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
           //     },
           //   )
           // ],
-        ),
+        // ),
         // drawer: MyDrawer(),
         // body: MealList());
         body: FrontPageMenu());

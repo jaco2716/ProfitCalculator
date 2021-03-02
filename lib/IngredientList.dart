@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/CalculatorPage.dart';
 import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
@@ -20,10 +22,12 @@ class _IngredientListState extends State<IngredientList> {
   String ingredientJsonFile = config.ingredientJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
           backgroundColor: showArchived ? Colors.red : Colors.blue,
           title: Text(appBarTitle),
@@ -41,6 +45,14 @@ class _IngredientListState extends State<IngredientList> {
                       appBarTitle = 'All Ingredients';
                   });
                 }),
+            IconButton(
+            icon: Icon(CupertinoIcons.plus_slash_minus),
+            onPressed: () {
+              // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: CalculatorPage(),duration: Duration(hours: 24),behavior: SnackBarBehavior.floating,));
+              
+            }),
           ]),
       body: SingleChildScrollView(
         child: Center(

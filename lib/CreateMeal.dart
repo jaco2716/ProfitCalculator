@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/Model/Meal.dart';
+import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'package:profit_calculator/main.dart';
 import 'Model/Ingredient.dart';
@@ -65,10 +66,14 @@ class _CreateMealState extends State<CreateMeal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: widget.editMode ?? false
-              ? Text('Edit Meal')
-              : Text('Create Meal')),
+      appBar: widget.editMode ?? false
+          ? MyAppBarWithCalc('Edit Meal')
+          : MyAppBarWithCalc('Create Meal'),
+
+      // appBar: AppBar(
+      //     title: widget.editMode ?? false
+      //         ? Text('Edit Meal')
+      //         : Text('Create Meal')),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -311,7 +316,10 @@ class _CreateMealState extends State<CreateMeal> {
 
         double _totalPrice = 0;
         _selectedIngredients.forEach((e) {
-          _totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
+          if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
+            _totalPrice += (e.amountInGrams) * e.kgPrice;
+          } else
+            _totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
         });
 
         if (_salePriceChosen)
@@ -499,7 +507,7 @@ class _CreateMealState extends State<CreateMeal> {
       double.parse(value);
       return null;
     } catch (error) {
-      return "Invalid number. Use '.' as komma.";
+      return "Invalid number.";
     }
   }
 }

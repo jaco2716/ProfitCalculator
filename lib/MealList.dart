@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'package:profit_calculator/SingleMeal.dart';
 import 'Model/EnvironmentConfig.dart' as config;
@@ -52,9 +53,11 @@ class _MealListState extends State<MealList> {
 
 //Show a loading circle if isLoading is true.
     return Scaffold(
-      appBar: AppBar(
-        title: Text('All Meals'),
-      ),
+      appBar: MyAppBarWithCalc('All Meals'),
+
+      // appBar: AppBar(
+      //   title: Text('All Meals'),
+      // ),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -175,6 +178,8 @@ class _MealListState extends State<MealList> {
                                 //         }),
                                 //   ),
                                 // ),
+                        SizedBox(height: 450,),
+
                               ],
                             );
                           });

@@ -136,39 +136,52 @@ class _SingleMealState extends State<SingleMeal> {
                 Divider(
                   thickness: 1,
                 ),
-                ListView.separated(
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider(
-                      height: 1,
-                      thickness: 2,
-                    );
-                  },
-                  itemCount: widget.meal.ingredients.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    String _lowMeasureUnit =
-                        widget.meal.ingredients[index].measureUnit == 'Kg'
-                            ? 'g'
-                            : 'ml';
-                    // print(Color(meal.ingredients[index].color));
-                    return ListTile(
-                      title: Row(children: [
-                        CircleAvatar(
-                          backgroundColor:
-                              Color(widget.meal.ingredients[index].color),
-                          radius: 10,
-                        ),
-                        Text('   ' + widget.meal.ingredients[index].name),
-                      ]),
-                      subtitle: Text(
-                          '         ${widget.meal.ingredients[index].amountInGrams.round()} ' +
-                              _lowMeasureUnit),
-                      trailing: Text(
-                          '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / 1000).toStringAsFixed(2)} kr,-'),
-                    );
-                  },
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                ),
+                widget.meal.ingredients.length == 0
+                    ? Padding(
+                      padding: const EdgeInsets.all(25.0),
+                      child: Text('No ingredients added.'),
+                    )
+                    : ListView.separated(
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider(
+                            height: 1,
+                            thickness: 2,
+                          );
+                        },
+                        itemCount: widget.meal.ingredients.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          double dividerDouble = widget.meal.ingredients[index]
+                                          .measureUnit ==
+                                      'Kg' ||
+                                  widget.meal.ingredients[index].measureUnit ==
+                                      'Liter'
+                              ? 1000
+                              : 1;
+                          String _lowMeasureUnit =
+                              widget.meal.ingredients[index].measureUnit == 'Kg'
+                                  ? 'g'
+                                  : 'ml';
+                          print(widget.meal.ingredients.toString());
+
+                          return ListTile(
+                            title: Row(children: [
+                              CircleAvatar(
+                                backgroundColor:
+                                    Color(widget.meal.ingredients[index].color),
+                                radius: 10,
+                              ),
+                              Text('   ' + widget.meal.ingredients[index].name),
+                            ]),
+                            subtitle: Text(
+                                '         ${widget.meal.ingredients[index].amountInGrams.round()} ' +
+                                    _lowMeasureUnit),
+                            trailing: Text(
+                                '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)} kr,-'),
+                          );
+                        },
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                      ),
               ],
             ),
           ),

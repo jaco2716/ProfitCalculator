@@ -14,9 +14,12 @@ class Meal {
     double totalPrice = 0;
     // print(ingredients);
     // if (ingredients.length != 0 || ingredients != null) {
-      ingredients?.forEach((e) {
+    ingredients?.forEach((e) {
+      if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
+        totalPrice += (e.amountInGrams) * e.kgPrice;
+      } else
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
-      });
+    });
     // }
     return totalPrice;
   }
