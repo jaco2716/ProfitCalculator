@@ -5,6 +5,7 @@ import 'package:profit_calculator/CreateMeal.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/ObjectManager.dart';
+import 'package:profit_calculator/SharedValueHandler.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 import 'Model/Meal.dart';
 import 'main.dart';
@@ -20,10 +21,9 @@ class SingleMeal extends StatefulWidget {
 }
 
 class _SingleMealState extends State<SingleMeal> {
+  SharedValueHandler sharedVH = SharedValueHandler();
   final FileManagement fileManagement = FileManagement();
-
   final ObjectManager objManager = ObjectManager();
-
   String mealJsonFile = config.mealJsonFile;
 
   @override
@@ -68,14 +68,14 @@ class _SingleMealState extends State<SingleMeal> {
                 )),
           ),
           Card(
-            color: Colors.blue[50],
+            color: Colors.indigo[50],
             elevation: 5,
             margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
             child: Container(
                 width: double.infinity,
                 child: ListTile(
                   title: Text(
-                    'Sale Price:',
+                    'Net Price:',
                     style: TextStyle(color: Colors.blue[700]),
                   ),
                   trailing: Text(
@@ -83,6 +83,27 @@ class _SingleMealState extends State<SingleMeal> {
                     style: TextStyle(color: Colors.blue[700]),
                   ),
                 )),
+          ),
+          Card(
+            color: Colors.blue[50],
+            elevation: 5,
+            margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
+            child: Container(
+                width: double.infinity,
+                child: FutureBuilder(
+                    future: sharedVH.getVATSharedP(),
+                    initialData: 0,
+                    builder: (context, snapshot) {
+                      return ListTile(
+                          title: Text(
+                            'Gross Price (${snapshot.data}% VAT):',
+                            style: TextStyle(color: Colors.blue[700]),
+                          ),
+                          trailing: Text(
+                            '${(widget.meal.salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- kr',
+                            style: TextStyle(color: Colors.blue[700]),
+                          ));
+                    })),
           ),
           Card(
             elevation: 5,
@@ -138,9 +159,9 @@ class _SingleMealState extends State<SingleMeal> {
                 ),
                 widget.meal.ingredients.length == 0
                     ? Padding(
-                      padding: const EdgeInsets.all(25.0),
-                      child: Text('No ingredients added.'),
-                    )
+                        padding: const EdgeInsets.all(25.0),
+                        child: Text('No ingredients added.'),
+                      )
                     : ListView.separated(
                         separatorBuilder: (BuildContext context, int index) {
                           return Divider(

@@ -424,7 +424,7 @@ class _CreateMealState extends State<CreateMeal> {
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
                   ],
-                  keyboardType: TextInputType.phone,
+                  keyboardType: TextInputType.number,
                   maxLength: 4,
                   maxLengthEnforced: true,
                   controller: tec,

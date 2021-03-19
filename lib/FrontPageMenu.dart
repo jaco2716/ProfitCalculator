@@ -5,6 +5,8 @@ import 'package:profit_calculator/IngredientList.dart';
 import 'package:profit_calculator/MealList.dart';
 import 'package:profit_calculator/SettingsPage.dart';
 
+import 'VATChangePage.dart';
+
 class FrontPageMenu extends StatelessWidget {
   const FrontPageMenu({Key key}) : super(key: key);
 
@@ -25,7 +27,7 @@ class FrontPageMenu extends StatelessWidget {
           //   child: Center(child: Icon(Icons.accessibility_new, size: 80, color: Colors.blue,),),
           // ),
           Container(
-              padding: EdgeInsets.all(30),
+              padding: EdgeInsets.all(20),
               child: Center(
                   child: Text('Menu',
                       style: TextStyle(
@@ -41,11 +43,12 @@ class FrontPageMenu extends StatelessWidget {
           drawerListTile(Icon(Icons.list), "All Meals", MealList(), context),
           Divider(),
           drawerListTile(
+              Icon(Icons.attach_money), "Change VAT", VATChangePage(), context),
+          Divider(),
+          drawerListTile(
               Icon(Icons.settings), "Settings", SettingsPage(), context),
-          // Divider(),
-          // drawerListTile(Icon(Icons.settings), "Settings", SettingsPage(), context),
-
           // drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
+
           SizedBox(height: 400),
         ],
       ),

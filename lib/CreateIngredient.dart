@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
@@ -21,9 +20,14 @@ class CreateIngredient extends StatefulWidget {
 
 class _CreateIngredientState extends State<CreateIngredient> {
   final _formKey = GlobalKey<FormState>();
+  final _formKeyDialog = GlobalKey<FormState>();
+  TextEditingController _kgPriceController = TextEditingController();
+  TextEditingController _nameController = TextEditingController();
   String _name = '';
   String _kgPrice = '';
-  String _measureUnit = 'Kg';
+  String _measureUnit = 'g';
+  String _amountValue = '';
+  String _amountPrice = '';
   Color currentColor = Colors.red;
 
   String ingredientJsonFile = config.ingredientJsonFile;
@@ -48,13 +52,15 @@ class _CreateIngredientState extends State<CreateIngredient> {
       tempKg = widget.editIngredient.kgPrice.toString();
       _kgPrice = tempKg.replaceAll('.', ',');
       _measureUnit = widget.editIngredient.measureUnit;
+      _nameController.text = _name;
+      _kgPriceController.text = _kgPrice;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc('Create Ingredient'),
+      appBar: MyAppBarWithCalc(widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
       // AppBar(
       //   title: Text('Create Ingredient'),
       // ),
@@ -72,25 +78,200 @@ class _CreateIngredientState extends State<CreateIngredient> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
+                      controller: _nameController,
                       decoration: InputDecoration(
                         labelText: 'Name',
                       ),
-                      initialValue: _name,
+                      // initialValue: widget.editMode ?? false ? _name : null,
                       keyboardType: TextInputType.name,
                       validator: (value) => validateString(value),
                       onSaved: (value) => _name = value,
                       onFieldSubmitted: (value) => changeFocus(),
                     ),
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Container(
+                        width: 200,
+                        height: 55,
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(primary: Colors.pink),
+                          icon: Icon(Icons.line_weight),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: StatefulBuilder(builder:
+                                        (BuildContext context, setModalState) {
+                                      return Form(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        key: _formKeyDialog,
+                                        child: Container(
+                                          height: 165,
+                                          child: Column(
+                                            children: [
+                                              TextFormField(
+                                                decoration: InputDecoration(
+                                                  labelText:
+                                                      'Price for amount',
+                                                ),
+                                                // initialValue: _kgPrice,
+                                                inputFormatters: <
+                                                    TextInputFormatter>[
+                                                  FilteringTextInputFormatter
+                                                      .allow(RegExp(r'[0-9,.]'))
+                                                ],
+                                                keyboardType: TextInputType
+                                                    .numberWithOptions(
+                                                        decimal: true),
+                                                validator: (value) =>
+                                                    validateDouble(value),
+                                                onSaved: (value) =>
+                                                    _amountPrice = value,
+                                                onFieldSubmitted: (value) =>
+                                                    changeFocus(),
+                                              ),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      width: 110,
+                                                      child: TextFormField(
+                                                        decoration:
+                                                            InputDecoration(
+                                                          labelText: 'Amount',
+                                                        ),
+                                                        // initialValue: _kgPrice,
+                                                        inputFormatters: <
+                                                            TextInputFormatter>[
+                                                          FilteringTextInputFormatter
+                                                              .allow(RegExp(
+                                                                  r'[0-9,.]'))
+                                                        ],
+                                                        keyboardType: TextInputType
+                                                            .numberWithOptions(
+                                                                decimal: true),
+                                                        validator: (value) =>
+                                                            validateDouble(
+                                                                value),
+                                                        onSaved: (value) =>
+                                                            _amountValue =
+                                                                value,
+                                                        onFieldSubmitted:
+                                                            (value) =>
+                                                                changeFocus(),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                        width: 70,
+                                                        // height: 70,
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                top: 20),
+                                                        child: DropdownButton(
+                                                            value: _measureUnit,
+                                                            // style: TextStyle(color: Colors.white),
+                                                            // iconEnabledColor: Colors.white,
+                                                            // dropdownColor: Colors.blue,
+                                                            items: <String>[
+                                                              "g",
+                                                              "ml",
+                                                              "Kg",
+                                                              "Liter",
+                                                            ].map<
+                                                                DropdownMenuItem<
+                                                                    String>>((String
+                                                                value) {
+                                                              return DropdownMenuItem<
+                                                                  String>(
+                                                                value: value,
+                                                                child:
+                                                                    Text(value),
+                                                              );
+                                                            }).toList(),
+                                                            onChanged:
+                                                                (newValue) {
+                                                              setModalState(() {
+                                                                _measureUnit =
+                                                                    newValue;
+                                                              });
+                                                            }))
+                                                  ]),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Close')),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            print(_formKeyDialog.currentState
+                                                .validate());
+                                            if (_formKeyDialog.currentState
+                                                .validate()) {
+                                              _formKeyDialog.currentState
+                                                  .save();
+
+                                              String tempAmountValue =
+                                                  _amountValue.replaceAll(
+                                                      ',', '.');
+                                              print(tempAmountValue);
+                                              String tempAmountPrice =
+                                                  _amountPrice.replaceAll(
+                                                      ',', '.');
+                                              double newAmountValue =
+                                                  double.parse(tempAmountValue);
+                                              double newAmountPrice =
+                                                  double.parse(tempAmountPrice);
+                                              double _newkgPrice =
+                                                  newAmountPrice /
+                                                      newAmountValue;
+                                              if (_measureUnit == 'g' ||
+                                                  _measureUnit == 'ml') {
+                                                _newkgPrice *= 1000;
+                                              }
+                                              _newkgPrice = (_newkgPrice * 100)
+                                                      .roundToDouble() /
+                                                  100;
+                                              _kgPrice = _newkgPrice
+                                                  .toString()
+                                                  .replaceAll('.', ',');
+                                              _kgPriceController.text =
+                                                  _kgPrice;
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                          child: Text('Done'))
+                                    ],
+                                  );
+                                }).then((value) {
+                              setState(() {});
+                            });
+                          },
+                          label: Text('Input amount'),
+                        ),
+                      ),
+                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 180,
+                          width: MediaQuery.of(context).size.width - 110,
                           child: TextFormField(
+                            controller: _kgPriceController,
                             decoration: InputDecoration(
                               labelText: 'Price per Kg/Liter',
                             ),
-                            initialValue: _kgPrice,
+                            // initialValue:
+                            //     widget.editMode ?? false ? _kgPrice : null,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'[0-9,.]'))
@@ -102,31 +283,32 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             onFieldSubmitted: (value) => changeFocus(),
                           ),
                         ),
-                        Container(
-                            width: 70,
-                            // height: 70,
-                            padding: EdgeInsets.only(top: 20),
-                            child: DropdownButton(
-                                value: _measureUnit,
-                                // style: TextStyle(color: Colors.white),
-                                // iconEnabledColor: Colors.white,
-                                // dropdownColor: Colors.blue,
-                                items: <String>[
-                                  "Kg",
-                                  "Liter",
-                                  "g",
-                                  "ml",
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _measureUnit = newValue;
-                                  });
-                                }))
+                        Text(_measureUnit == 'Kg' || _measureUnit == 'g'? 'Kr/Kg' : 'Kr/Liter'),
+                        // Container(
+                        //     width: 70,
+                        //     // height: 70,
+                        //     padding: EdgeInsets.only(top: 20),
+                        //     child: DropdownButton(
+                        //         value: _measureUnit,
+                        //         // style: TextStyle(color: Colors.white),
+                        //         // iconEnabledColor: Colors.white,
+                        //         // dropdownColor: Colors.blue,
+                        //         items: <String>[
+                        //           "Kg",
+                        //           "Liter",
+                        //           "g",
+                        //           "ml",
+                        //         ].map<DropdownMenuItem<String>>((String value) {
+                        //           return DropdownMenuItem<String>(
+                        //             value: value,
+                        //             child: Text(value),
+                        //           );
+                        //         }).toList(),
+                        //         onChanged: (newValue) {
+                        //           setState(() {
+                        //             _measureUnit = newValue;
+                        //           });
+                        //         }))
                       ],
                     ),
                     SizedBox(
@@ -142,41 +324,42 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      '\nPick a color as your category',
-                      style: TextStyle(
-                          fontSize: 15,
-                          // fontWeight: FontWeight.w300,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 40, vertical: 20),
-                      child: Container(
-                        // color: Colors.blue[100],
-                        padding: EdgeInsets.only(top: 0, right: 20, left: 20),
-                        height: 150,
-                        width: 320,
-                        child: BlockPicker(
-                          availableColors: [
-                            Colors.red,
-                            Colors.orange,
-                            Colors.yellow,
-                            Colors.purple,
-                            Colors.blue,
-                            Colors.cyan,
-                            Colors.green,
-                            Colors.lime,
-                            Colors.grey[300],
-                            Colors.grey,
-                            Colors.black,
-                            Colors.brown,
-                          ],
-                          pickerColor: currentColor,
-                          onColorChanged: changeColor,
-                        ),
-                      ),
-                    ),
+                    // TODO delete color picker..
+                    // Text(
+                    //   '\nPick a color as your category',
+                    //   style: TextStyle(
+                    //       fontSize: 15,
+                    //       // fontWeight: FontWeight.w300,
+                    //       fontStyle: FontStyle.italic),
+                    // ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(
+                    //       horizontal: 40, vertical: 20),
+                    //   child: Container(
+                    //     // color: Colors.blue[100],
+                    //     padding: EdgeInsets.only(top: 0, right: 20, left: 20),
+                    //     height: 150,
+                    //     width: 320,
+                    //     child: BlockPicker(
+                    //       availableColors: [
+                    //         Colors.red,
+                    //         Colors.orange,
+                    //         Colors.yellow,
+                    //         Colors.purple,
+                    //         Colors.blue,
+                    //         Colors.cyan,
+                    //         Colors.green,
+                    //         Colors.lime,
+                    //         Colors.grey[300],
+                    //         Colors.grey,
+                    //         Colors.black,
+                    //         Colors.brown,
+                    //       ],
+                    //       pickerColor: currentColor,
+                    //       onColorChanged: changeColor,
+                    //     ),
+                    //   ),
+                    // ),
                     widget.editMode ?? false
                         ? !widget.editIngredient.archived
                             ? IconButton(
@@ -196,8 +379,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
                                     _archiveIngredientDialog(context, true),
                               )
                         : Center(),
-                        SizedBox(height: 400,),
-
+                    SizedBox(
+                      height: 400,
+                    ),
                   ],
                 ),
               ),
@@ -376,5 +560,5 @@ class _CreateIngredientState extends State<CreateIngredient> {
   }
 
 //change color in the color selector
-  void changeColor(Color color) => setState(() => currentColor = color);
+  //void changeColor(Color color) => setState(() => currentColor = color);
 }

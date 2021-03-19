@@ -29,7 +29,6 @@ class CalculatorPage extends StatelessWidget {
             hideExpression: false,
             theme: const CalculatorThemeData(
               expressionStyle: TextStyle(fontSize: 15, height: 1,),
-              
               displayColor: Colors.grey,
               displayStyle: const TextStyle(fontSize: 80, color: Colors.white),
               numStyle: TextStyle(fontSize: 25, color: Colors.black),

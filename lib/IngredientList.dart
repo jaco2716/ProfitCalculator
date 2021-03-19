@@ -148,10 +148,12 @@ class _IngredientListState extends State<IngredientList> {
       child: ListTile(
         title: Row(children: [
           CircleAvatar(
-            backgroundColor: Color(ingredient.color),
-            radius: 10,
+            backgroundColor: Colors.pink[300],
+            child: Icon(Icons.fastfood_rounded, color: Colors.white,),
+            radius: 12,
           ),
-          Text('   ' + ingredient.name),
+          
+          Text('      ' + ingredient.name),
         ]),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
