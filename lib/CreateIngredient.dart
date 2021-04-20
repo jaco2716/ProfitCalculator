@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
+import 'Model/Meal.dart';
 
 class CreateIngredient extends StatefulWidget {
   final bool editMode;
@@ -31,6 +32,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   Color currentColor = Colors.red;
 
   String ingredientJsonFile = config.ingredientJsonFile;
+  String mealJsonFile = config.mealJsonFile;
   List<Ingredient> ingredientsList = <Ingredient>[];
 
   final FileManagement fileManagement = FileManagement();
@@ -60,7 +62,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc(widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
+      appBar: MyAppBarWithCalc(
+          widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
       // AppBar(
       //   title: Text('Create Ingredient'),
       // ),
@@ -80,6 +83,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(),
                         labelText: 'Name',
                       ),
                       // initialValue: widget.editMode ?? false ? _name : null,
@@ -88,228 +92,36 @@ class _CreateIngredientState extends State<CreateIngredient> {
                       onSaved: (value) => _name = value,
                       onFieldSubmitted: (value) => changeFocus(),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Container(
-                        width: 200,
-                        height: 55,
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(primary: Colors.pink),
-                          icon: Icon(Icons.line_weight),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: StatefulBuilder(builder:
-                                        (BuildContext context, setModalState) {
-                                      return Form(
-                                        autovalidateMode:
-                                            AutovalidateMode.onUserInteraction,
-                                        key: _formKeyDialog,
-                                        child: Container(
-                                          height: 165,
-                                          child: Column(
-                                            children: [
-                                              TextFormField(
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Price for amount',
-                                                ),
-                                                // initialValue: _kgPrice,
-                                                inputFormatters: <
-                                                    TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .allow(RegExp(r'[0-9,.]'))
-                                                ],
-                                                keyboardType: TextInputType
-                                                    .numberWithOptions(
-                                                        decimal: true),
-                                                validator: (value) =>
-                                                    validateDouble(value),
-                                                onSaved: (value) =>
-                                                    _amountPrice = value,
-                                                onFieldSubmitted: (value) =>
-                                                    changeFocus(),
-                                              ),
-                                              Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      width: 110,
-                                                      child: TextFormField(
-                                                        decoration:
-                                                            InputDecoration(
-                                                          labelText: 'Amount',
-                                                        ),
-                                                        // initialValue: _kgPrice,
-                                                        inputFormatters: <
-                                                            TextInputFormatter>[
-                                                          FilteringTextInputFormatter
-                                                              .allow(RegExp(
-                                                                  r'[0-9,.]'))
-                                                        ],
-                                                        keyboardType: TextInputType
-                                                            .numberWithOptions(
-                                                                decimal: true),
-                                                        validator: (value) =>
-                                                            validateDouble(
-                                                                value),
-                                                        onSaved: (value) =>
-                                                            _amountValue =
-                                                                value,
-                                                        onFieldSubmitted:
-                                                            (value) =>
-                                                                changeFocus(),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        width: 70,
-                                                        // height: 70,
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 20),
-                                                        child: DropdownButton(
-                                                            value: _measureUnit,
-                                                            // style: TextStyle(color: Colors.white),
-                                                            // iconEnabledColor: Colors.white,
-                                                            // dropdownColor: Colors.blue,
-                                                            items: <String>[
-                                                              "g",
-                                                              "ml",
-                                                              "Kg",
-                                                              "Liter",
-                                                            ].map<
-                                                                DropdownMenuItem<
-                                                                    String>>((String
-                                                                value) {
-                                                              return DropdownMenuItem<
-                                                                  String>(
-                                                                value: value,
-                                                                child:
-                                                                    Text(value),
-                                                              );
-                                                            }).toList(),
-                                                            onChanged:
-                                                                (newValue) {
-                                                              setModalState(() {
-                                                                _measureUnit =
-                                                                    newValue;
-                                                              });
-                                                            }))
-                                                  ]),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Close')),
-                                      ElevatedButton(
-                                          onPressed: () {
-                                            print(_formKeyDialog.currentState
-                                                .validate());
-                                            if (_formKeyDialog.currentState
-                                                .validate()) {
-                                              _formKeyDialog.currentState
-                                                  .save();
-
-                                              String tempAmountValue =
-                                                  _amountValue.replaceAll(
-                                                      ',', '.');
-                                              print(tempAmountValue);
-                                              String tempAmountPrice =
-                                                  _amountPrice.replaceAll(
-                                                      ',', '.');
-                                              double newAmountValue =
-                                                  double.parse(tempAmountValue);
-                                              double newAmountPrice =
-                                                  double.parse(tempAmountPrice);
-                                              double _newkgPrice =
-                                                  newAmountPrice /
-                                                      newAmountValue;
-                                              if (_measureUnit == 'g' ||
-                                                  _measureUnit == 'ml') {
-                                                _newkgPrice *= 1000;
-                                              }
-                                              _newkgPrice = (_newkgPrice * 100)
-                                                      .roundToDouble() /
-                                                  100;
-                                              _kgPrice = _newkgPrice
-                                                  .toString()
-                                                  .replaceAll('.', ',');
-                                              _kgPriceController.text =
-                                                  _kgPrice;
-                                              Navigator.of(context).pop();
-                                            }
-                                          },
-                                          child: Text('Done'))
-                                    ],
-                                  );
-                                }).then((value) {
-                              setState(() {});
-                            });
-                          },
-                          label: Text('Input amount'),
-                        ),
-                      ),
+                    SizedBox(
+                      height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width - 110,
-                          child: TextFormField(
-                            controller: _kgPriceController,
-                            decoration: InputDecoration(
-                              labelText: 'Price per Kg/Liter',
-                            ),
-                            // initialValue:
-                            //     widget.editMode ?? false ? _kgPrice : null,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'[0-9,.]'))
-                            ],
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            validator: (value) => validateDouble(value),
-                            onSaved: (value) => _kgPrice = value,
-                            onFieldSubmitted: (value) => changeFocus(),
-                          ),
+                    Container(
+                      // width: MediaQuery.of(context).size.width - 110,
+                      child: TextFormField(
+                        readOnly: true,
+                        onTap: () {
+                          inputAmuntDialog();
+                        },
+                        controller: _kgPriceController,
+                        decoration: InputDecoration(
+                          suffixText:
+                              _measureUnit == 'Kg' || _measureUnit == 'g'
+                                  ? 'Kr/Kg'
+                                  : 'Kr/Liter',
+                          border: OutlineInputBorder(),
+                          labelText: 'Kg Price / Liter Price',
                         ),
-                        Text(_measureUnit == 'Kg' || _measureUnit == 'g'? 'Kr/Kg' : 'Kr/Liter'),
-                        // Container(
-                        //     width: 70,
-                        //     // height: 70,
-                        //     padding: EdgeInsets.only(top: 20),
-                        //     child: DropdownButton(
-                        //         value: _measureUnit,
-                        //         // style: TextStyle(color: Colors.white),
-                        //         // iconEnabledColor: Colors.white,
-                        //         // dropdownColor: Colors.blue,
-                        //         items: <String>[
-                        //           "Kg",
-                        //           "Liter",
-                        //           "g",
-                        //           "ml",
-                        //         ].map<DropdownMenuItem<String>>((String value) {
-                        //           return DropdownMenuItem<String>(
-                        //             value: value,
-                        //             child: Text(value),
-                        //           );
-                        //         }).toList(),
-                        //         onChanged: (newValue) {
-                        //           setState(() {
-                        //             _measureUnit = newValue;
-                        //           });
-                        //         }))
-                      ],
+                        // initialValue:
+                        //     widget.editMode ?? false ? _kgPrice : null,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]'))
+                        ],
+                        keyboardType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        validator: (value) => validateDouble(value),
+                        onSaved: (value) => _kgPrice = value,
+                        onFieldSubmitted: (value) => changeFocus(),
+                      ),
                     ),
                     SizedBox(
                       height: 20,
@@ -360,24 +172,34 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     //     ),
                     //   ),
                     // ),
+                    // widget.editMode ?? false
+                    //     ? !widget.editIngredient.archived
+                    //         ? IconButton(
+                    //             padding: EdgeInsets.all(20),
+                    //             iconSize: 40,
+                    //             color: Colors.red,
+                    //             icon: Icon(Icons.archive),
+                    //             onPressed: () =>
+                    //                 _archiveIngredientDialog(context, false),
+                    //           )
+                    //         : IconButton(
+                    //             padding: EdgeInsets.all(20),
+                    //             iconSize: 40,
+                    //             color: Colors.green,
+                    //             icon: Icon(Icons.archive),
+                    //             onPressed: () =>
+                    //                 _archiveIngredientDialog(context, true),
+                    //           )
+                    //     : Center(),
+
                     widget.editMode ?? false
-                        ? !widget.editIngredient.archived
-                            ? IconButton(
-                                padding: EdgeInsets.all(20),
-                                iconSize: 40,
-                                color: Colors.red,
-                                icon: Icon(Icons.archive),
-                                onPressed: () =>
-                                    _archiveIngredientDialog(context, false),
-                              )
-                            : IconButton(
-                                padding: EdgeInsets.all(20),
-                                iconSize: 40,
-                                color: Colors.green,
-                                icon: Icon(Icons.archive),
-                                onPressed: () =>
-                                    _archiveIngredientDialog(context, true),
-                              )
+                        ? IconButton(
+                            padding: EdgeInsets.all(40),
+                            iconSize: 40,
+                            color: Colors.red,
+                            icon: Icon(Icons.delete),
+                            onPressed: () => _deleteIngredientDialog(context),
+                          )
                         : Center(),
                     SizedBox(
                       height: 400,
@@ -452,34 +274,26 @@ class _CreateIngredientState extends State<CreateIngredient> {
     return true;
   }
 
-//Show archive menu box
-  _archiveIngredientDialog(BuildContext context, bool alreadyArchived) {
-    String alertContent;
-    String actionText;
-    alreadyArchived
-        ? alertContent =
-            'Are you sure you want to unarchive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.'
-        : alertContent =
-            'Are you sure you want to archive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.';
-    alreadyArchived ? actionText = 'Unarchive' : actionText = 'Archive';
-
+  //Delete ingredient menu box
+  _deleteIngredientDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(actionText),
-          content: Text(alertContent),
+          title: Text('Delete Ingredient'),
+          content: Text(
+              'This cannot be undone, are you sure you want to delete this ingredient?'),
           actions: [
-            FlatButton(
-              child: Text('Cancel'),
+            RaisedButton(
+              child: Text('No'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             RaisedButton(
-              child: Text(actionText),
-              color: alreadyArchived ? Colors.green : Colors.red,
-              onPressed: () => _archiveIngredient(context, alreadyArchived),
+              child: Text('Yes'),
+              color: Colors.red,
+              onPressed: () => _deleteIngredient(context),
             )
           ],
         );
@@ -487,55 +301,318 @@ class _CreateIngredientState extends State<CreateIngredient> {
     );
   }
 
-//Archive ingredient and show error or succes messages
-  _archiveIngredient(BuildContext context, bool alreadyArchived) async {
-    bool archiveSuccess = false;
-    String archiveText;
-    alreadyArchived ? archiveText = 'unarchived' : archiveText = 'archived';
+  _deleteIngredient(BuildContext context) async {
+    String ingredientFileContent =
+        await fileManagement.readFile(ingredientJsonFile);
+    List<Ingredient> allIngredientsFromFile =
+        objManager.jsonToListIngredient(ingredientFileContent);
+    String mealFileContent = await fileManagement.readFile(mealJsonFile);
+    List<Meal> allMealsFromFile = objManager.jsonToListMeal(mealFileContent);
+    int ingredientFoundIndex = -1;
+    if (allMealsFromFile != null) {
+      for (var m in allMealsFromFile) {
+        ingredientFoundIndex =
+            m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        if (ingredientFoundIndex >= 0) {
+          break;
+        }
+      }
+    }
 
-    archiveSuccess = await _archiveIngredientFromFile(
-        widget.editIngredient, alreadyArchived);
-
-    if (archiveSuccess) {
+    if (ingredientFoundIndex != -1) {
       Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      // Navigator.of(context).pushReplacement(MaterialPageRoute(
-      //   builder: (context) => IngredientList(),
-      // ));
-
-      // Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute(
-      //       builder: (context) => IngredientList(),
-      //     ),
-      //     (route) => false);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${widget.editIngredient.name} was $archiveText.'),
-      ));
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(
+                'Could not delete ingredient, because one or more meals are using it.'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Ok'))
+            ],
+          );
+        },
+      );
     } else {
+      int deleteIndex = allIngredientsFromFile
+          .indexWhere((element) => element.id == widget.editIngredient.id);
+      allIngredientsFromFile.removeAt(deleteIndex);
+
+      fileManagement.writeFile(
+          ingredientJsonFile, jsonEncode(allIngredientsFromFile));
+      Navigator.of(context).popUntil((route) => route.isFirst);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Something went wrong, please try again.'),
-      ));
+          content: Text('${widget.editIngredient.name} was deleted.')));
     }
   }
 
+//Show archive menu box
+  // _archiveIngredientDialog(BuildContext context, bool alreadyArchived) {
+  //   String alertContent;
+  //   String actionText;
+  //   alreadyArchived
+  //       ? alertContent =
+  //           'Are you sure you want to unarchive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.'
+  //       : alertContent =
+  //           'Are you sure you want to archive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.';
+  //   alreadyArchived ? actionText = 'Unarchive' : actionText = 'Archive';
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text(actionText),
+  //         content: Text(alertContent),
+  //         actions: [
+  //           FlatButton(
+  //             child: Text('Cancel'),
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //             },
+  //           ),
+  //           RaisedButton(
+  //             child: Text(actionText),
+  //             color: alreadyArchived ? Colors.green : Colors.red,
+  //             onPressed: () => _archiveIngredient(context, alreadyArchived),
+  //           )
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
+//Archive ingredient and show error or succes messages
+  // _archiveIngredient(BuildContext context, bool alreadyArchived) async {
+  //   bool archiveSuccess = false;
+  //   String archiveText;
+  //   alreadyArchived ? archiveText = 'unarchived' : archiveText = 'archived';
+
+  //   archiveSuccess = await _archiveIngredientFromFile(
+  //       widget.editIngredient, alreadyArchived);
+
+  //   if (archiveSuccess) {
+  //     Navigator.of(context).pop();
+  //     Navigator.of(context).pop();
+  //     // Navigator.of(context).pushReplacement(MaterialPageRoute(
+  //     //   builder: (context) => IngredientList(),
+  //     // ));
+
+  //     // Navigator.of(context).pushAndRemoveUntil(
+  //     //     MaterialPageRoute(
+  //     //       builder: (context) => IngredientList(),
+  //     //     ),
+  //     //     (route) => false);
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('${widget.editIngredient.name} was $archiveText.'),
+  //     ));
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('Something went wrong, please try again.'),
+  //     ));
+  //   }
+  // }
+
 //Archive ingredient from firestore database
-  Future<bool> _archiveIngredientFromFile(
-      Ingredient editIngredient, bool alreadyArchived) async {
-    try {
-      String fileContent = await fileManagement.readFile(ingredientJsonFile);
-      List<Ingredient> allIngredients =
-          objManager.jsonToListIngredient(fileContent);
-      int archiveIndex = allIngredients
-          .indexWhere((element) => element.id == editIngredient.id);
-      alreadyArchived
-          ? allIngredients[archiveIndex].archived = false
-          : allIngredients[archiveIndex].archived = true;
-      fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredients));
-    } catch (error) {
-      print('Error archiving ingredient: $error');
-      return false;
-    }
-    return true;
+  // Future<bool> _archiveIngredientFromFile(
+  //     Ingredient editIngredient, bool alreadyArchived) async {
+  //   try {
+  //     String fileContent = await fileManagement.readFile(ingredientJsonFile);
+  //     List<Ingredient> allIngredients =
+  //         objManager.jsonToListIngredient(fileContent);
+  //     int archiveIndex = allIngredients
+  //         .indexWhere((element) => element.id == editIngredient.id);
+  //     alreadyArchived
+  //         ? allIngredients[archiveIndex].archived = false
+  //         : allIngredients[archiveIndex].archived = true;
+  //     fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredients));
+  //   } catch (error) {
+  //     print('Error archiving ingredient: $error');
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
+  void inputAmuntDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content:
+                StatefulBuilder(builder: (BuildContext context, setModalState) {
+              return Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKeyDialog,
+                child: Container(
+                  height: 250,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 70,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+
+                            labelText: 'Price for amount',
+                            errorStyle: TextStyle(height: 0.5),
+                            // counterStyle: TextStyle(height: -0.5),
+                            // counterText: ' ',
+                            // errorText: '',
+                          ),
+                          // initialValue: _kgPrice,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9,.]'))
+                          ],
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          validator: (value) => validateDouble(value),
+                          onSaved: (value) => _amountPrice = value,
+                          onFieldSubmitted: (value) => changeFocus(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Container(
+                        height: 70,
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Amount in $_measureUnit',
+                            errorStyle: TextStyle(height: 0.5),
+                            // counterStyle: TextStyle(height: 1),
+                            // counterText: ' ',
+                          ),
+                          // initialValue: _kgPrice,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9,.]'))
+                          ],
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          validator: (value) => validateDouble(value),
+                          onSaved: (value) => _amountValue = value,
+                          onFieldSubmitted: (value) => changeFocus(),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      // Text(''),
+                      Container(
+                        // color: Colors.red,
+                        width: 200,
+                        height: 70,
+                        // padding: EdgeInsets.only(top: 20),
+                        child: GridView.count(
+                          physics: NeverScrollableScrollPhysics(),
+                          crossAxisCount: 4,
+                          children: <String>[
+                            "g",
+                            "ml",
+                            "Kg",
+                            "Liter",
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: meassureUnitGridTile(value, setModalState),
+                            );
+                          }).toList(),
+                        ),
+                        // child: DropdownButton(
+                        //   value: _measureUnit,
+                        //   // style: TextStyle(color: Colors.white),
+                        //   // iconEnabledColor: Colors.white,
+                        //   // dropdownColor: Colors.blue,
+                        //   items: <String>[
+                        //     "g",
+                        //     "ml",
+                        //     "Kg",
+                        //     "Liter",
+                        //   ].map<DropdownMenuItem<String>>((String value) {
+                        //     return DropdownMenuItem<String>(
+                        //       value: value,
+                        //       child: Text(value),
+                        //     );
+                        //   }).toList(),
+                        //   onChanged: (newValue) {
+                        //     setModalState(() {
+                        //       _measureUnit = newValue;
+                        //     });
+                        //   },
+                        // ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Close')),
+              ElevatedButton(
+                  onPressed: () {
+                    print(_formKeyDialog.currentState.validate());
+                    if (_formKeyDialog.currentState.validate()) {
+                      _formKeyDialog.currentState.save();
+
+                      String tempAmountValue =
+                          _amountValue.replaceAll(',', '.');
+                      print(tempAmountValue);
+                      String tempAmountPrice =
+                          _amountPrice.replaceAll(',', '.');
+                      double newAmountValue = double.parse(tempAmountValue);
+                      double newAmountPrice = double.parse(tempAmountPrice);
+                      double _newkgPrice = newAmountPrice / newAmountValue;
+                      if (_measureUnit == 'g' || _measureUnit == 'ml') {
+                        _newkgPrice *= 1000;
+                      }
+                      _newkgPrice = (_newkgPrice * 100).roundToDouble() / 100;
+                      _kgPrice = _newkgPrice.toString().replaceAll('.', ',');
+                      _kgPriceController.text = _kgPrice;
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('Done'))
+            ],
+          );
+        }).then((value) {
+      setState(() {});
+    });
+  }
+
+  Widget meassureUnitGridTile(
+      String unit, void Function(void Function()) setModalState) {
+    return AnimatedContainer(
+      curve: Curves.decelerate,
+      duration: Duration(milliseconds: 200),
+      padding: EdgeInsets.all(unit == _measureUnit ? 0 : 5),
+      child: InkWell(
+        onTap: () {
+          setModalState(() {
+            _measureUnit = unit;
+          });
+        },
+        child: Card(
+          margin: EdgeInsets.all(0),
+          color: unit == _measureUnit ? Colors.blue : Colors.blue[100],
+          child: Center(
+              child: Text(
+            unit,
+            style: TextStyle(
+                color: unit == _measureUnit ? Colors.white : Colors.white),
+          )),
+        ),
+      ),
+    );
   }
 
 //change focus to remove keyboard when background is tapped

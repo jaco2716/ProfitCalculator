@@ -4,6 +4,7 @@ import 'package:profit_calculator/CreateMeal.dart';
 import 'package:profit_calculator/IngredientList.dart';
 import 'package:profit_calculator/MealList.dart';
 import 'package:profit_calculator/SettingsPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'VATChangePage.dart';
 
@@ -27,26 +28,51 @@ class FrontPageMenu extends StatelessWidget {
           //   child: Center(child: Icon(Icons.accessibility_new, size: 80, color: Colors.blue,),),
           // ),
           Container(
-              padding: EdgeInsets.all(20),
-              child: Center(
-                  child: Text('Menu',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w200,
-                      )))),
-          drawerListTile(Icon(Icons.add), "Create Ingredient",
-              CreateIngredient(), context),
-          drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
-          Divider(),
+            padding: EdgeInsets.all(20),
+          ),
+          // drawerListTile(Icon(Icons.add), "Create Ingredient",
+          //     CreateIngredient(), context),
+          // drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
+
           drawerListTile(
-              Icon(Icons.list), "All Ingredients", IngredientList(), context),
-          drawerListTile(Icon(Icons.list), "All Meals", MealList(), context),
-          Divider(),
+            Icon(Icons.list),
+            "Ingredients",
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => IngredientList()));
+            },
+          ),
           drawerListTile(
-              Icon(Icons.attach_money), "Change VAT", VATChangePage(), context),
-          Divider(),
+            Icon(Icons.list),
+            "Meals",
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MealList()));
+            },
+          ),
           drawerListTile(
-              Icon(Icons.settings), "Settings", SettingsPage(), context),
+            Icon(Icons.list),
+            "Menus",
+            onTap: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MealList()));
+            },
+          ),
+          Divider(),
+          drawerListTile(Icon(Icons.attach_money), "Set VAT & Currency",
+              onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => VATChangePage()));
+          }, color: Colors.blue[800]),
+          // Divider(),
+          drawerListTile(Icon(Icons.settings), "Backup & Restore", onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SettingsPage()));
+          }, color: Colors.blue[800]),
+          Divider(),
+          drawerListTile(Icon(Icons.info), "Contact Support",
+              onTap: () => _launchURL(), color: Colors.blueGrey[700]),
+
           // drawerListTile(Icon(Icons.show_chart), "Charts", ChartPage(), context),
 
           SizedBox(height: 400),
@@ -55,24 +81,25 @@ class FrontPageMenu extends StatelessWidget {
     );
   }
 
+  void _launchURL() async {
+    String _url = 'https://wejeo.dk/#Contact';
+    await canLaunch(_url) ? await launch(_url) : print('Could not launch $_url');
+  }
+
 //List tile for every page to go to.
   Widget drawerListTile(Icon _tileIcon, String _tileTitle,
-      Widget _navigationPage, BuildContext context) {
+      {void Function() onTap, Color color}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Theme(
         data: ThemeData.dark(),
         child: Card(
-          color: Colors.blue,
+          color: color == null ? Colors.blue : color,
           child: ListTile(
               leading: _tileIcon,
               title: Text(_tileTitle),
               trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                // Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => _navigationPage));
-              }),
+              onTap: () => onTap()),
         ),
       ),
     );

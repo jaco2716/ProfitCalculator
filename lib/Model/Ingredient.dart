@@ -6,16 +6,16 @@ class Ingredient {
   int color;
   String measureUnit;
   double amountInGrams;
-  bool archived;
+  //bool archived;
 
   //Constructor
   Ingredient(this.id, this.name, this.kgPrice, this.color, this.measureUnit,
-      {this.amountInGrams, this.archived = false});
+      {this.amountInGrams}); // , this.archived = false});
 
   //Clone the object without any refference
   Ingredient.clone(Ingredient ingredientCopy)
       : this(ingredientCopy.id, ingredientCopy.name, ingredientCopy.kgPrice,
-            ingredientCopy.color, ingredientCopy.measureUnit, amountInGrams: ingredientCopy.amountInGrams, archived: ingredientCopy.archived);
+            ingredientCopy.color, ingredientCopy.measureUnit, amountInGrams: ingredientCopy.amountInGrams);// , archived: ingredientCopy.archived);
 
   //Json convert, fromJson and toJson.
   Ingredient.fromJson(Map<String, dynamic> json)
@@ -24,8 +24,8 @@ class Ingredient {
         kgPrice = json['kgPrice'],
         color = json['color'],
         measureUnit = json['measureUnit'],
-        amountInGrams = json['amountInGrams'],
-        archived = json['archived'];
+        amountInGrams = json['amountInGrams'];
+        // archived = json['archived'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -34,7 +34,7 @@ class Ingredient {
         'color': color,
         'measureUnit': measureUnit,
         'amountInGrams': amountInGrams,
-        'archived': archived,
+        // 'archived': archived,
       };
 
       @override

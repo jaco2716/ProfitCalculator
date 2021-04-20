@@ -232,7 +232,7 @@ class _CreateMealState extends State<CreateMeal> {
 
   //Show a menu to choose wich ingredients are in the meal
   _showEditIngredients(List<Ingredient> ingredients) {
-    bool showArchived = false;
+    //bool showArchived = false;
     showModalBottomSheet(
       enableDrag: false,
       isScrollControlled: true,
@@ -245,18 +245,18 @@ class _CreateMealState extends State<CreateMeal> {
                 AppBar(
                   title: Text('Add ingredients'),
                   backgroundColor: Colors.pink,
-                  actions: [
-                    IconButton(
-                        icon: showArchived
-                            ? Icon(Icons.archive_outlined)
-                            : Icon(Icons.archive),
-                        onPressed: () {
-                          setModalState(() {
-                            showArchived = !showArchived;
-                          });
-                          print(showArchived);
-                        })
-                  ],
+                  // actions: [
+                  //   IconButton(
+                  //       icon: showArchived
+                  //           ? Icon(Icons.archive_outlined)
+                  //           : Icon(Icons.archive),
+                  //       onPressed: () {
+                  //         setModalState(() {
+                  //           showArchived = !showArchived;
+                  //         });
+                  //         print(showArchived);
+                  //       })
+                  // ],
                 ),
                 Container(
                   height: (MediaQuery.of(context).size.height - 200),
@@ -273,7 +273,7 @@ class _CreateMealState extends State<CreateMeal> {
                           itemCount: ingredients.length,
                           itemBuilder: (BuildContext context, int index) {
                             return addIngredientListTile(ingredients[index],
-                                setModalState, showArchived);
+                                setModalState); //, showArchived);
                           },
                         ),
                 ),
@@ -457,12 +457,12 @@ class _CreateMealState extends State<CreateMeal> {
 
 // Each ingredient widget in the menu to choose ingredients
   Widget addIngredientListTile(
-      Ingredient ingredient, Function setModalState, bool showArchived) {
-    if (!showArchived) {
-      if (ingredient.archived) return Center();
-    } else {
-      if (!ingredient.archived) return Center();
-    }
+      Ingredient ingredient, Function setModalState){// , bool showArchived) {
+    // if (!showArchived) {
+    //   if (ingredient.archived) return Center();
+    // } else {
+    //   if (!ingredient.archived) return Center();
+    // }
     return Card(
       child: CheckboxListTile(
         // tileColor: ingredient.color,

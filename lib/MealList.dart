@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/CreateMeal.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
@@ -54,6 +55,21 @@ class _MealListState extends State<MealList> {
 
 //Show a loading circle if isLoading is true.
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        height: 50,
+        child: ElevatedButton.icon(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMeal(),));
+          },
+          icon: Icon(Icons.add),
+          label: Text('Create Meal'),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.green, // background
+            onPrimary: Colors.white, // foreground
+          ),
+        ),
+      ),
       appBar: MyAppBarWithCalc('All Meals'),
 
       // appBar: AppBar(

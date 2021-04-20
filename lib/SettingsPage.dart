@@ -38,6 +38,13 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             drawerListTile(
+              tileIcon: Icon(Icons.restaurant_menu),
+              tileTitle: "Change Menu",
+              myOnPressed: () {
+                goToPage(ChooseMenuPage(), context);
+              },
+            ),
+            drawerListTile(
               tileIcon: Icon(Icons.save),
               tileTitle: "Save Backup",
               myOnPressed: () {

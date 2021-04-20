@@ -43,12 +43,12 @@ class Meal {
         salePrice = json['salePrice'],
         ingredients = (json['ingredients'] as List)
             ?.map((e) => Ingredient.fromJson(e))
-            ?.toList();
+            ?.toList();     //Når man konverterer en liste af objector fra Json.
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'salePrice': salePrice,
-        'ingredients': ingredients.map((e) => e.toJson()).toList(),
+        'ingredients': ingredients.map((e) => e.toJson()).toList(),   //Når man konverterer en liste af objector til Json.
       };
 }
