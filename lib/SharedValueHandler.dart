@@ -19,4 +19,22 @@ class SharedValueHandler {
       return false;
     }
   }
+
+  Future<String> getCurrencySharedP() async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String currency = prefs.getString('CurrencyChosen') ?? 'DKK';
+    return currency;
+  }
+
+  Future<bool> saveCurrencySharedP(String currencyText) async {
+    try {
+      String currency = currencyText;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('CurrencyChosen', currency);
+      return true;
+    } catch (e) {
+      print('Error saving VAT: $e');
+      return false;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import 'package:profit_calculator/CreateIngredient.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/ObjectManager.dart';
+import 'package:profit_calculator/SharedValueHandler.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
 import 'Model/Ingredient.dart';
@@ -23,6 +24,7 @@ class _IngredientListState extends State<IngredientList> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   @override
   Widget build(BuildContext context) {
@@ -114,16 +116,22 @@ class _IngredientListState extends State<IngredientList> {
                     List<Ingredient> ingredients = objManager
                         .jsonToListIngredient(ingredientJsonSnapshot.data);
 
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 40),
-                      child: ListView.builder(
-                        itemCount: ingredients.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ingredientListTile(ingredients[index]);
-                        },
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
+                    return FutureBuilder(
+                      future: _sharedValueHandler.getCurrencySharedP(),
+                  initialData: '',
+                      builder: (context, currencySnapshot) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 40),
+                          child: ListView.builder(
+                            itemCount: ingredients.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ingredientListTile(ingredients[index], currencySnapshot.data);
+                            },
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                          ),
+                        );
+                      }
                     );
                   },
                 ),
@@ -158,7 +166,7 @@ class _IngredientListState extends State<IngredientList> {
   }
 
 //List tile widget of every ingredient
-  Widget ingredientListTile(Ingredient ingredient) {
+  Widget ingredientListTile(Ingredient ingredient, String currency) {
     // if (!showArchived) {
     //   if (ingredient.archived) return Center();
     // } else {
@@ -179,7 +187,7 @@ class _IngredientListState extends State<IngredientList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                '${ingredient.kgPrice.toString()} Kr/${ingredient.measureUnit}'),
+                '${ingredient.kgPrice.toString()} $currency/${ingredient.measureUnit}'),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Icon(

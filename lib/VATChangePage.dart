@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:profit_calculator/SharedValueHandler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class VATChangePage extends StatelessWidget {
-  final TextEditingController tec = TextEditingController();
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+class VATChangePage extends StatefulWidget {
+  @override
+  _VATChangePageState createState() => _VATChangePageState();
+}
+
+class _VATChangePageState extends State<VATChangePage> {
+  final TextEditingController vatTec = TextEditingController();
+  String dropdownValue = 'USD';
+
+  // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Change VAT'),
+        title: Text('Change VAT & Currency'),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 30),
@@ -30,7 +39,7 @@ class VATChangePage extends StatelessWidget {
             Container(
               height: 40,
               child: FutureBuilder(
-                future: getVATSharedP(),
+                future: _sharedValueHandler.getVATSharedP(),
                 initialData: '...',
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   return Text(
@@ -50,7 +59,7 @@ class VATChangePage extends StatelessWidget {
                       // onChanged: (value) {
                       //   tec.text = value;
                       // },
-                      controller: tec,
+                      controller: vatTec,
                       decoration: InputDecoration(hintText: 'VAT in %'),
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
@@ -59,16 +68,65 @@ class VATChangePage extends StatelessWidget {
                     ),
                   )),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Card(
+                  color: Colors.grey[300],
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Currency:       '),
+                      Expanded(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: dropdownValue,
+                          // icon: const Icon(Icons.arrow_downward),
+                          // iconSize: 24,
+                          // elevation: 16,
+                          // style: const TextStyle(color: Colors.grey),
+                          underline: Container(
+                            height: 2,
+                            color: Colors.blue,
+                          ),
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                            });
+                          },
+                          items: <String>[
+                            'USD',
+                            'DKK',
+                            'GBP',
+                            'EUR',
+                            'JPY',
+                            'CHF',
+                            'CAD', 
+                            'AUD'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ]),
+                  )),
+            ),
             drawerListTile(
               tileIcon: Icon(Icons.save),
               tileTitle: "Save",
               myOnPressed: () async {
-                String vattext = tec.text;
-                bool saveSucces = await saveVATSharedP(vattext);
+                String vattext = vatTec.text;
+                String currencytext = dropdownValue;
+                bool saveSucces = await _sharedValueHandler.saveVATSharedP(vattext);
+                saveSucces = await _sharedValueHandler.saveCurrencySharedP(currencytext);
                 if (saveSucces) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('VAT has been set to $vattext%.')));
-                      Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('VAT & Currency has been set to $vattext% & $currencytext.')));
+                  Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Something went wrong.')));
@@ -81,7 +139,6 @@ class VATChangePage extends StatelessWidget {
     );
   }
 
-//List tile for every page to go to.
   Widget drawerListTile(
       {Icon tileIcon, String tileTitle, void Function() myOnPressed}) {
     return Padding(
@@ -100,22 +157,5 @@ class VATChangePage extends StatelessWidget {
       ),
     );
   }
-
-  Future<int> getVATSharedP() async {
-    final SharedPreferences prefs = await _prefs;
-    int vat = (prefs.getInt('VATPercent') ?? 0);
-    return vat;
-  }
-
-  Future<bool> saveVATSharedP(String vattext) async {
-    try {
-      int vat = int.parse(vattext);
-      final SharedPreferences prefs = await _prefs;
-      await prefs.setInt('VATPercent', vat);
-      return true;
-    } catch (e) {
-      print('Error saving VAT: $e');
-      return false;
-    }
-  }
+  
 }
