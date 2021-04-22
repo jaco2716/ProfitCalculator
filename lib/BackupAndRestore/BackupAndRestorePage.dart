@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/BackupAndRestore/SaveBackupPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import '../Model/EnvironmentConfig.dart' as config;
+import 'RestoreBackupPage.dart';
 
 class BackupAndRestore extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
@@ -41,7 +42,7 @@ class BackupAndRestore extends StatelessWidget {
               tileIcon: Icon(Icons.restaurant_menu),
               tileTitle: "Restore Backup",
               myOnPressed: () {
-                goToPage(SaveBackupPage(), context);
+                goToPage(RestoreBackupPage(), context);
               },
             ),
             drawerListTile(

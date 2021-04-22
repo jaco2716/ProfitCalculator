@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
-import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import '../Model/EnvironmentConfig.dart' as config;
+import '../MyAppBarWithCalc.dart';
 
-class SaveBackupPage extends StatelessWidget {
+class RestoreBackupPage extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
   final String mealJsonFile = config.mealJsonFile;
   final String ingredientJsonFile = config.ingredientJsonFile;
@@ -11,7 +11,7 @@ class SaveBackupPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc('Save Backup'),
+      appBar: MyAppBarWithCalc('Restore Backup'),
       body: Container(
         width: double.infinity,
         // color: Colors.amber,
@@ -27,11 +27,11 @@ class SaveBackupPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            saveSlotButton('Save to Slot 1', '01/10/2021',1),
-            saveSlotButton('Save to Slot 2', '01/27/2021',2),
-            saveSlotButton('Save to Slot 3', '02/03/2021',3),
-            saveSlotButton('Save to Slot 4', '02/17/2021',4),
-            saveSlotButton('Save to Slot 5', '02/27/2021',5),
+            saveSlotButton('Restore from Slot 1', '14:24 02/03/2021', 1),
+            saveSlotButton('Restore from Slot 2', 'Empty', 2),
+            saveSlotButton('Restore from Slot 3', 'Empty', 3),
+            saveSlotButton('Restore from Slot 4', 'Empty', 4),
+            saveSlotButton('Restore from Slot 5', 'Empty', 5),
           ],
         ),
       ),
@@ -50,14 +50,17 @@ class SaveBackupPage extends StatelessWidget {
         icon: Icon(Icons.save),
         label: Text('$title \nLast save: $dateLastSaved'),
         onPressed: () async {
-
           // String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
           // fileManagement.writeFile('$ingredientJsonFile$index', ingredientFileContent);
           // String mealFileContent = await fileManagement.readFile(mealJsonFile);
           // fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
 
+          String mealFileContent = await fileManagement.readFile('$mealJsonFile$index');
+          print(mealFileContent);
         },
       ),
     );
   }
 }
+
+
