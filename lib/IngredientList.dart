@@ -35,6 +35,9 @@ class _IngredientListState extends State<IngredientList> {
         height: 50,
         child: ElevatedButton.icon(
           onPressed: () {
+              print('savefile chosen: ');
+              print('savefile chosen: ${config.saveFileChosen}');
+
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => CreateIngredient(),
@@ -117,7 +120,7 @@ class _IngredientListState extends State<IngredientList> {
                         .jsonToListIngredient(ingredientJsonSnapshot.data);
 
                     return FutureBuilder(
-                      future: _sharedValueHandler.getCurrencySharedP(),
+                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen'),
                   initialData: '',
                       builder: (context, currencySnapshot) {
                         return Padding(

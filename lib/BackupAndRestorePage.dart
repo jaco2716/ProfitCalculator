@@ -3,7 +3,7 @@ import 'package:profit_calculator/ChooseMenuPage.dart';
 import 'package:profit_calculator/FileManagement.dart';
 import 'Model/EnvironmentConfig.dart' as config;
 
-class SettingsPage extends StatelessWidget {
+class BackupAndRestore extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String mealJsonFile = config.mealJsonFile;
@@ -11,7 +11,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: Text('Backup & Restore'),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 30),

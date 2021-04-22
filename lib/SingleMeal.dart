@@ -51,7 +51,7 @@ class _SingleMealState extends State<SingleMeal> {
       ),
       body: SingleChildScrollView(
           child: FutureBuilder(
-            future: _sharedValueHandler.getCurrencySharedP(),
+            future: _sharedValueHandler.getStringSharedP('CurrencyChosen'),
             initialData: '',
             builder: (context, currencySnapshot) {
               return Column(
@@ -97,7 +97,7 @@ class _SingleMealState extends State<SingleMeal> {
                 child: Container(
                     width: double.infinity,
                     child: FutureBuilder(
-                        future: sharedVH.getVATSharedP(),
+                        future: sharedVH.getIntSharedP('VATPercent'),
                         initialData: 0,
                         builder: (context, snapshot) {
                           return ListTile(

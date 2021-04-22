@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CreateIngredient.dart';
-import 'package:profit_calculator/CreateMeal.dart';
 import 'package:profit_calculator/IngredientList.dart';
 import 'package:profit_calculator/MealList.dart';
-import 'package:profit_calculator/SettingsPage.dart';
+import 'package:profit_calculator/BackupAndRestorePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'VATChangePage.dart';
@@ -67,7 +65,7 @@ class FrontPageMenu extends StatelessWidget {
           // Divider(),
           drawerListTile(Icon(Icons.settings), "Backup & Restore", onTap: () {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SettingsPage()));
+                MaterialPageRoute(builder: (context) => BackupAndRestore()));
           }, color: Colors.blue[800]),
           Divider(),
           drawerListTile(Icon(Icons.info), "Contact Support",

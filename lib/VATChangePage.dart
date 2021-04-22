@@ -39,7 +39,7 @@ class _VATChangePageState extends State<VATChangePage> {
             Container(
               height: 40,
               child: FutureBuilder(
-                future: _sharedValueHandler.getVATSharedP(),
+                future: _sharedValueHandler.getIntSharedP('VATPercent'),
                 initialData: '...',
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   return Text(
@@ -121,8 +121,8 @@ class _VATChangePageState extends State<VATChangePage> {
               myOnPressed: () async {
                 String vattext = vatTec.text;
                 String currencytext = dropdownValue;
-                bool saveSucces = await _sharedValueHandler.saveVATSharedP(vattext);
-                saveSucces = await _sharedValueHandler.saveCurrencySharedP(currencytext);
+                bool saveSucces = await _sharedValueHandler.saveIntSharedP(vattext, 'CurrencyChosen');
+                saveSucces = await _sharedValueHandler.saveStringSharedP(currencytext, 'CurrencyChosen');
                 if (saveSucces) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text('VAT & Currency has been set to $vattext% & $currencytext.')));

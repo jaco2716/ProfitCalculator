@@ -2,15 +2,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedValueHandler {
 
-  Future<int> getVATSharedP() async {
+  Future<int> getIntSharedP(String variableName) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int vat = (prefs.getInt('VATPercent') ?? 25);
     return vat;
   }
 
-  Future<bool> saveVATSharedP(String vattext) async {
+  Future<bool> saveIntSharedP(String value, String variableName) async {
     try {
-      int vat = int.parse(vattext);
+      int vat = int.parse(value);
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt('VATPercent', vat);
       return true;
@@ -20,17 +20,17 @@ class SharedValueHandler {
     }
   }
 
-  Future<String> getCurrencySharedP() async {
+  Future<String> getStringSharedP(String variableName) async {
      SharedPreferences prefs = await SharedPreferences.getInstance();
     String currency = prefs.getString('CurrencyChosen') ?? 'DKK';
     return currency;
   }
 
-  Future<bool> saveCurrencySharedP(String currencyText) async {
+  Future<bool> saveStringSharedP(String value, String variableName) async {
     try {
-      String currency = currencyText;
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('CurrencyChosen', currency);
+      await prefs.setString('CurrencyChosen', value);
       return true;
     } catch (e) {
       print('Error saving VAT: $e');
