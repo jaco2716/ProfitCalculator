@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 
-class ChooseMenuPage extends StatelessWidget {
-  const ChooseMenuPage({Key key}) : super(key: key);
+class SaveBackupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

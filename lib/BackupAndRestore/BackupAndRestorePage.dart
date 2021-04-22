@@ -32,16 +32,16 @@ class BackupAndRestore extends StatelessWidget {
             //   child: Center(child: Text('Welcome', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200,)))),
             drawerListTile(
               tileIcon: Icon(Icons.restaurant_menu),
-              tileTitle: "Change Menu",
+              tileTitle: "Save Backup",
               myOnPressed: () {
-                goToPage(ChooseMenuPage(), context);
+                goToPage(SaveBackupPage(), context);
               },
             ),
             drawerListTile(
               tileIcon: Icon(Icons.restaurant_menu),
-              tileTitle: "Change Menu",
+              tileTitle: "Restore Backup",
               myOnPressed: () {
-                goToPage(ChooseMenuPage(), context);
+                goToPage(SaveBackupPage(), context);
               },
             ),
             drawerListTile(

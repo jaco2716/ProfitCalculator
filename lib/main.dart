@@ -16,8 +16,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    config.saveFileChosen = 4;
-    
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

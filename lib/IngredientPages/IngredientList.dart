@@ -35,9 +35,6 @@ class _IngredientListState extends State<IngredientList> {
         height: 50,
         child: ElevatedButton.icon(
           onPressed: () {
-              print('savefile chosen: ');
-              print('savefile chosen: ${config.saveFileChosen}');
-
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => CreateIngredient(),

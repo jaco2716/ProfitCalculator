@@ -238,8 +238,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
         newID = DateTime.now().millisecondsSinceEpoch;
 
 //Create object
+      String _newMeasureUnit = _measureUnit == 'Kg'|| _measureUnit == 'g' ? 'Kg' : 'Liter';
       Ingredient newIngredient = Ingredient(
-          newID, _name, finalKgPrice, currentColor.value, _measureUnit);
+          newID, _name, finalKgPrice, currentColor.value, _newMeasureUnit);
 
       bool saveSucess = false;
 //Save ingredient to json file.

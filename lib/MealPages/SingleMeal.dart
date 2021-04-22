@@ -203,7 +203,7 @@ class _SingleMealState extends State<SingleMeal> {
                                     '         ${widget.meal.ingredients[index].amountInGrams.round()} ' +
                                         _lowMeasureUnit),
                                 trailing: Text(
-                                    '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)} ${currencySnapshot.data},-'),
+                                    '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
                               );
                             },
                             physics: NeverScrollableScrollPhysics(),
