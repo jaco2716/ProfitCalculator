@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:profit_calculator/Model/Ingredient.dart';
-import 'Model/Meal.dart';
+import '../Model/Meal.dart';
 
 class ObjectManager {
   List<Meal> jsonToListMeal(String mealJsonSnapshot) {

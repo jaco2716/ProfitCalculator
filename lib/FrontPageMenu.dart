@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/IngredientList.dart';
-import 'package:profit_calculator/MealList.dart';
-import 'package:profit_calculator/BackupAndRestorePage.dart';
+import 'package:profit_calculator/IngredientPages/IngredientList.dart';
+import 'package:profit_calculator/MealPages/MealList.dart';
+import 'package:profit_calculator/BackupAndRestore/BackupAndRestorePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'VATChangePage.dart';

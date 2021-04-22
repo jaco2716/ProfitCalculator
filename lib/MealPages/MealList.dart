@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CreateMeal.dart';
-import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/MealPages/CreateMeal.dart';
+import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
-import 'package:profit_calculator/ObjectManager.dart';
-import 'package:profit_calculator/SingleMeal.dart';
-import 'Model/EnvironmentConfig.dart' as config;
+import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/MealPages/SingleMeal.dart';
+import '../Model/EnvironmentConfig.dart' as config;
 
-import 'Model/Ingredient.dart';
-import 'Model/Meal.dart';
+import '../Model/Ingredient.dart';
+import '../Model/Meal.dart';
 
 class MealList extends StatefulWidget {
   MealList({Key key}) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/NotInUse/ChartPage.dart';
-import 'package:profit_calculator/CreateIngredient.dart';
-import 'package:profit_calculator/CreateMeal.dart';
-import 'package:profit_calculator/IngredientList.dart';
+import 'package:profit_calculator/IngredientPages/CreateIngredient.dart';
+import 'package:profit_calculator/MealPages/CreateMeal.dart';
+import 'package:profit_calculator/IngredientPages/IngredientList.dart';
 
 
 

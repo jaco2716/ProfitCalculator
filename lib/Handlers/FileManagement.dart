@@ -3,7 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
-import 'Model/EnvironmentConfig.dart' as config;
+import '../Model/EnvironmentConfig.dart' as config;
 
 class FileManagement {
   Future<String> get _localPath async {

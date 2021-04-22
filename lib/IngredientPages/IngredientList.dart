@@ -1,14 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/CalculatorPage.dart';
-import 'package:profit_calculator/CreateIngredient.dart';
-import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/IngredientPages/CreateIngredient.dart';
+import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
-import 'package:profit_calculator/ObjectManager.dart';
-import 'package:profit_calculator/SharedValueHandler.dart';
-import 'Model/EnvironmentConfig.dart' as config;
+import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import '../Model/EnvironmentConfig.dart' as config;
 
-import 'Model/Ingredient.dart';
+import '../Model/Ingredient.dart';
 
 class IngredientList extends StatefulWidget {
   IngredientList({Key key}) : super(key: key);

@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:profit_calculator/FileManagement.dart';
+import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
-import 'package:profit_calculator/ObjectManager.dart';
-import 'Model/Ingredient.dart';
-import 'Model/Meal.dart';
-import 'SharedValueHandler.dart';
+import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import '../Model/Ingredient.dart';
+import '../Model/Meal.dart';
+import '../Handlers/SharedValueHandler.dart';
 
 class CreateIngredient extends StatefulWidget {
   final bool editMode;

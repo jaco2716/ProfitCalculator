@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/FileManagement.dart';
-import 'package:profit_calculator/ObjectManager.dart';
+import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import '../InitialFutureWidget.dart';
 import '../Model/Ingredient.dart';
 import '../Model/Meal.dart';

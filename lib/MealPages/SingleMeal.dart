@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CreateMeal.dart';
+import 'package:profit_calculator/MealPages/CreateMeal.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:profit_calculator/FileManagement.dart';
-import 'package:profit_calculator/ObjectManager.dart';
-import 'package:profit_calculator/SharedValueHandler.dart';
-import 'Model/EnvironmentConfig.dart' as config;
-import 'Model/Meal.dart';
-import 'main.dart';
+import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import '../Model/EnvironmentConfig.dart' as config;
+import '../Model/Meal.dart';
+import '../main.dart';
 
 class SingleMeal extends StatefulWidget {
   String title;

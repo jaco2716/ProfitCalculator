@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:profit_calculator/SharedValueHandler.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 
 class VATChangePage extends StatefulWidget {
   @override
