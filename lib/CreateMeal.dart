@@ -106,7 +106,7 @@ class _CreateMealState extends State<CreateMeal> {
                           ? Container(
                               width: 150,
                               child: Text(
-                                'Sale Price in kr,-',
+                                'Sale Price',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.grey),
                               ))
@@ -116,7 +116,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   horizontal: 10, vertical: 10),
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  labelText: 'Sale Price in kr,-',
+                                  labelText: 'Sale Price',
                                 ),
                                 initialValue: _salePrice,
                                 inputFormatters: <TextInputFormatter>[
@@ -145,7 +145,7 @@ class _CreateMealState extends State<CreateMeal> {
                           ? Container(
                               width: 150,
                               child: Text(
-                                'Profit Margin in %',
+                                'Profit Margin %',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(color: Colors.grey),
                               ))
@@ -155,7 +155,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   horizontal: 10, vertical: 10),
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                  labelText: 'Profit Margin in %',
+                                  labelText: 'Profit Margin %',
                                 ),
                                 initialValue: _profitMargin,
                                 inputFormatters: <TextInputFormatter>[

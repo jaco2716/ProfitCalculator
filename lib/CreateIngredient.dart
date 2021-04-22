@@ -8,6 +8,7 @@ import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/ObjectManager.dart';
 import 'Model/Ingredient.dart';
 import 'Model/Meal.dart';
+import 'SharedValueHandler.dart';
 
 class CreateIngredient extends StatefulWidget {
   final bool editMode;
@@ -37,6 +38,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
+  final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+
 
   @override
   void initState() {
@@ -95,33 +98,39 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     SizedBox(
                       height: 20,
                     ),
-                    Container(
-                      // width: MediaQuery.of(context).size.width - 110,
-                      child: TextFormField(
-                        readOnly: true,
-                        onTap: () {
-                          inputAmuntDialog();
-                        },
-                        controller: _kgPriceController,
-                        decoration: InputDecoration(
-                          suffixText:
-                              _measureUnit == 'Kg' || _measureUnit == 'g'
-                                  ? 'Kr/Kg'
-                                  : 'Kr/Liter',
-                          border: OutlineInputBorder(),
-                          labelText: 'Kg Price / Liter Price',
-                        ),
-                        // initialValue:
-                        //     widget.editMode ?? false ? _kgPrice : null,
-                        inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]'))
-                        ],
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
-                        validator: (value) => validateDouble(value),
-                        onSaved: (value) => _kgPrice = value,
-                        onFieldSubmitted: (value) => changeFocus(),
-                      ),
+                    FutureBuilder(
+                      future: _sharedValueHandler.getCurrencySharedP(),
+                      initialData: '',
+                      builder: (context, currencySnapshot) {
+                        return Container(
+                          // width: MediaQuery.of(context).size.width - 110,
+                          child: TextFormField(
+                            readOnly: true,
+                            onTap: () {
+                              inputAmuntDialog();
+                            },
+                            controller: _kgPriceController,
+                            decoration: InputDecoration(
+                              suffixText:
+                                  _measureUnit == 'Kg' || _measureUnit == 'g'
+                                      ? '${currencySnapshot.data}/Kg'
+                                      : '${currencySnapshot.data}/Liter',
+                              border: OutlineInputBorder(),
+                              labelText: 'Kg Price / Liter Price',
+                            ),
+                            // initialValue:
+                            //     widget.editMode ?? false ? _kgPrice : null,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]'))
+                            ],
+                            keyboardType:
+                                TextInputType.numberWithOptions(decimal: true),
+                            validator: (value) => validateDouble(value),
+                            onSaved: (value) => _kgPrice = value,
+                            onFieldSubmitted: (value) => changeFocus(),
+                          ),
+                        );
+                      }
                     ),
                     SizedBox(
                       height: 20,
