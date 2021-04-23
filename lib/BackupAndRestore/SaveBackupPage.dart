@@ -3,101 +3,201 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import '../Model/EnvironmentConfig.dart' as config;
+import 'package:intl/intl.dart';
 
-class SaveBackupPage extends StatelessWidget {
-  final FileManagement fileManagement = FileManagement();
-  final String mealJsonFile = config.mealJsonFile;
-  final String ingredientJsonFile = config.ingredientJsonFile;
+class SaveBackupPage extends StatefulWidget {
   bool restorePageSelected;
-
-  List<String> saveButtonDates = [];
-  String saveButtonTitle;
-  String pageTitle;
-
-  SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   SaveBackupPage(this.restorePageSelected);
 
   @override
+  _SaveBackupPageState createState() => _SaveBackupPageState();
+}
+
+class _SaveBackupPageState extends State<SaveBackupPage> {
+  final FileManagement fileManagement = FileManagement();
+
+  final String mealJsonFile = config.mealJsonFile;
+
+  final String ingredientJsonFile = config.ingredientJsonFile;
+
+  List<String> saveButtonDates = [];
+
+  String saveButtonTitle;
+
+  String pageTitle;
+
+  DateFormat dateFormat = DateFormat("HH:mm - dd/MM/yyyy");
+
+  SharedValueHandler _sharedValueHandler = SharedValueHandler();
+
+  @override
   Widget build(BuildContext context) {
-    if (restorePageSelected) {
+    if (widget.restorePageSelected) {
       saveButtonTitle = 'Restore from slot ';
       pageTitle = 'Restore your data from a previous save file.';
     } else {
       saveButtonTitle = 'Save to slot ';
-      pageTitle = 'Save your data to a save file, and be able to restore it at a later time.';
+      pageTitle =
+          'Save your data to a save file, and be able to restore it at a later time.';
     }
-    
-      
+
     return Scaffold(
       appBar: MyAppBarWithCalc(
-          restorePageSelected ? 'Restore Backup' : 'Save Backup'),
+          widget.restorePageSelected ? 'Restore Backup' : 'Save Backup'),
       body: Container(
         width: double.infinity,
         // color: Colors.amber,
         padding: EdgeInsets.all(20),
         child: FutureBuilder(
-          future: _sharedValueHandler.getStringSharedP('saveAndRestoreDates', 'default'),
-          builder: (context, snapshot) {
-            return Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(
-                    pageTitle,
-                    textAlign: TextAlign.center,
+            future: _sharedValueHandler.getStringSharedP(
+                'saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
+            builder: (context, saveAndRestoreSnapshot) {
+              if (saveAndRestoreSnapshot.connectionState ==
+                  ConnectionState.waiting) return CircularProgressIndicator();
+              List<String> saveAndRestoreDates =
+                  saveAndRestoreSnapshot.data.toString().split('%');
+
+              return Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Text(
+                      pageTitle,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-                saveSlotButton(saveButtonTitle, '01/10/2021', 1),
-                saveSlotButton(saveButtonTitle, '01/27/2021', 2),
-                saveSlotButton(saveButtonTitle, '02/03/2021', 3),
-                saveSlotButton(saveButtonTitle, '02/17/2021', 4),
-                saveSlotButton(saveButtonTitle, '02/27/2021', 5),
-              ],
-            );
-          }
-        ),
+                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 1),
+                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 2),
+                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 3),
+                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 4),
+                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 5),
+                ],
+              );
+            }),
       ),
     );
   }
 
-  Widget saveSlotButton(String title, String dateLastSaved, int index) {
+  Widget saveSlotButton(
+    String title,
+    List<String> dateLastSaved,
+    int index,
+  ) {
     return Container(
       padding: EdgeInsets.all(10),
-      width: 250,
+      width: 260,
       height: 80,
-      // padding: EdgeInsets.all(20),
-      // margin: EdgeInsets.all(20),
       child: ElevatedButton.icon(
         style: ButtonStyle(),
         icon: Icon(Icons.save),
-        label: Text('$title$index \nLast save: $dateLastSaved'),
-        onPressed: () async {
-          if (restorePageSelected) {
-            String ingredientFileContent =
-                await fileManagement.readFile(ingredientJsonFile);
-            fileManagement.writeFile(
-                '$ingredientJsonFile$index', ingredientFileContent);
-            String mealFileContent =
-                await fileManagement.readFile(mealJsonFile);
-            fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
-          } else {}
+        label: SizedBox(
+            width: 180,
+            child: Text('$title$index \nDate: ${dateLastSaved[index - 1]}')),
+        onPressed: () {
+          if (widget.restorePageSelected) {
+            _saveAndRestoreDialog(context, 'Restore from Save slot $index',
+                'Are you sure you want to restore from this save file?\nThis will replace your current data, and it will be lost if you haven\'t saved it.',
+                myOnPressed: () {
+              restoreDataFromSaveFile(index);
+            });
+          } else {
+            _saveAndRestoreDialog(context, 'Restore from Save slot $index',
+                'Are you sure you want to save your data to this save file?\nThis will replace the data on the save file with your current data.',
+                myOnPressed: () {
+              saveDataToSaveFile(index, dateLastSaved);
+            });
+          }
         },
       ),
     );
   }
 
-  void saveDataToSaveFile() {}
+  _saveAndRestoreDialog(BuildContext context, String title, String content,
+      {void Function() myOnPressed}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            RaisedButton(
+              child: Text('  Cancel  '),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              child: Text('  I\'m sure  '),
+              color: Colors.red,
+              onPressed: () {
+                myOnPressed();
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
 
-  void restoreDataFromSaveFile(int index) async {
-    String ingredientFileContent =
-        await fileManagement.readFile('$ingredientJsonFile$index');
-    String mealFileContent =
-        await fileManagement.readFile('$mealJsonFile$index');
+  saveDataToSaveFile(int index, List<String> datesList) async {
+    try {
+      DateTime newDate = DateTime.now();
 
-    fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
-    fileManagement.writeFile(mealJsonFile, mealFileContent);
+      String dateString = dateFormat.format(newDate);
+
+      // print(dateString);
+
+      datesList[index - 1] = dateString;
+      // datesList[index-1] = 'Empty';
+      String datesString = '';
+      for (var i = 0; i < 5; i++) {
+        datesString += datesList[i] + '%';
+      }
+      // print(datesString);
+
+      _sharedValueHandler.saveStringSharedP(datesString, 'saveAndRestoreDates');
+
+      String ingredientFileContent =
+          await fileManagement.readFile(ingredientJsonFile);
+      fileManagement.writeFile(
+          '$ingredientJsonFile$index', ingredientFileContent);
+      String mealFileContent = await fileManagement.readFile(mealJsonFile);
+      fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Data was saved to save slot $index'),
+      ));
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Something went wrong, try again.'),
+      ));
+      print('Error saving data to file: ' + error.toString());
+    }
+  }
+
+  restoreDataFromSaveFile(int index) async {
+    try {
+      String ingredientFileContent =
+          await fileManagement.readFile('$ingredientJsonFile$index');
+      String mealFileContent =
+          await fileManagement.readFile('$mealJsonFile$index');
+
+      fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
+      fileManagement.writeFile(mealJsonFile, mealFileContent);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Data was restored from save slot $index'),
+      ));
+      print('ingre: $ingredientFileContent \n meal: $mealFileContent');
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Something went wrong, try again.'),
+      ));
+      print('Error saving data to file: ' + error.toString());
+    }
   }
 }

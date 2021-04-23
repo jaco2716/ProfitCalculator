@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/BackupAndRestore/SaveBackupPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import '../Model/EnvironmentConfig.dart' as config;
-import 'RestoreBackupPage.dart';
 
 class BackupAndRestore extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
@@ -32,31 +31,17 @@ class BackupAndRestore extends StatelessWidget {
             //   padding: EdgeInsets.all(30),
             //   child: Center(child: Text('Welcome', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200,)))),
             drawerListTile(
-              tileIcon: Icon(Icons.restaurant_menu),
+              tileIcon: Icon(Icons.save),
               tileTitle: "Save Backup",
               myOnPressed: () {
                 goToPage(SaveBackupPage(false), context);
               },
             ),
             drawerListTile(
-              tileIcon: Icon(Icons.restaurant_menu),
+              tileIcon: Icon(Icons.download_rounded),
               tileTitle: "Restore Backup",
               myOnPressed: () {
                 goToPage(SaveBackupPage(true), context);
-              },
-            ),
-            drawerListTile(
-              tileIcon: Icon(Icons.save),
-              tileTitle: "Save Backup",
-              myOnPressed: () {
-                exportData(context);
-              },
-            ),
-            drawerListTile(
-              tileIcon: Icon(Icons.download_rounded),
-              tileTitle: "Load Backup",
-              myOnPressed: () {
-                importData();
               },
             ),
           ],
@@ -70,15 +55,13 @@ class BackupAndRestore extends StatelessWidget {
         context, MaterialPageRoute(builder: (context) => _navigationPage));
   }
 
-  
+  // void exportData(BuildContext context) {
+  //   fileManagement.exportData(context, ingredientJsonFile, mealJsonFile);
+  // }
 
-  void exportData(BuildContext context) {
-    fileManagement.exportData(context, ingredientJsonFile, mealJsonFile);
-  }
-
-  void importData() async {
-    await fileManagement.importData();
-  }
+  // void importData() async {
+  //   await fileManagement.importData();
+  // }
 
 //List tile for every page to go to.
   Widget drawerListTile(

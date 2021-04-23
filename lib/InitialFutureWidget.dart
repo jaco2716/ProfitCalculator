@@ -21,31 +21,32 @@ class InitialFutureWidget extends StatelessWidget {
         style: TextStyle(fontSize: 30, color: Colors.grey),
       ),
       SizedBox(height: 20),
-      Container(
-        width: 200,
-        child: RaisedButton.icon(
-          padding: EdgeInsets.all(10),
-          icon: Icon(Icons.add),
-          label: Text('Create Ingredient'),
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CreateIngredient()));
-          },
-        ),
-      ),
-      SizedBox(height: 10),
-      Container(
-        width: 200,
-        child: RaisedButton.icon(
-          padding: EdgeInsets.all(10),
-          icon: Icon(Icons.add),
-          label: Text('Create Meal'),
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => CreateMeal()));
-          },
-        ),
-      ),
+      Icon(Icons.arrow_circle_down_rounded, color: Colors.grey, size: 60,),
+      // Container(
+      //   width: 200,
+      //   child: RaisedButton.icon(
+      //     padding: EdgeInsets.all(10),
+      //     icon: Icon(Icons.add),
+      //     label: Text('Create Ingredient'),
+      //     onPressed: () {
+      //       Navigator.push(context,
+      //           MaterialPageRoute(builder: (context) => CreateIngredient()));
+      //     },
+      //   ),
+      // ),
+      // SizedBox(height: 10),
+      // Container(
+      //   width: 200,
+      //   child: RaisedButton.icon(
+      //     padding: EdgeInsets.all(10),
+      //     icon: Icon(Icons.add),
+      //     label: Text('Create Meal'),
+      //     onPressed: () {
+      //       Navigator.push(
+      //           context, MaterialPageRoute(builder: (context) => CreateMeal()));
+      //     },
+      //   ),
+      // ),
       SizedBox(height: 200),
     ]);
   }
