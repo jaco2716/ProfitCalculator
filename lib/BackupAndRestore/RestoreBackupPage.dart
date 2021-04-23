@@ -27,7 +27,7 @@ class RestoreBackupPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
-            saveSlotButton('Restore from Slot 1', '14:24 02/03/2021', 1),
+            saveSlotButton('Restore from Slot 1', '02/03/2021', 1),
             saveSlotButton('Restore from Slot 2', 'Empty', 2),
             saveSlotButton('Restore from Slot 3', 'Empty', 3),
             saveSlotButton('Restore from Slot 4', 'Empty', 4),
@@ -55,12 +55,17 @@ class RestoreBackupPage extends StatelessWidget {
           // String mealFileContent = await fileManagement.readFile(mealJsonFile);
           // fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
 
-          String mealFileContent = await fileManagement.readFile('$mealJsonFile$index');
+          String ingredientFileContent =
+              await fileManagement.readFile('$ingredientJsonFile$index');
+          String mealFileContent =
+              await fileManagement.readFile('$mealJsonFile$index');
+
+          fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
+          fileManagement.writeFile(mealJsonFile, mealFileContent);
+
           print(mealFileContent);
         },
       ),
     );
   }
 }
-
-

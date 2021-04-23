@@ -22,8 +22,12 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The user has the option to create a backup file and load it again at a later time.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

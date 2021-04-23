@@ -99,7 +99,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                       height: 20,
                     ),
                     FutureBuilder(
-                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen'),
+                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                       initialData: '',
                       builder: (context, currencySnapshot) {
                         return Container(

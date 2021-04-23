@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 
@@ -7,32 +8,56 @@ class SaveBackupPage extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
   final String mealJsonFile = config.mealJsonFile;
   final String ingredientJsonFile = config.ingredientJsonFile;
+  bool restorePageSelected;
+
+  List<String> saveButtonDates = [];
+  String saveButtonTitle;
+  String pageTitle;
+
+  SharedValueHandler _sharedValueHandler = SharedValueHandler();
+
+  SaveBackupPage(this.restorePageSelected);
 
   @override
   Widget build(BuildContext context) {
+    if (restorePageSelected) {
+      saveButtonTitle = 'Restore from slot ';
+      pageTitle = 'Restore your data from a previous save file.';
+    } else {
+      saveButtonTitle = 'Save to slot ';
+      pageTitle = 'Save your data to a save file, and be able to restore it at a later time.';
+    }
+    
+      
     return Scaffold(
-      appBar: MyAppBarWithCalc('Save Backup'),
+      appBar: MyAppBarWithCalc(
+          restorePageSelected ? 'Restore Backup' : 'Save Backup'),
       body: Container(
         width: double.infinity,
         // color: Colors.amber,
         padding: EdgeInsets.all(20),
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                'Here you can change what menu you are currently using, and allows you to edit menus individually.',
-                textAlign: TextAlign.center,
-              ),
-            ),
-            saveSlotButton('Save to Slot 1', '01/10/2021',1),
-            saveSlotButton('Save to Slot 2', '01/27/2021',2),
-            saveSlotButton('Save to Slot 3', '02/03/2021',3),
-            saveSlotButton('Save to Slot 4', '02/17/2021',4),
-            saveSlotButton('Save to Slot 5', '02/27/2021',5),
-          ],
+        child: FutureBuilder(
+          future: _sharedValueHandler.getStringSharedP('saveAndRestoreDates', 'default'),
+          builder: (context, snapshot) {
+            return Column(
+              // mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    pageTitle,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                saveSlotButton(saveButtonTitle, '01/10/2021', 1),
+                saveSlotButton(saveButtonTitle, '01/27/2021', 2),
+                saveSlotButton(saveButtonTitle, '02/03/2021', 3),
+                saveSlotButton(saveButtonTitle, '02/17/2021', 4),
+                saveSlotButton(saveButtonTitle, '02/27/2021', 5),
+              ],
+            );
+          }
         ),
       ),
     );
@@ -48,16 +73,31 @@ class SaveBackupPage extends StatelessWidget {
       child: ElevatedButton.icon(
         style: ButtonStyle(),
         icon: Icon(Icons.save),
-        label: Text('$title \nLast save: $dateLastSaved'),
+        label: Text('$title$index \nLast save: $dateLastSaved'),
         onPressed: () async {
-
-          // String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
-          // fileManagement.writeFile('$ingredientJsonFile$index', ingredientFileContent);
-          // String mealFileContent = await fileManagement.readFile(mealJsonFile);
-          // fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
-
+          if (restorePageSelected) {
+            String ingredientFileContent =
+                await fileManagement.readFile(ingredientJsonFile);
+            fileManagement.writeFile(
+                '$ingredientJsonFile$index', ingredientFileContent);
+            String mealFileContent =
+                await fileManagement.readFile(mealJsonFile);
+            fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
+          } else {}
         },
       ),
     );
+  }
+
+  void saveDataToSaveFile() {}
+
+  void restoreDataFromSaveFile(int index) async {
+    String ingredientFileContent =
+        await fileManagement.readFile('$ingredientJsonFile$index');
+    String mealFileContent =
+        await fileManagement.readFile('$mealJsonFile$index');
+
+    fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
+    fileManagement.writeFile(mealJsonFile, mealFileContent);
   }
 }

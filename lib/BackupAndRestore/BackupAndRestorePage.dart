@@ -35,14 +35,14 @@ class BackupAndRestore extends StatelessWidget {
               tileIcon: Icon(Icons.restaurant_menu),
               tileTitle: "Save Backup",
               myOnPressed: () {
-                goToPage(SaveBackupPage(), context);
+                goToPage(SaveBackupPage(false), context);
               },
             ),
             drawerListTile(
               tileIcon: Icon(Icons.restaurant_menu),
               tileTitle: "Restore Backup",
               myOnPressed: () {
-                goToPage(RestoreBackupPage(), context);
+                goToPage(SaveBackupPage(true), context);
               },
             ),
             drawerListTile(

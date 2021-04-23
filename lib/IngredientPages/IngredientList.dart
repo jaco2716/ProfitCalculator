@@ -117,7 +117,7 @@ class _IngredientListState extends State<IngredientList> {
                         .jsonToListIngredient(ingredientJsonSnapshot.data);
 
                     return FutureBuilder(
-                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen'),
+                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                   initialData: '',
                       builder: (context, currencySnapshot) {
                         return Padding(

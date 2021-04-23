@@ -37,7 +37,7 @@ class _VATChangePageState extends State<VATChangePage> {
               ),
             ),
             FutureBuilder(
-              future: _sharedValueHandler.getIntSharedP('VATPercent'),
+              future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
               initialData: '',
               builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
                 if(vatSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
@@ -79,7 +79,7 @@ class _VATChangePageState extends State<VATChangePage> {
               },
             ),
             FutureBuilder(
-                future: _sharedValueHandler.getStringSharedP('CurrencyChosen'),
+                future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                 builder: (context, currencySnapshot) {
                 if(currencySnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
 
@@ -143,8 +143,9 @@ class _VATChangePageState extends State<VATChangePage> {
               myOnPressed: () async {
                 String vattext = vatTec.text;
                 String currencytext = dropdownValue;
+                int valueInt = int.parse(vattext);
                 bool saveSucces = await _sharedValueHandler.saveIntSharedP(
-                    vattext, 'CurrencyChosen');
+                    valueInt, 'CurrencyChosen');
                 saveSucces = await _sharedValueHandler.saveStringSharedP(
                     currencytext, 'CurrencyChosen');
                 if (saveSucces) {
