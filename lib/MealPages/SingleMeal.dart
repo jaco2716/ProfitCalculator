@@ -6,18 +6,18 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 import '../Model/Meal.dart';
 import '../main.dart';
 
 class SingleMeal extends StatefulWidget {
-  String title;
   Meal meal;
   Menu menu;
   bool isMeal;
 
-  SingleMeal(this.title, {this.meal, this.menu, this.isMeal});
+  SingleMeal({this.meal, this.menu, this.isMeal});
 
   @override
   _SingleMealState createState() => _SingleMealState();
@@ -28,13 +28,36 @@ class _SingleMealState extends State<SingleMeal> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   String mealJsonFile = config.mealJsonFile;
+  String menuJsonFile = config.menuJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+
+  String _name;
+  double _totalCost;
+  double _salePrice;
+  double _profitMargin;
+  double _profit;
+  List<Ingredient> _ingredients;
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isMeal) {
+      _name = widget.meal.name;
+      _totalCost = widget.meal.totalCost;
+      _salePrice = widget.meal.salePrice;
+      _profitMargin = widget.meal.profitMargin;
+      _profit = widget.meal.profit;
+      _ingredients = widget.meal.ingredients;
+    } else {
+      _name = widget.menu.name;
+      _totalCost = widget.menu.totalCost;
+      _salePrice = widget.menu.salePrice;
+      _profitMargin = widget.menu.profitMargin;
+      _profit = widget.menu.profit;
+      _ingredients = widget.menu.ingredients;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_name),
         actions: [
           IconButton(
               icon: Icon(Icons.edit),
@@ -86,7 +109,7 @@ class _SingleMealState extends State<SingleMeal> {
                               style: TextStyle(color: Colors.red[700]),
                             ),
                             trailing: Text(
-                              '${widget.meal.totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                              '${_totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}',
                               style: TextStyle(color: Colors.red[700]),
                             ),
                           )),
@@ -103,7 +126,7 @@ class _SingleMealState extends State<SingleMeal> {
                               style: TextStyle(color: Colors.blue[700]),
                             ),
                             trailing: Text(
-                              '${widget.meal.salePrice.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                              '${_salePrice.toStringAsFixed(2)},- ${currencySnapshot.data}',
                               style: TextStyle(color: Colors.blue[700]),
                             ),
                           )),
@@ -124,14 +147,14 @@ class _SingleMealState extends State<SingleMeal> {
                                       style: TextStyle(color: Colors.blue[700]),
                                     ),
                                     trailing: Text(
-                                      '${(widget.meal.salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                      '${(_salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
                                       style: TextStyle(color: Colors.blue[700]),
                                     ));
                               })),
                     ),
                     Card(
                       elevation: 5,
-                      color: widget.meal.profitMargin > 0
+                      color: _profitMargin > 0
                           ? Colors.green[50]
                           : Colors.orange[50],
                       margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
@@ -141,97 +164,80 @@ class _SingleMealState extends State<SingleMeal> {
                             title: Text(
                               'Profit:',
                               style: TextStyle(
-                                  color: widget.meal.profitMargin > 0
+                                  color: _profitMargin > 0
                                       ? Colors.green[700]
                                       : Colors.orange[700]),
                             ),
                             trailing: Text(
-                              '${widget.meal.profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                              '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
                               style: TextStyle(
-                                  color: widget.meal.profitMargin > 0
+                                  color: _profitMargin > 0
                                       ? Colors.green[700]
                                       : Colors.orange[700]),
                             ),
                           )),
                     ),
-                    widget.meal.profitMargin < 0
+                    _profitMargin < 0
                         ? _profitMarginWidget(
-                            -widget.meal.profitMargin, Colors.orange[700], '-')
+                            -_profitMargin, Colors.orange[700], '-')
                         : _profitMarginWidget(
-                            widget.meal.profitMargin, Colors.green[700], ''),
+                            _profitMargin, Colors.green[700], ''),
                     // RaisedButton(
                     //     child: Text('Choose Profit Margin'),
                     //     onPressed: () {
                     //       _showChangeProfitMargin(context);
                     //     }),
-                    Card(
-                      margin: EdgeInsets.all(20),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text('Ingredients',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 30,
-                                  color: Colors.pink[100],
-                                )),
-                          ),
-                          Divider(
-                            thickness: 1,
-                          ),
-                          widget.meal.ingredients.length == 0
-                              ? Padding(
-                                  padding: const EdgeInsets.all(25.0),
-                                  child: Text('No ingredients added.'),
-                                )
-                              : ListView.separated(
-                                  separatorBuilder:
-                                      (BuildContext context, int index) {
-                                    return Divider(
-                                      height: 1,
-                                      thickness: 2,
-                                    );
-                                  },
-                                  itemCount: widget.meal.ingredients.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    double dividerDouble = widget
-                                                    .meal
-                                                    .ingredients[index]
-                                                    .measureUnit ==
-                                                'Kg' ||
-                                            widget.meal.ingredients[index]
-                                                    .measureUnit ==
-                                                'Liter'
-                                        ? 1000
-                                        : 1;
-                                    String _lowMeasureUnit = widget
-                                                .meal
-                                                .ingredients[index]
-                                                .measureUnit ==
-                                            'Kg'
-                                        ? 'g'
-                                        : 'ml';
-                                    print(widget.meal.ingredients.toString());
 
-                                    return ListTile(
-                                      title: Text(
-                                          widget.meal.ingredients[index].name),
-                                      subtitle: Text(
-                                          ' - ${widget.meal.ingredients[index].amountInGrams.round()} ' +
-                                              _lowMeasureUnit),
-                                      trailing: Text(
-                                          '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
-                                    );
-                                  },
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                ),
-                        ],
-                      ),
-                    ),
+                    ingredientList(currencySnapshot.data, _ingredients),
+                    !widget.isMeal
+                        ? mealList(currencySnapshot.data, widget.menu.meals)
+                        : Center(),
+                    // widget.meal.ingredients.length == 0
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.all(25.0),
+                    //         child: Text('No ingredients added.'),
+                    //       )
+                    //     : ListView.separated(
+                    //         separatorBuilder:
+                    //             (BuildContext context, int index) {
+                    //           return Divider(
+                    //             height: 1,
+                    //             thickness: 2,
+                    //           );
+                    //         },
+                    //         itemCount: widget.meal.ingredients.length,
+                    //         itemBuilder:
+                    //             (BuildContext context, int index) {
+                    //           double dividerDouble = widget
+                    //                           .meal
+                    //                           .ingredients[index]
+                    //                           .measureUnit ==
+                    //                       'Kg' ||
+                    //                   widget.meal.ingredients[index]
+                    //                           .measureUnit ==
+                    //                       'Liter'
+                    //               ? 1000
+                    //               : 1;
+                    //           String _lowMeasureUnit = widget
+                    //                       .meal
+                    //                       .ingredients[index]
+                    //                       .measureUnit ==
+                    //                   'Kg'
+                    //               ? 'g'
+                    //               : 'ml';
+                    //           return ListTile(
+                    //             title: Text(
+                    //                 widget.meal.ingredients[index].name),
+                    //             subtitle: Text(
+                    //                 ' - ${widget.meal.ingredients[index].amountInGrams.round()} ' +
+                    //                     _lowMeasureUnit),
+                    //             trailing: Text(
+                    //                 '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
+                    //           );
+                    //         },
+                    //         physics: NeverScrollableScrollPhysics(),
+                    //         shrinkWrap: true,
+                    //       ),
                     Container(
                       padding: EdgeInsets.all(20),
                       width: 200,
@@ -248,13 +254,118 @@ class _SingleMealState extends State<SingleMeal> {
     );
   }
 
+  Widget ingredientList(String currencyString, List<Ingredient> _iIngredients) {
+    return Card(
+      margin: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Ingredients',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 22,
+                  color: Colors.pink[200],
+                )),
+          ),
+          Divider(
+            thickness: 1,
+          ),
+          _iIngredients.length == 0
+              ? Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Text('No ingredients added.'),
+                )
+              : ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      height: 1,
+                      thickness: 2,
+                    );
+                  },
+                  itemCount: _iIngredients.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    double dividerDouble =
+                        _iIngredients[index].measureUnit == 'Kg' ||
+                                _iIngredients[index].measureUnit == 'Liter'
+                            ? 1000
+                            : 1;
+                    String _lowMeasureUnit =
+                        _iIngredients[index].measureUnit == 'Kg' ? 'g' : 'ml';
+                    print(_iIngredients.toString());
+
+                    return ListTile(
+                      title: Text(_iIngredients[index].name),
+                      subtitle: Text(
+                          ' - ${_iIngredients[index].amountInGrams.round()} ' +
+                              _lowMeasureUnit),
+                      trailing: Text(
+                          '${(_iIngredients[index].kgPrice * _iIngredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- $currencyString'),
+                    );
+                  },
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                )
+        ],
+      ),
+    );
+  }
+
+  Widget mealList(String currencyString, List<Meal> _iMeal) {
+    return Card(
+      margin: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Meals',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 22,
+                  color: Colors.pink[200],
+                )),
+          ),
+          Divider(
+            thickness: 1,
+          ),
+          _iMeal.length == 0
+              ? Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Text('No meals added.'),
+                )
+              : ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      height: 1,
+                      thickness: 2,
+                    );
+                  },
+                  itemCount: _iMeal.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(_iMeal[index].name),
+                      subtitle: Text(' - x${_iMeal[index].amount} '),
+                      trailing:
+                          Text('${(_iMeal[index].totalCost * _iMeal[index].amount) .toStringAsFixed(2)},- $currencyString'),
+                    );
+                  },
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                )
+        ],
+      ),
+    );
+  }
+
   _deleteMealDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Delete'),
-          content: Text('Are you sure you want to delete ${widget.meal.name}?'),
+          content: Text('Are you sure you want to delete ${_name}?'),
           actions: [
             FlatButton(
               child: Text('cancel'),
@@ -285,7 +396,7 @@ class _SingleMealState extends State<SingleMeal> {
           ),
           (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('${widget.meal.name} was deleted.'),
+        content: Text('${_name} was deleted.'),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

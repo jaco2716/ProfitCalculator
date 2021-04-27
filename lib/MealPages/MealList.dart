@@ -289,7 +289,7 @@ class _MealListState extends State<MealList> {
 //Go to meal page when tapped.
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) => SingleMeal(meal.name, meal: meal, isMeal: true),
+            builder: (context) => SingleMeal(meal: meal, isMeal: true),
           ))
               .then((context) {
             setState(() {});
@@ -327,7 +327,7 @@ class _MealListState extends State<MealList> {
 //Go to menu page when tapped.
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) => SingleMeal(menu.name, menu: menu, isMeal: false),
+            builder: (context) => SingleMeal(menu: menu, isMeal: false),
           ))
               .then((context) {
             setState(() {});

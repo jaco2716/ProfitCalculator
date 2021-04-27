@@ -454,6 +454,7 @@ class _CreateMealState extends State<CreateMeal> {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
               _selectedMeals);
         }
+        print('amount: ${newMenu.meals[0].amount}');
 
         // print('${newMeal.id}, ${newMeal.ingredients}, ${newMeal.name}, ${newMeal.salePrice},');
 
@@ -577,6 +578,9 @@ class _CreateMealState extends State<CreateMeal> {
                     setState(() {
                       ltMeal.amount--;
                     });
+                    int mealIndex = _selectedMeals
+                        .indexWhere((meal) => meal.id == ltMeal.id);
+                    _selectedMeals[mealIndex].amount = ltMeal.amount;
                   }
                 }),
             Text('${ltMeal.amount}'),
@@ -586,6 +590,9 @@ class _CreateMealState extends State<CreateMeal> {
                   setState(() {
                     ltMeal.amount++;
                   });
+                  int mealIndex =
+                      _selectedMeals.indexWhere((meal) => meal.id == ltMeal.id);
+                  _selectedMeals[mealIndex].amount = ltMeal.amount;
                 }),
           ])),
     );

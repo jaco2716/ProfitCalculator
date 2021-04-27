@@ -23,7 +23,7 @@ class Menu {
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
     meals?.forEach((e) { 
-      totalPrice += e.totalCost;
+      totalPrice += e.totalCost * e.amount;
     });
     return totalPrice;
   }

@@ -8,7 +8,7 @@ class Meal {
   int amount;
 
   //Constructor
-  Meal(this.id, this.name, this.salePrice, this.ingredients,{this.amount});
+  Meal(this.id, this.name, this.salePrice, this.ingredients, {this.amount});
 
   Meal.clone(Meal mealCopy)
       : this(
@@ -41,8 +41,9 @@ class Meal {
   double get profitMargin {
     if (salePrice != 0) {
       return (profit / salePrice * 100);
-    } else
+    } else {
       return 0;
+    }
   }
 
   //Json convert function, fromJson and toJson
@@ -52,7 +53,8 @@ class Meal {
         salePrice = json['salePrice'],
         ingredients = (json['ingredients'] as List)
             ?.map((e) => Ingredient.fromJson(e))
-            ?.toList(); //Når man konverterer en liste af objector fra Json.
+            ?.toList(), //Når man konverterer en liste af objector fra Json.
+        amount = json['amount'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -61,5 +63,6 @@ class Meal {
         'ingredients': ingredients
             .map((e) => e.toJson())
             .toList(), //Når man konverterer en liste af objector til Json.
+        'amount': amount,
       };
 }
