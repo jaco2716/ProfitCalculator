@@ -1,8 +1,5 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 
 class FileManagement {
@@ -35,8 +32,15 @@ class FileManagement {
       if (fileExists) {
         jsonContents = await file.readAsString();
       } else {
-        writeFile(fileName, '');
-        jsonContents = '';
+        if (fileName == config.ingredientJsonFile) {
+          writeFile(fileName,
+              '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445324000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]');
+          jsonContents =
+              '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445324000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
+        } else {
+          writeFile(fileName, '');
+          jsonContents = '';
+        }
       }
 
       // print('Reading file $fileName.. Content: $jsonContents');
@@ -48,40 +52,41 @@ class FileManagement {
     }
   }
 
-  exportData(BuildContext context, String ingredientFileName,
-      String mealFileName) async {
-    final path = await _localPath;
-    String mergedJson = '';
+  // exportData(BuildContext context, String ingredientFileName,
+  //     String mealFileName) async {
+  //   final path = await _localPath;
+  //   String mergedJson = '';
 
-    String ingredientJson = await readFile(ingredientFileName);
-    String mealJson = await readFile(mealFileName);
+  //   String ingredientJson = await readFile(ingredientFileName);
+  //   String mealJson = await readFile(mealFileName);
 
-    mergedJson = ingredientJson + '&&&' + mealJson;
-    writeFile('profitCalculatorBackup', mergedJson);
+  //   mergedJson = ingredientJson + '&&&' + mealJson;
+  //   writeFile('profitCalculatorBackup', mergedJson);
 
-    await Share.shareFiles(
-      ['$path/profitCalculatorBackup.json'],
-      subject: 'Profit Calculator Backup',
-    );
-  }
+  //   await Share.shareFiles(
+  //     ['$path/profitCalculatorBackup.json'],
+  //     subject: 'Profit Calculator Backup',
+  //   );
+  // }
 
-  importData() async {
-    final String ingredientJsonFile = config.ingredientJsonFile;
-    final String mealJsonFile = config.mealJsonFile;
+  // importData() async {
+  //   final String ingredientJsonFile = config.ingredientJsonFile;
+  //   final String mealJsonFile = config.mealJsonFile;
 
-    FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
-    File file;
-    if (result != null) {
-      file = File(result.files.single.path);
-      print(file.readAsString());
-    } else {
-      return;
-    }
-    String mergedJson = await file.readAsString();
-    List<String> splitJson = mergedJson.split('&&&');
-    String ingredientJson = splitJson[0];
-    String mealJson = splitJson[1];
-    writeFile(ingredientJsonFile, ingredientJson);
-    writeFile(mealJsonFile, mealJson);
-  }
+  //   FilePickerResult result = await FilePicker.platform
+  //       .pickFiles(type: FileType.custom, allowedExtensions: ['json']);
+  //   File file;
+  //   if (result != null) {
+  //     file = File(result.files.single.path);
+  //     print(file.readAsString());
+  //   } else {
+  //     return;
+  //   }
+  //   String mergedJson = await file.readAsString();
+  //   List<String> splitJson = mergedJson.split('&&&');
+  //   String ingredientJson = splitJson[0];
+  //   String mealJson = splitJson[1];
+  //   writeFile(ingredientJsonFile, ingredientJson);
+  //   writeFile(mealJsonFile, mealJson);
+  // }
 }

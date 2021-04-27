@@ -7,8 +7,9 @@
 
   // int saveFileChosen = 0;
 
-  const mealJsonFile = 'mealJsonFile';
   const ingredientJsonFile = 'ingredientJsonFile';
+  const mealJsonFile = 'mealJsonFile';
+  const menuJsonFile = 'menuJsonFile';
 
 // const ingredientFileName = {
 //   'baseUrl': 'some-url.com'

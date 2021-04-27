@@ -120,6 +120,7 @@ class _IngredientListState extends State<IngredientList> {
                       future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                   initialData: '',
                       builder: (context, currencySnapshot) {
+                        print(ingredients[0].toString());
                         return Padding(
                           padding: const EdgeInsets.only(top: 40),
                           child: ListView.builder(
@@ -176,13 +177,7 @@ class _IngredientListState extends State<IngredientList> {
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: ListTile(
-        title: Row(children: [
-          Icon(
-            Icons.adjust,
-            color: Colors.pink[100],
-          ),
-          Text('      ' + ingredient.name),
-        ]),
+        title: Text(ingredient.name),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -45,7 +45,7 @@ class FrontPageMenu extends StatelessWidget {
             "Meals",
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MealList()));
+                  context, MaterialPageRoute(builder: (context) => MealList(true)));
             },
           ),
           drawerListTile(
@@ -53,7 +53,7 @@ class FrontPageMenu extends StatelessWidget {
             "Menus",
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MealList()));
+                  context, MaterialPageRoute(builder: (context) => MealList(false)));
             },
           ),
           Divider(),

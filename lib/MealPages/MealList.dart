@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/MealPages/CreateMeal.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MealPages/SingleMeal.dart';
@@ -11,7 +12,8 @@ import '../Model/Ingredient.dart';
 import '../Model/Meal.dart';
 
 class MealList extends StatefulWidget {
-  MealList({Key key}) : super(key: key);
+  final bool isMealList;
+  MealList(this.isMealList);
 
   @override
   _MealListState createState() => _MealListState();
@@ -19,40 +21,16 @@ class MealList extends StatefulWidget {
 
 class _MealListState extends State<MealList> {
   bool isLoading = false;
+
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String mealJsonFile = config.mealJsonFile;
+  final String menuJsonFile = config.menuJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   // int calculatorPadding = 10;
 
   @override
   Widget build(BuildContext context) {
-    // List<Meal> mealsnew = [
-    //   Meal(1, "name", 12, [
-    //     Ingredient(1, "name", 40.4, 4288585374, "Kg", amountInGrams: 100),
-    //     Ingredient(2, "name2", 40.4, 4288585374, "Liter", amountInGrams: 100)
-    //   ]),
-    //   Meal(2, "name2", 12, [
-    //     Ingredient(1, "name", 40.4, 4288585374, "Kg", amountInGrams: 100),
-    //     Ingredient(2, "name2", 40.4, 4288585374, "Liter", amountInGrams: 100)
-    //   ]),
-    //   Meal(3, "name3", 12, [
-    //     Ingredient(1, "name", 40.4, 4288585374, "Kg", amountInGrams: 100),
-    //     Ingredient(2, "name2", 40.4, 4288585374, "Liter", amountInGrams: 100)
-    //   ]),
-    // ];
-
-    // List<Ingredient> ingredientsnew = [
-    //   Ingredient(1, "name", 12, 4288585374, "Kg", archived: true),
-    //   Ingredient(2, "name2", 12, 4288585374, "Liter"),
-    //   Ingredient(3, "name3", 12, 4288585374, "Kg"),
-    // ];
-
-    // fileManagement.writeFile(ingredientJsonFile, jsonEncode(ingredientsnew));
-    // print(jsonEncode(ingredientsnew));
-
-    // fileManagement.writeFile(mealJsonFile, jsonEncode(mealsnew));
-
 //Show a loading circle if isLoading is true.
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -60,21 +38,29 @@ class _MealListState extends State<MealList> {
         height: 50,
         child: ElevatedButton.icon(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMeal(),));
+            if (widget.isMealList) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CreateMeal(
+                  isMeals: true,
+                ),
+              ));
+            } else {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => CreateMeal(
+                  isMeals: false,
+                ),
+              ));
+            }
           },
           icon: Icon(Icons.add),
-          label: Text('Create Meal'),
+          label: Text(widget.isMealList ? 'Create Meal' : 'Create Menu'),
           style: ElevatedButton.styleFrom(
             primary: Colors.green, // background
             onPrimary: Colors.white, // foreground
           ),
         ),
       ),
-      appBar: MyAppBarWithCalc('All Meals'),
-
-      // appBar: AppBar(
-      //   title: Text('All Meals'),
-      // ),
+      appBar: MyAppBarWithCalc(widget.isMealList ? 'All Meals' : 'All Menus'),
       body: isLoading
           ? Center(
               child: CircularProgressIndicator(),
@@ -133,13 +119,11 @@ class _MealListState extends State<MealList> {
                                     child: Center(
                                         child: CircularProgressIndicator()));
                               }
-                              //Mao ingredients from firestore to new list.
+                              //Make ingredients from firestore to new list.
                               List<Ingredient> allIngredients =
                                   objManager.jsonToListIngredient(
                                       ingredientJsonSnapshot.data);
-                              // print(ingredientJsonSnapshot.data);
-// print('1st: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
-                              //JOIN meals with updated ingredients because Firestore does not have SQL JOIN.
+                              //JOIN meals with updated ingredients.
                               meals.forEach((meal) {
                                 meal.ingredients.forEach((mIngredient) {
                                   allIngredients.forEach((aIngredient) {
@@ -150,49 +134,104 @@ class _MealListState extends State<MealList> {
                                       mIngredient.measureUnit =
                                           aIngredient.measureUnit;
                                     }
-                                    // print('id ${mIngredient.kgPrice} + ${aIngredient.kgPrice}');
                                   });
                                 });
                               });
-// print('2nd: id: ${meals[0].ingredients[0].id}, name: ${meals[0].ingredients[0].name}, kg Price: ${meals[0].ingredients[0].kgPrice}');
 
-                              return Column(
-                                children: [
-                                  // Divider(
-                                  //   thickness: 2,
-                                  // ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top:40),
-                                    child: ListView.builder(
-                                      itemCount: meals.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return mealListTile(meals[index]);
-                                      },
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
+                              if (widget.isMealList) {
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 40),
+                                      child: ListView.builder(
+                                        itemCount: meals.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return mealListTile(meals[index]);
+                                        },
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                      ),
                                     ),
-                                  ),
-                                  // SizedBox(height: 20,),
-                                  // SizedBox(
-                                  //   height: 90,
-                                  //   width: double.infinity,
-                                  //   child: Padding(
-                                  //     padding: const EdgeInsets.symmetric(
-                                  //         vertical: 20),
-                                  //     child: FlatButton(
-                                  //         shape: ContinuousRectangleBorder(),
-                                  //         color: Colors.blue,
-                                  //         child: Text('Set All Profit Margins'),
-                                  //         onPressed: () {
-                                  //           _showChangeProfitMargin(
-                                  //               context, meals);
-                                  //         }),
-                                  //   ),
-                                  // ),
-                                  SizedBox(height: 400),
-                                ],
-                              );
+                                    SizedBox(height: 400),
+                                  ],
+                                );
+                              } else {
+                                return FutureBuilder(
+                                  future: fileManagement.readFile(menuJsonFile),
+                                  initialData: '',
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot menuJsonSnapshot) {
+                                    if (menuJsonSnapshot.hasError) {
+                                      return Container(
+                                          height: 400,
+                                          child: Center(
+                                              child: Text(
+                                            'Something went wrong.\nPlease try restarting your app.',
+                                            textAlign: TextAlign.center,
+                                          )));
+                                    }
+                                    if (menuJsonSnapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Container(
+                                          height: 400,
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()));
+                                    }
+                                    if (menuJsonSnapshot.data.length == 0) {
+                                      return InitialFutureWidget();
+                                    }
+                                    List<Menu> menus = objManager
+                                        .jsonToListMenu(menuJsonSnapshot.data);
+                                    //JOIN menus with updated ingredients.
+                                    menus.forEach((menu) {
+                                      menu.ingredients.forEach((mIngredient) {
+                                        allIngredients.forEach((aIngredient) {
+                                          if (mIngredient.id ==
+                                              aIngredient.id) {
+                                            mIngredient.name = aIngredient.name;
+                                            mIngredient.color =
+                                                aIngredient.color;
+                                            mIngredient.kgPrice =
+                                                aIngredient.kgPrice;
+                                            mIngredient.measureUnit =
+                                                aIngredient.measureUnit;
+                                          }
+                                        });
+                                      });
+                                      menu.meals.forEach((mMeal) {
+                                        meals.forEach((aMeal) {
+                                          if (mMeal.id == aMeal.id) {
+                                            mMeal.name = aMeal.name;
+                                            mMeal.salePrice = aMeal.salePrice;
+                                          }
+                                        });
+                                      });
+                                    });
+
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 40),
+                                          child: ListView.builder(
+                                            itemCount: menus.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return menuListTile(menus[index]);
+                                            },
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                          ),
+                                        ),
+                                        SizedBox(height: 400),
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
                             });
                       },
                     ),
@@ -212,7 +251,7 @@ class _MealListState extends State<MealList> {
                         style: TextStyle(fontSize: 16),
                       ),
                       trailing: Text(
-                        'Cost/Profit',
+                        'Price/Profit',
                         style: TextStyle(fontSize: 16),
                       ),
                       dense: true,
@@ -250,7 +289,7 @@ class _MealListState extends State<MealList> {
 //Go to meal page when tapped.
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) => SingleMeal(meal.name, meal),
+            builder: (context) => SingleMeal(meal.name, meal: meal, isMeal: true),
           ))
               .then((context) {
             setState(() {});
@@ -260,112 +299,42 @@ class _MealListState extends State<MealList> {
       ),
     );
   }
-//TODO delete or fix change all profit margins.
 
-//Show menu to change all profit margins
-//   _showChangeProfitMargin(BuildContext context, List<Meal> meals) {
-//     showDialog(
-//       context: context,
-//       builder: (context) {
-//         TextEditingController tec = TextEditingController();
-//         return AlertDialog(
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Text('Calculate the Sale Price from a Profit Margin'),
-//               Container(
-//                   padding: EdgeInsets.all(5),
-//                   width: 100,
-//                   child: TextField(
-//                     inputFormatters: <TextInputFormatter>[
-//                       FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-//                     ],
-//                     keyboardType: TextInputType.phone,
-//                     maxLength: 2,
-//                     maxLengthEnforced: true,
-//                     controller: tec,
-//                     decoration: InputDecoration(
-//                         hintText: '%',
-//                         border: OutlineInputBorder(),
-//                         counterText: ''),
-//                   )),
-//             ],
-//           ),
-//           actions: [
-//             FlatButton(
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//                 child: Text('Cancel')),
-//             RaisedButton(
-//               onPressed: () async {
-//                 Navigator.pop(context);
-// //set isLeading to true and update page so it shows a loading screen. then set to false again after async call.
-//                 setState(() {
-//                   isLoading = true;
-//                 });
-//                 await _changeAllProfitMargin(tec.text, meals);
-//                 setState(() {
-//                   isLoading = false;
-//                 });
-//               },
-//               child: Text('Accept'),
-//             )
-//           ],
-//         );
-//       },
-//     );
-//   }
-
-//TODO delete or fix change all profit margins.
-//function to calculate all prices from profit margin and then save.
-//   Future<bool> _changeAllProfitMargin(
-//       String textFieldText, List<Meal> meals) async {
-//     String textfield = textFieldText;
-//     double profitMargin;
-//     bool dbSucess = false;
-//     if (textfield != null) profitMargin = double.tryParse(textfield);
-//     if (profitMargin != null) {
-//       for (var meal in meals) {
-//         double newSalePrice =
-//             ((meal.totalCost / (1 - profitMargin / 100)) * 100)
-//                     .roundToDouble() /
-//                 100;
-//         print(newSalePrice);
-//         // dbSucess =
-//         //     await _saveProfitMarginToDB(meal.id.toString(), newSalePrice);
-//         meal.salePrice = newSalePrice;
-//         print(dbSucess);
-//       }
-// //show error or success message
-//       if (dbSucess) {
-//         // setState(() {});
-//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           content: Text('Profit Margin has been saved.'),
-//         ));
-//         print('success: ' + dbSucess.toString());
-//         return true;
-//       } else {
-//         print('error: ' + dbSucess.toString());
-//         // setState(() {});
-//         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//           content: Text('Something went wrong, please try again.'),
-//         ));
-//       }
-//     }
-//     return false;
-//   }
-
-//Save the profitmargins calculated to firestore database
-  // Future<bool> _saveProfitMarginToDB(String id, double salePrice) {
-  //   return FirestoreRef.mealRef
-  //       .doc(id)
-  //       .update({"salePrice": salePrice}).then((value) {
-  //     print("DB updated");
-  //     return true;
-  //   }).catchError((error) {
-  //     print("Failed to update salePrice in DB: $error");
-  //     return false;
-  //   });
-  // }
+  Widget menuListTile(Menu menu) {
+    return Card(
+      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        title: Text(menu.name),
+        subtitle: Text(
+            '${menu.ingredients.length} Ingredients\n${menu.meals.length} Meals'),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '${menu.salePrice.toStringAsFixed(2)},-',
+              style: TextStyle(color: Colors.blue),
+            ),
+            Text(' / '),
+            Text(
+              '${menu.profit.toStringAsFixed(2)},-',
+              style: TextStyle(
+                  color: menu.profit > 0 ? Colors.green : Colors.orange[700]),
+            ),
+          ],
+        ),
+        onTap: () {
+//Go to menu page when tapped.
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+            builder: (context) => SingleMeal(menu.name, menu: menu, isMeal: false),
+          ))
+              .then((context) {
+            setState(() {});
+          });
+          print(menu.name + ' Tapped!');
+        },
+      ),
+    );
+  }
 }

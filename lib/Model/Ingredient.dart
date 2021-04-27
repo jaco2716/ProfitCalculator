@@ -40,6 +40,6 @@ class Ingredient {
       @override
   String toString() {
     
-    return 'Id: $id, Name: $name, kgPrice: $kgPrice';
+    return 'Id: $id, Name: $name, kgPrice: $kgPrice, color: $color, measureUnit: $measureUnit, amountInGrams: $amountInGrams';
   }
 }

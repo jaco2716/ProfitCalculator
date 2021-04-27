@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 
+import 'MyAppBarWithCalc.dart';
+
 class VATChangePage extends StatefulWidget {
   @override
   _VATChangePageState createState() => _VATChangePageState();
@@ -18,9 +20,7 @@ class _VATChangePageState extends State<VATChangePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Change VAT & Currency'),
-      ),
+      appBar: MyAppBarWithCalc('Set VAT & Currency'),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 30),
         child: Column(

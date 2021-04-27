@@ -1,35 +1,30 @@
 import 'package:profit_calculator/Model/Ingredient.dart';
+import 'package:profit_calculator/Model/Meal.dart';
 
-class Meal {
+import 'Meal.dart';
+
+class Menu {
   int id;
   String name;
   double salePrice;
   List<Ingredient> ingredients;
-  int amount;
+  List<Meal> meals;
 
   //Constructor
-  Meal(this.id, this.name, this.salePrice, this.ingredients,{this.amount});
+  Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals);
 
-  Meal.clone(Meal mealCopy)
-      : this(
-          mealCopy.id,
-          mealCopy.name,
-          mealCopy.salePrice,
-          mealCopy.ingredients,
-        );
-
-  //Get the total cost of the meal, calculated from all ingredients
+  //Get the total cost of the menu, calculated from all ingredients and meals
   double get totalCost {
     double totalPrice = 0;
-    // print(ingredients);
-    // if (ingredients.length != 0 || ingredients != null) {
     ingredients?.forEach((e) {
       if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
         totalPrice += (e.amountInGrams) * e.kgPrice;
       } else
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
-    // }
+    meals?.forEach((e) { 
+      totalPrice += e.totalCost;
+    });
     return totalPrice;
   }
 
@@ -46,20 +41,22 @@ class Meal {
   }
 
   //Json convert function, fromJson and toJson
-  Meal.fromJson(Map<String, dynamic> json)
+  Menu.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
         salePrice = json['salePrice'],
         ingredients = (json['ingredients'] as List)
             ?.map((e) => Ingredient.fromJson(e))
-            ?.toList(); //Når man konverterer en liste af objector fra Json.
+            ?.toList(),    //Når man konverterer en liste af objector fra Json.
+        meals = (json['meals'] as List)
+            ?.map((e) => Meal.fromJson(e))
+            ?.toList();     //Når man konverterer en liste af objector fra Json.
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'salePrice': salePrice,
-        'ingredients': ingredients
-            .map((e) => e.toJson())
-            .toList(), //Når man konverterer en liste af objector til Json.
+        'ingredients': ingredients.map((e) => e.toJson()).toList(),   //Når man konverterer en liste af objector til Json.
+        'meals': meals.map((e) => e.toJson()).toList(),   //Når man konverterer en liste af objector til Json.
       };
 }
