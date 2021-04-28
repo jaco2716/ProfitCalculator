@@ -16,7 +16,6 @@ class Meal {
           mealCopy.name,
           mealCopy.salePrice,
           mealCopy.ingredients,
-          amount: mealCopy.amount,
         );
 
   //Get the total cost of the meal, calculated from all ingredients

@@ -194,7 +194,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
       fileManagement.writeFile(mealJsonFile, mealFileContent);
       fileManagement.writeFile(menuJsonFile, menuFileContent);
-//TODO TEST IF SAVE OF MENU WORDS
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data was restored from save slot $index'),
       ));

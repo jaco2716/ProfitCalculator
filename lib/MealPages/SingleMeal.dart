@@ -182,10 +182,62 @@ class _SingleMealState extends State<SingleMeal> {
                             -_profitMargin, Colors.orange[700], '-')
                         : _profitMarginWidget(
                             _profitMargin, Colors.green[700], ''),
+                    // RaisedButton(
+                    //     child: Text('Choose Profit Margin'),
+                    //     onPressed: () {
+                    //       _showChangeProfitMargin(context);
+                    //     }),
+
                     ingredientList(currencySnapshot.data, _ingredients),
                     !widget.isMeal
                         ? mealList(currencySnapshot.data, widget.menu.meals)
                         : Center(),
+                    // widget.meal.ingredients.length == 0
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.all(25.0),
+                    //         child: Text('No ingredients added.'),
+                    //       )
+                    //     : ListView.separated(
+                    //         separatorBuilder:
+                    //             (BuildContext context, int index) {
+                    //           return Divider(
+                    //             height: 1,
+                    //             thickness: 2,
+                    //           );
+                    //         },
+                    //         itemCount: widget.meal.ingredients.length,
+                    //         itemBuilder:
+                    //             (BuildContext context, int index) {
+                    //           double dividerDouble = widget
+                    //                           .meal
+                    //                           .ingredients[index]
+                    //                           .measureUnit ==
+                    //                       'Kg' ||
+                    //                   widget.meal.ingredients[index]
+                    //                           .measureUnit ==
+                    //                       'Liter'
+                    //               ? 1000
+                    //               : 1;
+                    //           String _lowMeasureUnit = widget
+                    //                       .meal
+                    //                       .ingredients[index]
+                    //                       .measureUnit ==
+                    //                   'Kg'
+                    //               ? 'g'
+                    //               : 'ml';
+                    //           return ListTile(
+                    //             title: Text(
+                    //                 widget.meal.ingredients[index].name),
+                    //             subtitle: Text(
+                    //                 ' - ${widget.meal.ingredients[index].amountInGrams.round()} ' +
+                    //                     _lowMeasureUnit),
+                    //             trailing: Text(
+                    //                 '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
+                    //           );
+                    //         },
+                    //         physics: NeverScrollableScrollPhysics(),
+                    //         shrinkWrap: true,
+                    //       ),
                     Container(
                       padding: EdgeInsets.all(20),
                       width: 200,
@@ -226,7 +278,6 @@ class _SingleMealState extends State<SingleMeal> {
                   child: Text('No ingredients added.'),
                 )
               : ListView.separated(
-                  padding: EdgeInsets.only(bottom: 15),
                   separatorBuilder: (BuildContext context, int index) {
                     return Divider(
                       height: 1,
@@ -285,7 +336,6 @@ class _SingleMealState extends State<SingleMeal> {
                   child: Text('No meals added.'),
                 )
               : ListView.separated(
-                  padding: EdgeInsets.only(bottom: 15),
                   separatorBuilder: (BuildContext context, int index) {
                     return Divider(
                       height: 1,
@@ -297,8 +347,8 @@ class _SingleMealState extends State<SingleMeal> {
                     return ListTile(
                       title: Text(_iMeal[index].name),
                       subtitle: Text(' - x${_iMeal[index].amount} '),
-                      trailing: Text(
-                          '${(_iMeal[index].totalCost * _iMeal[index].amount).toStringAsFixed(2)},- $currencyString'),
+                      trailing:
+                          Text('${(_iMeal[index].totalCost * _iMeal[index].amount) .toStringAsFixed(2)},- $currencyString'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),
@@ -346,7 +396,7 @@ class _SingleMealState extends State<SingleMeal> {
           ),
           (route) => false);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('$_name was deleted.'),
+        content: Text('${_name} was deleted.'),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(

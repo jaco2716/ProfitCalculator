@@ -261,6 +261,7 @@ class _CreateMealState extends State<CreateMeal> {
                   ),
                   !widget.isMeals
                       ? Container(
+                          padding: EdgeInsets.only(bottom: 20),
                           width: 200,
                           child: RaisedButton.icon(
                               padding: EdgeInsets.all(15),
@@ -273,9 +274,9 @@ class _CreateMealState extends State<CreateMeal> {
                               }),
                         )
                       : Center(),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
                   Container(
                     width: 200,
                     child: RaisedButton.icon(
@@ -284,25 +285,25 @@ class _CreateMealState extends State<CreateMeal> {
                         label: Text(widget.isMeals ? 'Save Meal' : 'Save Menu'),
                         onPressed: () => _saveMeal(false)),
                   ),
-                  Container(
-                    width: 200,
-                    child: RaisedButton.icon(
-                        icon: Icon(Icons.save),
-                        padding: EdgeInsets.all(15),
-                        label: Text('delete Menu'),
-                        onPressed: () async {
-                          try {
-                            fileManagement.writeFile(menuJsonFile, '');
-                          } catch (error) {
-                            print('Error saving meal: $error');
-                            return false;
-                          }
-                          return true;
-                        }),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  // Container(
+                  //   width: 200,
+                  //   child: RaisedButton.icon(
+                  //       icon: Icon(Icons.save),
+                  //       padding: EdgeInsets.all(15),
+                  //       label: Text('delete Menu'),
+                  //       onPressed: () async {
+                  //         try {
+                  //           fileManagement.writeFile(menuJsonFile, '');
+                  //         } catch (error) {
+                  //           print('Error saving meal: $error');
+                  //           return false;
+                  //         }
+                  //         return true;
+                  //       }),
+                  // ),
+                  // SizedBox(
+                  //   height: 20,
+                  // ),
                   // widget.editMode ?? false
                   //     ? Container(
                   //         width: 200,
@@ -313,7 +314,6 @@ class _CreateMealState extends State<CreateMeal> {
                   //             onPressed: () => _saveMeal(true)),
                   //       )
                   //     : Center(),
-                  SizedBox(height: 40),
                   SizedBox(height: 400),
                 ],
               ),
