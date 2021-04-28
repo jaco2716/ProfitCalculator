@@ -421,6 +421,11 @@ class _CreateMealState extends State<CreateMeal> {
           } else
             _totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
         });
+        if (!widget.isMeals) {
+          _selectedMeals.forEach((m) {
+            _totalPrice += m.totalCost * m.amount;
+          });
+        }
 
         if (_salePriceChosen) {
           String tempSale = _salePrice.replaceAll(',', '.');
@@ -454,7 +459,6 @@ class _CreateMealState extends State<CreateMeal> {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
               _selectedMeals);
         }
-        print('amount: ${newMenu.meals[0].amount}');
 
         // print('${newMeal.id}, ${newMeal.ingredients}, ${newMeal.name}, ${newMeal.salePrice},');
 
@@ -470,12 +474,13 @@ class _CreateMealState extends State<CreateMeal> {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(_name + ' has been saved.'),
           ));
-          // Navigator.of(context).pop('newMealsss');
           if (!dublicate) {
             if (widget.editMode ?? false) {
-              Navigator.of(context).pop(newMeal);
-              // Navigator.of(context).pushReplacement(MaterialPageRoute(
-              //     builder: (context) => SingleMeal(newMeal.name, newMeal)));
+              if (widget.isMeals) {
+                Navigator.of(context).pop(newMeal);
+              } else {
+                Navigator.of(context).pop(newMenu);
+              }
             } else {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(

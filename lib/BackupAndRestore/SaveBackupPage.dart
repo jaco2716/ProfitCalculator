@@ -17,9 +17,9 @@ class SaveBackupPage extends StatefulWidget {
 class _SaveBackupPageState extends State<SaveBackupPage> {
   final FileManagement fileManagement = FileManagement();
 
-  final String mealJsonFile = config.mealJsonFile;
-
   final String ingredientJsonFile = config.ingredientJsonFile;
+  final String mealJsonFile = config.mealJsonFile;
+  final String menuJsonFile = config.menuJsonFile;
 
   List<String> saveButtonDates = [];
 
@@ -168,6 +168,8 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
           '$ingredientJsonFile$index', ingredientFileContent);
       String mealFileContent = await fileManagement.readFile(mealJsonFile);
       fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
+      String menuFileContent = await fileManagement.readFile(menuJsonFile);
+      fileManagement.writeFile('$menuJsonFile$index', menuFileContent);
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data was saved to save slot $index'),
@@ -186,9 +188,13 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
           await fileManagement.readFile('$ingredientJsonFile$index');
       String mealFileContent =
           await fileManagement.readFile('$mealJsonFile$index');
+      String menuFileContent =
+          await fileManagement.readFile('$menuJsonFile$index');
 
       fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
       fileManagement.writeFile(mealJsonFile, mealFileContent);
+      fileManagement.writeFile(menuJsonFile, menuFileContent);
+//TODO TEST IF SAVE OF MENU WORDS
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data was restored from save slot $index'),
       ));
