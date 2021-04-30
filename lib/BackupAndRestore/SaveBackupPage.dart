@@ -45,38 +45,40 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
     return Scaffold(
       appBar: MyAppBarWithCalc(
           widget.restorePageSelected ? 'Restore Backup' : 'Save Backup'),
-      body: Container(
-        width: double.infinity,
-        // color: Colors.amber,
-        padding: EdgeInsets.all(20),
-        child: FutureBuilder(
-            future: _sharedValueHandler.getStringSharedP(
-                'saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
-            builder: (context, saveAndRestoreSnapshot) {
-              if (saveAndRestoreSnapshot.connectionState ==
-                  ConnectionState.waiting) return CircularProgressIndicator();
-              List<String> saveAndRestoreDates =
-                  saveAndRestoreSnapshot.data.toString().split('%');
+      body: SingleChildScrollView(
+              child: Container(
+          width: double.infinity,
+          // color: Colors.amber,
+          padding: EdgeInsets.all(20),
+          child: FutureBuilder(
+              future: _sharedValueHandler.getStringSharedP(
+                  'saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
+              builder: (context, saveAndRestoreSnapshot) {
+                if (saveAndRestoreSnapshot.connectionState ==
+                    ConnectionState.waiting) return CircularProgressIndicator();
+                List<String> saveAndRestoreDates =
+                    saveAndRestoreSnapshot.data.toString().split('%');
 
-              return Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text(
-                      pageTitle,
-                      textAlign: TextAlign.center,
+                return Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        pageTitle,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 1),
-                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 2),
-                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 3),
-                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 4),
-                  saveSlotButton(saveButtonTitle, saveAndRestoreDates, 5),
-                ],
-              );
-            }),
+                    saveSlotButton(saveButtonTitle, saveAndRestoreDates, 1),
+                    saveSlotButton(saveButtonTitle, saveAndRestoreDates, 2),
+                    saveSlotButton(saveButtonTitle, saveAndRestoreDates, 3),
+                    saveSlotButton(saveButtonTitle, saveAndRestoreDates, 4),
+                    saveSlotButton(saveButtonTitle, saveAndRestoreDates, 5),
+                  ],
+                );
+              }),
+        ),
       ),
     );
   }
@@ -104,7 +106,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
               restoreDataFromSaveFile(index);
             });
           } else {
-            _saveAndRestoreDialog(context, 'Restore from Save slot $index',
+            _saveAndRestoreDialog(context, 'Save to Save slot $index',
                 'Are you sure you want to save your data to this save file?\nThis will replace the data on the save file with your current data.',
                 myOnPressed: () {
               saveDataToSaveFile(index, dateLastSaved);

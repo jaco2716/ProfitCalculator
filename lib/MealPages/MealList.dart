@@ -92,7 +92,7 @@ class _MealListState extends State<MealList> {
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
-                        if (mealJsonSnapshot.data.length == 0) {
+                        if (mealJsonSnapshot.data.length == 0 && widget.isMealList) {
                           return InitialFutureWidget();
                         }
                         //Map data from firestore to list of objects

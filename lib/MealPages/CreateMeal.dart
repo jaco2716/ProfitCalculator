@@ -454,7 +454,7 @@ class _CreateMealState extends State<CreateMeal> {
         Meal newMeal;
         Menu newMenu;
         if (widget.isMeals) {
-          newMeal = Meal(newID, _name, _finalSalePrice, _selectedIngredients);
+          newMeal = Meal(newID, _name, _finalSalePrice, _selectedIngredients, amount: 1);
         } else {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
               _selectedMeals);

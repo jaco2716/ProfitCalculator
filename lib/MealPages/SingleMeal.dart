@@ -347,8 +347,8 @@ class _SingleMealState extends State<SingleMeal> {
                     return ListTile(
                       title: Text(_iMeal[index].name),
                       subtitle: Text(' - x${_iMeal[index].amount} '),
-                      trailing:
-                          Text('${(_iMeal[index].totalCost * _iMeal[index].amount) .toStringAsFixed(2)},- $currencyString'),
+                      trailing: Text(
+                          '${(_iMeal[index].totalCost * _iMeal[index].amount).toStringAsFixed(2)},- $currencyString'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),
@@ -387,7 +387,11 @@ class _SingleMealState extends State<SingleMeal> {
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-    deleteSuccess = await _deleteMealFromFile(widget.meal);
+    if (widget.isMeal) {
+      deleteSuccess = await _deleteMealFromFile(widget.meal);
+    } else {
+      deleteSuccess = await _deleteMenuFromFile(widget.menu);
+    }
 
     if (deleteSuccess) {
       Navigator.of(context).pushAndRemoveUntil(
@@ -409,12 +413,62 @@ class _SingleMealState extends State<SingleMeal> {
     try {
       String fileContent = await fileManagement.readFile(mealJsonFile);
       List<Meal> allMeals = objManager.jsonToListMeal(fileContent);
-      int deleteIndex =
-          allMeals.indexWhere((element) => element.id == newMeal.id);
-      allMeals.removeAt(deleteIndex);
-      fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
+
+      String menuFileContent = await fileManagement.readFile(menuJsonFile);
+      List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+      int mealFoundIndex = -1;
+      if (allMenusFromFile != null) {
+        for (var m in allMenusFromFile) {
+          mealFoundIndex = m.meals.indexWhere((i) => i.id == widget.meal.id);
+          if (mealFoundIndex >= 0) {
+            break;
+          }
+        }
+      }
+
+      if (mealFoundIndex != -1) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('Error'),
+              content: Text(
+                  'Could not delete ingredient, because one or more meals are using it.'),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Ok'))
+              ],
+            );
+          },
+        );
+        return false;
+      } else {
+        int deleteIndex =
+            allMeals.indexWhere((element) => element.id == newMeal.id);
+        allMeals.removeAt(deleteIndex);
+        fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
+      }
     } catch (error) {
       print('Error deleting meal: $error');
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> _deleteMenuFromFile(Menu newMenu) async {
+    try {
+      String fileContent = await fileManagement.readFile(menuJsonFile);
+      List<Menu> allMenus = objManager.jsonToListMenu(fileContent);
+      int deleteIndex =
+          allMenus.indexWhere((element) => element.id == newMenu.id);
+      allMenus.removeAt(deleteIndex);
+      fileManagement.writeFile(menuJsonFile, jsonEncode(allMenus));
+    } catch (error) {
+      print('Error deleting menu: $error');
       return false;
     }
     return true;

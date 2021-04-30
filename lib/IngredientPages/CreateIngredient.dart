@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
+import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import '../Model/Ingredient.dart';
@@ -34,12 +35,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
   String ingredientJsonFile = config.ingredientJsonFile;
   String mealJsonFile = config.mealJsonFile;
+  String menuJsonFile = config.menuJsonFile;
   List<Ingredient> ingredientsList = <Ingredient>[];
 
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-
 
   @override
   void initState() {
@@ -99,39 +100,40 @@ class _CreateIngredientState extends State<CreateIngredient> {
                       height: 20,
                     ),
                     FutureBuilder(
-                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
-                      initialData: '',
-                      builder: (context, currencySnapshot) {
-                        return Container(
-                          // width: MediaQuery.of(context).size.width - 110,
-                          child: TextFormField(
-                            readOnly: true,
-                            onTap: () {
-                              inputAmuntDialog();
-                            },
-                            controller: _kgPriceController,
-                            decoration: InputDecoration(
-                              suffixText:
-                                  _measureUnit == 'Kg' || _measureUnit == 'g'
-                                      ? '${currencySnapshot.data}/Kg'
-                                      : '${currencySnapshot.data}/Liter',
-                              border: OutlineInputBorder(),
-                              labelText: 'Kg Price / Liter Price',
+                        future: _sharedValueHandler.getStringSharedP(
+                            'CurrencyChosen', 'DKK'),
+                        initialData: '',
+                        builder: (context, currencySnapshot) {
+                          return Container(
+                            // width: MediaQuery.of(context).size.width - 110,
+                            child: TextFormField(
+                              readOnly: true,
+                              onTap: () {
+                                inputAmuntDialog();
+                              },
+                              controller: _kgPriceController,
+                              decoration: InputDecoration(
+                                suffixText:
+                                    _measureUnit == 'Kg' || _measureUnit == 'g'
+                                        ? '${currencySnapshot.data}/Kg'
+                                        : '${currencySnapshot.data}/Liter',
+                                border: OutlineInputBorder(),
+                                labelText: 'Kg Price / Liter Price',
+                              ),
+                              // initialValue:
+                              //     widget.editMode ?? false ? _kgPrice : null,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'[0-9,.]'))
+                              ],
+                              keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true),
+                              validator: (value) => validateDouble(value),
+                              onSaved: (value) => _kgPrice = value,
+                              onFieldSubmitted: (value) => changeFocus(),
                             ),
-                            // initialValue:
-                            //     widget.editMode ?? false ? _kgPrice : null,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9,.]'))
-                            ],
-                            keyboardType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            validator: (value) => validateDouble(value),
-                            onSaved: (value) => _kgPrice = value,
-                            onFieldSubmitted: (value) => changeFocus(),
-                          ),
-                        );
-                      }
-                    ),
+                          );
+                        }),
                     SizedBox(
                       height: 20,
                     ),
@@ -238,7 +240,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
         newID = DateTime.now().millisecondsSinceEpoch;
 
 //Create object
-      String _newMeasureUnit = _measureUnit == 'Kg'|| _measureUnit == 'g' ? 'Kg' : 'Liter';
+      String _newMeasureUnit =
+          _measureUnit == 'Kg' || _measureUnit == 'g' ? 'Kg' : 'Liter';
       Ingredient newIngredient = Ingredient(
           newID, _name, finalKgPrice, currentColor.value, _newMeasureUnit);
 
@@ -329,7 +332,20 @@ class _CreateIngredientState extends State<CreateIngredient> {
       }
     }
 
-    if (ingredientFoundIndex != -1) {
+    String menuFileContent = await fileManagement.readFile(menuJsonFile);
+    List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+    int ingredientinmenuFoundIndex = -1;
+    if (allMenusFromFile != null) {
+      for (var m in allMenusFromFile) {
+        ingredientinmenuFoundIndex =
+            m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        if (ingredientinmenuFoundIndex >= 0) {
+          break;
+        }
+      }
+    }
+
+    if (ingredientFoundIndex != -1 || ingredientinmenuFoundIndex != -1) {
       Navigator.of(context).pop();
       showDialog(
         context: context,
@@ -337,7 +353,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
           return AlertDialog(
             title: Text('Error'),
             content: Text(
-                'Could not delete ingredient, because one or more meals are using it.'),
+                'Could not delete ingredient, because one or more meals or menus are using it.'),
             actions: [
               TextButton(
                   onPressed: () {
