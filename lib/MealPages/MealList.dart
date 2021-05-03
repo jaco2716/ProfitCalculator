@@ -39,18 +39,27 @@ class _MealListState extends State<MealList> {
         child: ElevatedButton.icon(
           onPressed: () {
             if (widget.isMealList) {
-              Navigator.of(context).push(MaterialPageRoute(
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
                 builder: (context) => CreateMeal(
                   isMeals: true,
                 ),
-              ));
+              ))
+                  .then((value) {
+                setState(() {});
+              });
             } else {
-              Navigator.of(context).push(MaterialPageRoute(
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
                 builder: (context) => CreateMeal(
                   isMeals: false,
                 ),
-              ));
+              ))
+                  .then((value) {
+                setState(() {});
+              });
             }
+            // setState(() {});
           },
           icon: Icon(Icons.add),
           label: Text(widget.isMealList ? 'Create Meal' : 'Create Menu'),
@@ -92,12 +101,15 @@ class _MealListState extends State<MealList> {
                               child:
                                   Center(child: CircularProgressIndicator()));
                         }
-                        if (mealJsonSnapshot.data.length == 0 && widget.isMealList) {
+                        if (mealJsonSnapshot.data.length == 0 &&
+                            widget.isMealList) {
                           return InitialFutureWidget();
                         }
                         //Map data from firestore to list of objects
                         List<Meal> meals =
                             objManager.jsonToListMeal(mealJsonSnapshot.data);
+
+                            // meals.sort((a,b) => a.profitMargin.compareTo(b.profitMargin));
 
                         return FutureBuilder(
                             future: fileManagement.readFile(ingredientJsonFile),
@@ -332,6 +344,7 @@ class _MealListState extends State<MealList> {
               .then((context) {
             setState(() {});
           });
+
           print(menu.name + ' Tapped!');
         },
       ),

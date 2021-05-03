@@ -44,14 +44,14 @@ class _SingleMealState extends State<SingleMeal> {
       _name = widget.meal.name;
       _totalCost = widget.meal.totalCost;
       _salePrice = widget.meal.salePrice;
-      _profitMargin = widget.meal.profitMargin;
+      // _profitMargin = widget.meal.profitMargin;
       _profit = widget.meal.profit;
       _ingredients = widget.meal.ingredients;
     } else {
       _name = widget.menu.name;
       _totalCost = widget.menu.totalCost;
       _salePrice = widget.menu.salePrice;
-      _profitMargin = widget.menu.profitMargin;
+      // _profitMargin = widget.menu.profitMargin;
       _profit = widget.menu.profit;
       _ingredients = widget.menu.ingredients;
     }
@@ -91,165 +91,209 @@ class _SingleMealState extends State<SingleMeal> {
       ),
       body: SingleChildScrollView(
           child: FutureBuilder(
-              future:
-                  _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
-              initialData: '',
-              builder: (context, currencySnapshot) {
-                return Column(
-                  children: [
-                    Card(
-                      color: Colors.red[50],
-                      elevation: 5,
-                      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-                      child: Container(
-                          width: double.infinity,
-                          child: ListTile(
-                            title: Text(
-                              'Total Cost:',
-                              style: TextStyle(color: Colors.red[700]),
-                            ),
-                            trailing: Text(
-                              '${_totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              style: TextStyle(color: Colors.red[700]),
-                            ),
-                          )),
-                    ),
-                    Card(
-                      color: Colors.indigo[50],
-                      elevation: 5,
-                      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-                      child: Container(
-                          width: double.infinity,
-                          child: ListTile(
-                            title: Text(
-                              'Net Price:',
-                              style: TextStyle(color: Colors.blue[700]),
-                            ),
-                            trailing: Text(
-                              '${_salePrice.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              style: TextStyle(color: Colors.blue[700]),
-                            ),
-                          )),
-                    ),
-                    Card(
-                      color: Colors.blue[50],
-                      elevation: 5,
-                      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-                      child: Container(
-                          width: double.infinity,
-                          child: FutureBuilder(
-                              future: sharedVH.getIntSharedP('VATPercent', 25),
-                              initialData: 0,
-                              builder: (context, snapshot) {
-                                return ListTile(
-                                    title: Text(
-                                      'Gross Price (${snapshot.data}% VAT):',
-                                      style: TextStyle(color: Colors.blue[700]),
-                                    ),
-                                    trailing: Text(
-                                      '${(_salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                      style: TextStyle(color: Colors.blue[700]),
-                                    ));
-                              })),
-                    ),
-                    Card(
-                      elevation: 5,
-                      color: _profitMargin > 0
-                          ? Colors.green[50]
-                          : Colors.orange[50],
-                      margin: EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-                      child: Container(
-                          width: double.infinity,
-                          child: ListTile(
-                            title: Text(
-                              'Profit:',
-                              style: TextStyle(
-                                  color: _profitMargin > 0
-                                      ? Colors.green[700]
-                                      : Colors.orange[700]),
-                            ),
-                            trailing: Text(
-                              '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              style: TextStyle(
-                                  color: _profitMargin > 0
-                                      ? Colors.green[700]
-                                      : Colors.orange[700]),
-                            ),
-                          )),
-                    ),
-                    _profitMargin < 0
-                        ? _profitMarginWidget(
-                            -_profitMargin, Colors.orange[700], '-')
-                        : _profitMarginWidget(
-                            _profitMargin, Colors.green[700], ''),
-                    // RaisedButton(
-                    //     child: Text('Choose Profit Margin'),
-                    //     onPressed: () {
-                    //       _showChangeProfitMargin(context);
-                    //     }),
+              future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
+              builder: (context, hourPriceSnapshot) {
+                if (hourPriceSnapshot.connectionState ==
+                    ConnectionState.waiting) return CircularProgressIndicator();
+                return FutureBuilder(
+                    future: _sharedValueHandler.getStringSharedP(
+                        'CurrencyChosen', 'DKK'),
+                    initialData: '',
+                    builder: (context, currencySnapshot) {
+                      if (currencySnapshot.connectionState ==
+                          ConnectionState.waiting)
+                        return CircularProgressIndicator();
+                      int _hourPrice = hourPriceSnapshot.data;
+                      double _totalWithHour = 0;
+                      print('minutes:');
+                      print('hourprice: ${_hourPrice}');
+                      if (widget.isMeal) {
+                        _profitMargin = widget.meal.profitMargin(_hourPrice);
 
-                    ingredientList(currencySnapshot.data, _ingredients),
-                    !widget.isMeal
-                        ? mealList(currencySnapshot.data, widget.menu.meals)
-                        : Center(),
-                    // widget.meal.ingredients.length == 0
-                    //     ? Padding(
-                    //         padding: const EdgeInsets.all(25.0),
-                    //         child: Text('No ingredients added.'),
-                    //       )
-                    //     : ListView.separated(
-                    //         separatorBuilder:
-                    //             (BuildContext context, int index) {
-                    //           return Divider(
-                    //             height: 1,
-                    //             thickness: 2,
-                    //           );
-                    //         },
-                    //         itemCount: widget.meal.ingredients.length,
-                    //         itemBuilder:
-                    //             (BuildContext context, int index) {
-                    //           double dividerDouble = widget
-                    //                           .meal
-                    //                           .ingredients[index]
-                    //                           .measureUnit ==
-                    //                       'Kg' ||
-                    //                   widget.meal.ingredients[index]
-                    //                           .measureUnit ==
-                    //                       'Liter'
-                    //               ? 1000
-                    //               : 1;
-                    //           String _lowMeasureUnit = widget
-                    //                       .meal
-                    //                       .ingredients[index]
-                    //                       .measureUnit ==
-                    //                   'Kg'
-                    //               ? 'g'
-                    //               : 'ml';
-                    //           return ListTile(
-                    //             title: Text(
-                    //                 widget.meal.ingredients[index].name),
-                    //             subtitle: Text(
-                    //                 ' - ${widget.meal.ingredients[index].amountInGrams.round()} ' +
-                    //                     _lowMeasureUnit),
-                    //             trailing: Text(
-                    //                 '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
-                    //           );
-                    //         },
-                    //         physics: NeverScrollableScrollPhysics(),
-                    //         shrinkWrap: true,
-                    //       ),
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      width: 200,
-                      child: IconButton(
-                          iconSize: 40,
-                          color: Colors.red,
-                          icon: Icon(Icons.delete),
-                          padding: EdgeInsets.all(15),
-                          onPressed: () => _deleteMealDialog(context)),
-                    ),
-                  ],
-                );
+                        _totalWithHour = _totalCost +
+                            (_hourPrice / 60) * widget.meal.minutesToMake;
+                      } else {
+                        _profitMargin = widget.menu.profitMargin(_hourPrice);
+                        _totalWithHour = _totalCost +
+                            (_hourPrice / 60) * widget.menu.totalMinutesToMake;
+                      }
+                      return Column(
+                        children: [
+                          Card(
+                            color: Colors.red[50],
+                            elevation: 5,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 5),
+                            child: Container(
+                                width: double.infinity,
+                                child: ListTile(
+                                  title: Text(
+                                    'Total Cost:',
+                                    style: TextStyle(color: Colors.red[700]),
+                                  ),
+                                  trailing: Text(
+                                    '${_totalWithHour.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                    style: TextStyle(color: Colors.red[700]),
+                                  ),
+                                )),
+                          ),
+                          Card(
+                            color: Colors.indigo[50],
+                            elevation: 5,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 5),
+                            child: Container(
+                                width: double.infinity,
+                                child: ListTile(
+                                  title: Text(
+                                    'Net Price:',
+                                    style: TextStyle(color: Colors.blue[700]),
+                                  ),
+                                  trailing: Text(
+                                    '${_salePrice.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                    style: TextStyle(color: Colors.blue[700]),
+                                  ),
+                                )),
+                          ),
+                          Card(
+                            color: Colors.blue[50],
+                            elevation: 5,
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 5),
+                            child: Container(
+                                width: double.infinity,
+                                child: FutureBuilder(
+                                    future: sharedVH.getIntSharedP(
+                                        'VATPercent', 25),
+                                    initialData: 0,
+                                    builder: (context, snapshot) {
+                                      return ListTile(
+                                          title: Text(
+                                            'Gross Price (${snapshot.data}% VAT):',
+                                            style: TextStyle(
+                                                color: Colors.blue[700]),
+                                          ),
+                                          trailing: Text(
+                                            '${(_salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                            style: TextStyle(
+                                                color: Colors.blue[700]),
+                                          ));
+                                    })),
+                          ),
+                          Card(
+                            elevation: 5,
+                            color: _profitMargin > 0
+                                ? Colors.green[50]
+                                : Colors.orange[50],
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 5),
+                            child: Container(
+                                width: double.infinity,
+                                child: ListTile(
+                                  title: Text(
+                                    'Profit:',
+                                    style: TextStyle(
+                                        color: _profitMargin > 0
+                                            ? Colors.green[700]
+                                            : Colors.orange[700]),
+                                  ),
+                                  trailing: Text(
+                                    '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                    style: TextStyle(
+                                        color: _profitMargin > 0
+                                            ? Colors.green[700]
+                                            : Colors.orange[700]),
+                                  ),
+                                )),
+                          ),
+                          _profitMargin < 0
+                              ? _profitMarginWidget(
+                                  -_profitMargin, Colors.orange[700], '-')
+                              : _profitMarginWidget(
+                                  _profitMargin, Colors.green[700], ''),
+                          // RaisedButton(
+                          //     child: Text('Choose Profit Margin'),
+                          //     onPressed: () {
+                          //       _showChangeProfitMargin(context);
+                          //     }),
+
+                          ingredientList(currencySnapshot.data, _ingredients),
+                          !widget.isMeal
+                              ? mealList(currencySnapshot.data,
+                                  widget.menu.meals, _hourPrice)
+                              : Center(),
+                          widget.isMeal
+                              ? Card(
+                                  margin: EdgeInsets.all(20),
+                                  child: ListTile(
+                                    title: Text(
+                                        'Time spent making meal.'), //'Cost for time spend\nmaking meal.'
+                                    subtitle: Text(
+                                        ' - ${widget.meal.minutesToMake} min'),
+                                    trailing: Text(
+                                        '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- DKK'),
+                                  ),
+                                )
+                              : Center(),
+                          // widget.meal.ingredients.length == 0
+                          //     ? Padding(
+                          //         padding: const EdgeInsets.all(25.0),
+                          //         child: Text('No ingredients added.'),
+                          //       )
+                          //     : ListView.separated(
+                          //         separatorBuilder:
+                          //             (BuildContext context, int index) {
+                          //           return Divider(
+                          //             height: 1,
+                          //             thickness: 2,
+                          //           );
+                          //         },
+                          //         itemCount: widget.meal.ingredients.length,
+                          //         itemBuilder:
+                          //             (BuildContext context, int index) {
+                          //           double dividerDouble = widget
+                          //                           .meal
+                          //                           .ingredients[index]
+                          //                           .measureUnit ==
+                          //                       'Kg' ||
+                          //                   widget.meal.ingredients[index]
+                          //                           .measureUnit ==
+                          //                       'Liter'
+                          //               ? 1000
+                          //               : 1;
+                          //           String _lowMeasureUnit = widget
+                          //                       .meal
+                          //                       .ingredients[index]
+                          //                       .measureUnit ==
+                          //                   'Kg'
+                          //               ? 'g'
+                          //               : 'ml';
+                          //           return ListTile(
+                          //             title: Text(
+                          //                 widget.meal.ingredients[index].name),
+                          //             subtitle: Text(
+                          //                 ' - ${widget.meal.ingredients[index].amountInGrams.round()} ' +
+                          //                     _lowMeasureUnit),
+                          //             trailing: Text(
+                          //                 '${(widget.meal.ingredients[index].kgPrice * widget.meal.ingredients[index].amountInGrams / dividerDouble).toStringAsFixed(2)},- ${currencySnapshot.data}'),
+                          //           );
+                          //         },
+                          //         physics: NeverScrollableScrollPhysics(),
+                          //         shrinkWrap: true,
+                          //       ),
+                          Container(
+                            padding: EdgeInsets.all(20),
+                            width: 200,
+                            child: IconButton(
+                                iconSize: 40,
+                                color: Colors.red,
+                                icon: Icon(Icons.delete),
+                                padding: EdgeInsets.all(15),
+                                onPressed: () => _deleteMealDialog(context)),
+                          ),
+                        ],
+                      );
+                    });
               })),
     );
   }
@@ -312,7 +356,7 @@ class _SingleMealState extends State<SingleMeal> {
     );
   }
 
-  Widget mealList(String currencyString, List<Meal> _iMeal) {
+  Widget mealList(String currencyString, List<Meal> _iMeals, int _iHourPrice) {
     return Card(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -330,7 +374,7 @@ class _SingleMealState extends State<SingleMeal> {
           Divider(
             thickness: 1,
           ),
-          _iMeal.length == 0
+          _iMeals.length == 0
               ? Padding(
                   padding: const EdgeInsets.all(25.0),
                   child: Text('No meals added.'),
@@ -342,18 +386,22 @@ class _SingleMealState extends State<SingleMeal> {
                       thickness: 2,
                     );
                   },
-                  itemCount: _iMeal.length,
+                  itemCount: _iMeals.length,
                   itemBuilder: (BuildContext context, int index) {
+                    double _iTotalPrice;
+                    _iTotalPrice = (_iMeals[index].totalCost +
+                            (_iHourPrice / 60) * _iMeals[index].minutesToMake) *
+                        _iMeals[index].amount;
+
                     return ListTile(
-                      title: Text(_iMeal[index].name),
-                      subtitle: Text(' - x${_iMeal[index].amount} '),
-                      trailing: Text(
-                          '${(_iMeal[index].totalCost * _iMeal[index].amount).toStringAsFixed(2)},- $currencyString'),
+                      title: Text(_iMeals[index].name),
+                      subtitle: Text(' - x${_iMeals[index].amount} '),
+                      trailing: Text('$_iTotalPrice ,- $currencyString'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                )
+                ),
         ],
       ),
     );
@@ -394,11 +442,13 @@ class _SingleMealState extends State<SingleMeal> {
     }
 
     if (deleteSuccess) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => MyHomePage(),
-          ),
-          (route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute(
+      //       builder: (context) => MyHomePage(),
+      //     ),
+      //     (route) => false);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('${_name} was deleted.'),
       ));
@@ -490,7 +540,7 @@ class _SingleMealState extends State<SingleMeal> {
             textAlign: TextAlign.center,
             style: new TextStyle(fontWeight: FontWeight.w300, fontSize: 30.0),
           ),
-          Text('Profit Margin'),
+          Text('Profit'),
         ],
       ),
       circularStrokeCap: CircularStrokeCap.round,

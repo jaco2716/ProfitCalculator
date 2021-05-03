@@ -11,6 +11,7 @@ class VATChangePage extends StatefulWidget {
 
 class _VATChangePageState extends State<VATChangePage> {
   final TextEditingController vatTec = TextEditingController();
+  final TextEditingController hourPriceTec = TextEditingController();
   String dropdownValue = 'USD';
   List<bool> initialLoads = [true, true];
 
@@ -21,73 +22,33 @@ class _VATChangePageState extends State<VATChangePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBarWithCalc('Set VAT & Currency'),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 30.0),
-              child: Center(
-                child: Icon(
-                  Icons.attach_money,
-                  size: 80,
-                  color: Colors.blue[200],
+      body: SingleChildScrollView(
+              child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: Center(
+                  child: Icon(
+                    Icons.attach_money,
+                    size: 60,
+                    color: Colors.blue[200],
+                  ),
                 ),
               ),
-            ),
-            FutureBuilder(
-              future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
-              initialData: '',
-              builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
-                if(vatSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
-                if (initialLoads[0]) {
-                  print('vatSnapshot');
-                  print(vatSnapshot);
-                  vatTec.text = vatSnapshot.data.toString();
-                  initialLoads[0] = false;
-                }
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Card(
-                      color: Colors.grey[300],
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('VAT in %:       '),
-                            Expanded(
-                              child: TextField(
-                                // onChanged: (value) {
-                                //   tec.text = value;
-                                // },
-
-                                controller: vatTec,
-                                // decoration: InputDecoration(hintText: 'VAT in %'),
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9]'))
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
-                );
-              },
-            ),
-            FutureBuilder(
-                future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
-                builder: (context, currencySnapshot) {
-                if(currencySnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
-
-                  if (initialLoads[1]) {
-                    initialLoads[1] = false;
-                    dropdownValue = currencySnapshot.data;
+              FutureBuilder(
+                future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
+                initialData: '',
+                builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
+                  if(vatSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                  if (initialLoads[0]) {
+                    print('vatSnapshot');
+                    print(vatSnapshot);
+                    vatTec.text = vatSnapshot.data.toString();
+                    initialLoads[0] = false;
                   }
-
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Card(
@@ -95,71 +56,157 @@ class _VATChangePageState extends State<VATChangePage> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Currency:       '),
-                                Expanded(
-                                  child: DropdownButton<String>(
-                                    isExpanded: true,
-                                    value: dropdownValue,
-                                    // icon: const Icon(Icons.arrow_downward),
-                                    // iconSize: 24,
-                                    // elevation: 16,
-                                    // style: const TextStyle(color: Colors.grey),
-                                    underline: Container(
-                                      height: 2,
-                                      color: Colors.blue,
-                                    ),
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        dropdownValue = newValue;
-                                      });
-                                    },
-                                    items: <String>[
-                                      'USD',
-                                      'DKK',
-                                      'GBP',
-                                      'EUR',
-                                      'JPY',
-                                      'CHF',
-                                      'CAD',
-                                      'AUD'
-                                    ].map<DropdownMenuItem<String>>(
-                                        (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('VAT in %:       '),
+                              Expanded(
+                                child: TextField(
+                                  // onChanged: (value) {
+                                  //   tec.text = value;
+                                  // },
+
+                                  controller: vatTec,
+                                  // decoration: InputDecoration(hintText: 'VAT in %'),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9]'))
+                                  ],
                                 ),
-                              ]),
+                              ),
+                            ],
+                          ),
                         )),
                   );
-                }),
-            drawerListTile(
-              tileIcon: Icon(Icons.save),
-              tileTitle: "Save",
-              myOnPressed: () async {
-                String vattext = vatTec.text;
-                String currencytext = dropdownValue;
-                int valueInt = int.parse(vattext);
-                bool saveSucces = await _sharedValueHandler.saveIntSharedP(
-                    valueInt, 'CurrencyChosen');
-                saveSucces = await _sharedValueHandler.saveStringSharedP(
-                    currencytext, 'CurrencyChosen');
-                if (saveSucces) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                          'VAT & Currency has been set to $vattext% & $currencytext.')));
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Something went wrong.')));
-                }
-              },
-            ),
-          ],
+                },
+              ),
+              FutureBuilder(
+                future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
+                initialData: '',
+                builder: (BuildContext context, AsyncSnapshot hourPriceSnapshot) {
+                  if(hourPriceSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                  // if (initialLoads[0]) {
+                    hourPriceTec.text = hourPriceSnapshot.data.toString();
+                  //   initialLoads[0] = false;
+                  // }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Card(
+                        color: Colors.grey[300],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Hourly rate:   '),
+                              Expanded(
+                                child: TextField(
+                                  // onChanged: (value) {
+                                  //   tec.text = value;
+                                  // },
+
+                                  controller: hourPriceTec,
+                                  // decoration: InputDecoration(hintText: 'VAT in %'),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9]'))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                  );
+                },
+              ),
+              FutureBuilder(
+                  future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
+                  builder: (context, currencySnapshot) {
+                  if(currencySnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+
+                    if (initialLoads[1]) {
+                      initialLoads[1] = false;
+                      dropdownValue = currencySnapshot.data;
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Card(
+                          color: Colors.grey[300],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Currency:       '),
+                                  Expanded(
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: dropdownValue,
+                                      // icon: const Icon(Icons.arrow_downward),
+                                      // iconSize: 24,
+                                      // elevation: 16,
+                                      // style: const TextStyle(color: Colors.grey),
+                                      underline: Container(
+                                        height: 2,
+                                        color: Colors.blue,
+                                      ),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          dropdownValue = newValue;
+                                        });
+                                      },
+                                      items: <String>[
+                                        'USD',
+                                        'DKK',
+                                        'GBP',
+                                        'EUR',
+                                        'JPY',
+                                        'CHF',
+                                        'CAD',
+                                        'AUD'
+                                      ].map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ]),
+                          )),
+                    );
+                  }),
+              drawerListTile(
+                tileIcon: Icon(Icons.save),
+                tileTitle: "Save",
+                myOnPressed: () async {
+                  String vattext = vatTec.text;
+                  String hourPrice = hourPriceTec.text;
+                  String currencytext = dropdownValue;
+                  int vatInt = int.parse(vattext);
+                  int hourPriceInt = int.parse(hourPrice);
+                  bool saveSucces = await _sharedValueHandler.saveIntSharedP(
+                      vatInt, 'VATPercent');
+                  saveSucces = await _sharedValueHandler.saveIntSharedP(
+                      hourPriceInt, 'hourPrice');
+                  saveSucces = await _sharedValueHandler.saveStringSharedP(
+                      currencytext, 'CurrencyChosen');
+                  if (saveSucces) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'VAT & Currency has been set to $vattext% & $currencytext.')));
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Something went wrong.')));
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

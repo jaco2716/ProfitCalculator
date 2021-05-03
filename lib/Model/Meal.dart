@@ -5,18 +5,17 @@ class Meal {
   String name;
   double salePrice;
   List<Ingredient> ingredients;
+  int minutesToMake;
   int amount;
 
   //Constructor
-  Meal(this.id, this.name, this.salePrice, this.ingredients, {this.amount});
+  Meal(this.id, this.name, this.salePrice, this.ingredients, this.minutesToMake,
+      {this.amount});
 
   Meal.clone(Meal mealCopy)
-      : this(
-          mealCopy.id,
-          mealCopy.name,
-          mealCopy.salePrice,
-          mealCopy.ingredients,
-        );
+      : this(mealCopy.id, mealCopy.name, mealCopy.salePrice,
+            mealCopy.ingredients, mealCopy.minutesToMake,
+            amount: mealCopy.amount);
 
   //Get the total cost of the meal, calculated from all ingredients
   double get totalCost {
@@ -38,13 +37,21 @@ class Meal {
     return (salePrice - totalCost);
   }
 
-  double get profitMargin {
-    if (salePrice != 0) {
-      return (profit / salePrice * 100);
+  double profitMargin(int hourPrice) {
+    if (salePrice != 0 && totalCost != 0) {
+      double totalWithHour = totalCost + ((hourPrice / 60) * minutesToMake);
+      return ((salePrice - totalWithHour) / totalWithHour) * 100;
     } else {
       return 0;
     }
   }
+  // double get profitMargin {
+  //   if (salePrice != 0) {
+  //     return (profit / salePrice * 100);
+  //   } else {
+  //     return 0;
+  //   }
+  // }
 
   //Json convert function, fromJson and toJson
   Meal.fromJson(Map<String, dynamic> json)
@@ -54,6 +61,7 @@ class Meal {
         ingredients = (json['ingredients'] as List)
             ?.map((e) => Ingredient.fromJson(e))
             ?.toList(), //Når man konverterer en liste af objector fra Json.
+        minutesToMake = json['minutesToMake'],
         amount = json['amount'];
 
   Map<String, dynamic> toJson() => {
@@ -63,6 +71,7 @@ class Meal {
         'ingredients': ingredients
             .map((e) => e.toJson())
             .toList(), //Når man konverterer en liste af objector til Json.
+        'minutesToMake': minutesToMake,
         'amount': amount,
       };
 }

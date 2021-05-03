@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/MealPages/SingleMeal.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
@@ -25,6 +27,7 @@ class _CreateMealState extends State<CreateMeal> {
   final _formKey = GlobalKey<FormState>();
   String _name;
   String _salePrice;
+  String _minutesToMake;
   String _profitMargin;
   bool _salePriceChosen = true;
 
@@ -39,6 +42,7 @@ class _CreateMealState extends State<CreateMeal> {
   String ingredientJsonFile = config.ingredientJsonFile;
   String mealJsonFile = config.mealJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   //Get all ingredients from firestore
   getIngredientsFromFile() async {
@@ -63,6 +67,7 @@ class _CreateMealState extends State<CreateMeal> {
   initEditMealMode() {
     String tempSale;
     _name = widget.editMeal.name;
+    _minutesToMake = widget.editMeal.minutesToMake.toString();
     tempSale = widget.editMeal.salePrice.toString();
     _salePrice = tempSale.replaceAll('.', ',');
     _selectedIngredients =
@@ -98,224 +103,260 @@ class _CreateMealState extends State<CreateMeal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBarWithCalc(widget.isMeals ? 'Create Meal' : 'Create Menu'),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Container(
-            constraints: BoxConstraints(maxWidth: 400),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Name',
-                      ),
-                      initialValue: _name,
-                      keyboardType: TextInputType.name,
-                      validator: (value) => validateString(value),
-                      onSaved: (value) => _name = value,
-                      onFieldSubmitted: (value) => changeFocus(),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      !_salePriceChosen
-                          ? Container(
-                              width: 150,
-                              child: Text(
-                                'Sale Price',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey),
-                              ))
-                          : Container(
-                              width: 150,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Sale Price',
-                                ),
-                                initialValue: _salePrice,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9.,]'))
-                                ],
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                validator: (value) => validateDouble(value),
-                                onSaved: (value) => _salePrice = value,
-                                onFieldSubmitted: (value) => changeFocus(),
-                              ),
-                            ),
-                      CircleAvatar(
-                        child: IconButton(
-                          icon: Icon(_salePriceChosen
-                              ? Icons.arrow_back
-                              : Icons.arrow_forward),
-                          onPressed: () {
-                            setState(() {
-                              _salePriceChosen = !_salePriceChosen;
-                            });
-                          },
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 400),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Name',
                         ),
+                        initialValue: _name,
+                        keyboardType: TextInputType.name,
+                        validator: (value) => validateString(value),
+                        onSaved: (value) => _name = value,
+                        onFieldSubmitted: (value) => changeFocus(),
                       ),
-                      _salePriceChosen
-                          ? Container(
-                              width: 150,
-                              child: Text(
-                                'Profit Margin %',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey),
-                              ))
-                          : Container(
-                              width: 150,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 10),
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  labelText: 'Profit Margin %',
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        !_salePriceChosen
+                            ? Container(
+                                width: 170,
+                                child: Text(
+                                  'Sale Price',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey),
+                                ))
+                            : Container(
+                                width: 170,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Sale Price',
+                                  ),
+                                  initialValue: _salePrice,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9.,]'))
+                                  ],
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  validator: (value) => validateDouble(value),
+                                  onSaved: (value) => _salePrice = value,
+                                  onFieldSubmitted: (value) => changeFocus(),
                                 ),
-                                initialValue: _profitMargin,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9.,]'))
-                                ],
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                validator: (value) => validateDouble(value),
-                                onSaved: (value) => _profitMargin = value,
-                                onFieldSubmitted: (value) => changeFocus(),
                               ),
+                        CircleAvatar(
+                          child: IconButton(
+                            icon: Icon(_salePriceChosen
+                                ? Icons.arrow_back
+                                : Icons.arrow_forward),
+                            onPressed: () {
+                              print(_minutesToMake);
+                              setState(() {
+                                _salePriceChosen = !_salePriceChosen;
+                              });
+                            },
+                          ),
+                        ),
+                        _salePriceChosen
+                            ? Container(
+                                width: 130,
+                                child: Text(
+                                  'Profit %',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey),
+                                ))
+                            : Container(
+                                width: 130,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                child: TextFormField(
+                                  decoration: InputDecoration(
+                                    labelText: 'Profit %',
+                                  ),
+                                  initialValue: _profitMargin,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9.,]'))
+                                  ],
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  validator: (value) => validateDouble(value),
+                                  onSaved: (value) => _profitMargin = value,
+                                  onFieldSubmitted: (value) => changeFocus(),
+                                ),
+                              ),
+                      ],
+                    ),
+                    widget.isMeals
+                        ? Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Minutes to make meal',
+                              ),
+                              initialValue: _minutesToMake,
+                              keyboardType: TextInputType.number,
+                              validator: (value) => validateInt(value),
+                              onSaved: (value) => _minutesToMake = value,
+                              onFieldSubmitted: (value) => changeFocus(),
                             ),
-                    ],
-                  ),
-                  Divider(thickness: 1),
-                  Text(
-                    _selectedIngredients.length == 0
-                        ? 'No ingredients added.'
-                        : 'Ingredients:',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w300),
-                  ),
-                  Container(
-                    // color: Colors.red,
-                    padding: EdgeInsets.all(10),
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      itemCount: _selectedIngredients.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ingredientListTile(_selectedIngredients[index]);
-                      },
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                          )
+                        : Center(),
+                    Divider(thickness: 1),
+                    Text(
+                      _selectedIngredients.length == 0
+                          ? 'No ingredients added.'
+                          : 'Ingredients:',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w300),
                     ),
-                  ),
-                  Divider(thickness: 1),
-                  !widget.isMeals
-                      ? Text(
-                          _selectedMeals.length == 0
-                              ? 'No meals added.'
-                              : 'Meals:',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w300),
-                        )
-                      : Center(),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(0),
-                      itemCount: _selectedMeals.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return mealListTile(_selectedMeals[index]);
-                      },
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                    Container(
+                      // color: Colors.red,
+                      padding: EdgeInsets.all(10),
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        itemCount: _selectedIngredients.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return ingredientListTile(
+                              _selectedIngredients[index]);
+                        },
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    width: 200,
-                    child: RaisedButton.icon(
-                        padding: EdgeInsets.all(15),
-                        icon: Icon(Icons.add),
-                        label: Text('Add Ingredients'),
-                        color: Colors.pink,
-                        onPressed: () {
-                          _showEditIngredients(
-                              eIngredients: ingredients, eIsIngredients: true);
-                        }),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  !widget.isMeals
-                      ? Container(
-                          padding: EdgeInsets.only(bottom: 20),
-                          width: 200,
-                          child: RaisedButton.icon(
-                              padding: EdgeInsets.all(15),
-                              icon: Icon(Icons.add),
-                              label: Text('Add Meals'),
-                              color: Colors.pink,
-                              onPressed: () {
-                                _showEditIngredients(
-                                    eMeals: meals, eIsIngredients: false);
-                              }),
-                        )
-                      : Center(),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  Container(
-                    width: 200,
-                    child: RaisedButton.icon(
-                        icon: Icon(Icons.save),
-                        padding: EdgeInsets.all(15),
-                        label: Text(widget.isMeals ? 'Save Meal' : 'Save Menu'),
-                        onPressed: () => _saveMeal(false)),
-                  ),
-                  // Container(
-                  //   width: 200,
-                  //   child: RaisedButton.icon(
-                  //       icon: Icon(Icons.save),
-                  //       padding: EdgeInsets.all(15),
-                  //       label: Text('delete Menu'),
-                  //       onPressed: () async {
-                  //         try {
-                  //           fileManagement.writeFile(menuJsonFile, '');
-                  //         } catch (error) {
-                  //           print('Error saving meal: $error');
-                  //           return false;
-                  //         }
-                  //         return true;
-                  //       }),
-                  // ),
-                  // SizedBox(
-                  //   height: 20,
-                  // ),
-                  // widget.editMode ?? false
-                  //     ? Container(
-                  //         width: 200,
-                  //         child: FlatButton.icon(
-                  //             icon: Icon(Icons.copy),
-                  //             padding: EdgeInsets.all(15),
-                  //             label: Text('Dublicate'),
-                  //             onPressed: () => _saveMeal(true)),
-                  //       )
-                  //     : Center(),
-                  SizedBox(height: 400),
-                ],
+                    Container(
+                      width: 200,
+                      child: RaisedButton.icon(
+                          padding: EdgeInsets.all(15),
+                          icon: Icon(Icons.add),
+                          label: Text('Add Ingredients'),
+                          color: Colors.pink,
+                          onPressed: () {
+                            _showEditIngredients(
+                                eIngredients: ingredients,
+                                eIsIngredients: true);
+                          }),
+                    ),
+                    Divider(thickness: 1),
+                    !widget.isMeals
+                        ? Text(
+                            _selectedMeals.length == 0
+                                ? 'No meals added.'
+                                : 'Meals:',
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w300),
+                          )
+                        : Center(),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        itemCount: _selectedMeals.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return mealListTile(_selectedMeals[index]);
+                        },
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                    ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    // Container(
+                    //   width: 200,
+                    //   child: RaisedButton.icon(
+                    //       padding: EdgeInsets.all(15),
+                    //       icon: Icon(Icons.add),
+                    //       label: Text('Add Ingredients'),
+                    //       color: Colors.pink,
+                    //       onPressed: () {
+                    //         _showEditIngredients(
+                    //             eIngredients: ingredients, eIsIngredients: true);
+                    //       }),
+                    // ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    !widget.isMeals
+                        ? Container(
+                            padding: EdgeInsets.only(bottom: 20),
+                            width: 200,
+                            child: RaisedButton.icon(
+                                padding: EdgeInsets.all(15),
+                                icon: Icon(Icons.add),
+                                label: Text('Add Meals'),
+                                color: Colors.pink,
+                                onPressed: () {
+                                  _showEditIngredients(
+                                      eMeals: meals, eIsIngredients: false);
+                                }),
+                          )
+                        : Center(),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    Container(
+                      width: 200,
+                      child: RaisedButton.icon(
+                          icon: Icon(Icons.save),
+                          padding: EdgeInsets.all(15),
+                          label:
+                              Text(widget.isMeals ? 'Save Meal' : 'Save Menu'),
+                          onPressed: () => _saveMeal(false)),
+                    ),
+                    // Container(
+                    //   width: 200,
+                    //   child: RaisedButton.icon(
+                    //       icon: Icon(Icons.save),
+                    //       padding: EdgeInsets.all(15),
+                    //       label: Text('delete Menu'),
+                    //       onPressed: () async {
+                    //         try {
+                    //           fileManagement.writeFile(menuJsonFile, '');
+                    //         } catch (error) {
+                    //           print('Error saving meal: $error');
+                    //           return false;
+                    //         }
+                    //         return true;
+                    //       }),
+                    // ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    // widget.editMode ?? false
+                    //     ? Container(
+                    //         width: 200,
+                    //         child: FlatButton.icon(
+                    //             icon: Icon(Icons.copy),
+                    //             padding: EdgeInsets.all(15),
+                    //             label: Text('Dublicate'),
+                    //             onPressed: () => _saveMeal(true)),
+                    //       )
+                    //     : Center(),
+                    SizedBox(height: 400),
+                  ],
+                ),
               ),
             ),
           ),
@@ -413,6 +454,8 @@ class _CreateMealState extends State<CreateMeal> {
       if (nullIndex == -1) {
         _formKey.currentState.save();
         double _finalSalePrice;
+        int _finalMinutesToMake = 0;
+        if (widget.isMeals) _finalMinutesToMake = int.parse(_minutesToMake);
 
         double _totalPrice = 0;
         _selectedIngredients.forEach((e) {
@@ -432,8 +475,20 @@ class _CreateMealState extends State<CreateMeal> {
           _finalSalePrice = double.parse(tempSale);
         } else {
           String tempProfit = _profitMargin.replaceAll(',', '.');
+          if (widget.isMeals) {
+            int _hourPrice =
+                await _sharedValueHandler.getIntSharedP('hourPrice', 100);
 
-          _finalSalePrice = _totalPrice / (1 - double.parse(tempProfit) / 100);
+            print('MINUTES!!!::::.::________');
+            print(_finalMinutesToMake);
+
+            _totalPrice = _totalPrice + (_hourPrice / 60 * _finalMinutesToMake);
+          }
+
+          //_finalSalePrice = _totalPrice / (1 - double.parse(tempProfit) / 100);
+
+          _finalSalePrice =
+              ((double.parse(tempProfit) / 100) * _totalPrice) + _totalPrice;
         }
 
         _finalSalePrice = (_finalSalePrice * 100).roundToDouble() / 100;
@@ -454,7 +509,10 @@ class _CreateMealState extends State<CreateMeal> {
         Meal newMeal;
         Menu newMenu;
         if (widget.isMeals) {
-          newMeal = Meal(newID, _name, _finalSalePrice, _selectedIngredients, amount: 1);
+          newMeal = Meal(newID, _name, _finalSalePrice, _selectedIngredients,
+              _finalMinutesToMake,
+              amount: 1);
+          print(newMeal);
         } else {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
               _selectedMeals);
@@ -482,11 +540,18 @@ class _CreateMealState extends State<CreateMeal> {
                 Navigator.of(context).pop(newMenu);
               }
             } else {
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (context) => MyHomePage(),
-                  ),
-                  (route) => false);
+              if (widget.isMeals) {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) =>
+                        SingleMeal(meal: newMeal, isMeal: true)));
+              } else {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) =>
+                        SingleMeal(menu: newMenu, isMeal: false)));
+              }
+              // Navigator.of(context).pushAndRemoveUntil(
+              //     MaterialPageRoute(builder: (context) => MyHomePage()),
+              //     (route) => false);
             }
           }
         } else {
@@ -687,6 +752,15 @@ class _CreateMealState extends State<CreateMeal> {
     try {
       value = value.replaceAll(',', '.');
       double.parse(value);
+      return null;
+    } catch (error) {
+      return "Invalid number.";
+    }
+  }
+
+  String validateInt(String value) {
+    try {
+      int.parse(value);
       return null;
     } catch (error) {
       return "Invalid number.";
