@@ -1,6 +1,7 @@
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 
+import 'Extra.dart';
 import 'Meal.dart';
 
 class Menu {
@@ -9,9 +10,10 @@ class Menu {
   double salePrice;
   List<Ingredient> ingredients;
   List<Meal> meals;
+  List<Extra> extras;
 
   //Constructor
-  Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals);
+  Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals, this.extras);
 
   //Get the total cost of the menu, calculated from all ingredients and meals
   double get totalCost {
@@ -24,6 +26,9 @@ class Menu {
     });
     meals?.forEach((e) {
       totalPrice += e.totalCost * e.amount;
+    });
+    extras?.forEach((e) {
+      totalPrice += e.buyPrice * e.amount;
     });
     return totalPrice;
   }
@@ -75,6 +80,9 @@ class Menu {
             ?.toList(), //Når man konverterer en liste af objector fra Json.
         meals = (json['meals'] as List)
             ?.map((e) => Meal.fromJson(e))
+            ?.toList(), //Når man konverterer en liste af objector fra Json.
+        extras = (json['extras'] as List)
+            ?.map((e) => Extra.fromJson(e))
             ?.toList(); //Når man konverterer en liste af objector fra Json.
 
   Map<String, dynamic> toJson() => {
@@ -85,6 +93,9 @@ class Menu {
             .map((e) => e.toJson())
             .toList(), //Når man konverterer en liste af objector til Json.
         'meals': meals
+            .map((e) => e.toJson())
+            .toList(), //Når man konverterer en liste af objector til Json.
+        'extras': extras
             .map((e) => e.toJson())
             .toList(), //Når man konverterer en liste af objector til Json.
       };

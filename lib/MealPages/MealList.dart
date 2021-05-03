@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MealPages/CreateMeal.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
@@ -22,11 +23,14 @@ class MealList extends StatefulWidget {
 class _MealListState extends State<MealList> {
   bool isLoading = false;
 
+  int _hourPrice = 0;
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String mealJsonFile = config.mealJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
+  final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+
   // int calculatorPadding = 10;
 
   @override
@@ -80,42 +84,23 @@ class _MealListState extends State<MealList> {
                   child: Container(
                     constraints: BoxConstraints(maxWidth: 700),
                     child: FutureBuilder(
-                      future: fileManagement.readFile(mealJsonFile),
-                      initialData: '',
-                      builder: (context, mealJsonSnapshot) {
-                        // print(mealFileSnapshot.data);
-                        if (mealJsonSnapshot.hasError) {
-                          return Container(
-                              height: 400,
-                              child: Center(
-                                  child: Text(
-                                'Something went wrong.\nPlease try restarting your app.',
-                                textAlign: TextAlign.center,
-                              )));
-                        }
-
-                        if (mealJsonSnapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Container(
-                              height: 400,
-                              child:
-                                  Center(child: CircularProgressIndicator()));
-                        }
-                        if (mealJsonSnapshot.data.length == 0 &&
-                            widget.isMealList) {
-                          return InitialFutureWidget();
-                        }
-                        //Map data from firestore to list of objects
-                        List<Meal> meals =
-                            objManager.jsonToListMeal(mealJsonSnapshot.data);
-
-                            // meals.sort((a,b) => a.profitMargin.compareTo(b.profitMargin));
-
-                        return FutureBuilder(
-                            future: fileManagement.readFile(ingredientJsonFile),
+                        future:
+                            _sharedValueHandler.getIntSharedP('hourPrice', 100),
+                        builder: (context, hourSnapshot) {
+                          if (hourSnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                                height: 400,
+                                child:
+                                    Center(child: CircularProgressIndicator()));
+                          }
+                          _hourPrice = hourSnapshot.data;
+                          return FutureBuilder(
+                            future: fileManagement.readFile(mealJsonFile),
                             initialData: '',
-                            builder: (context, ingredientJsonSnapshot) {
-                              if (ingredientJsonSnapshot.hasError) {
+                            builder: (context, mealJsonSnapshot) {
+                              // print(mealFileSnapshot.data);
+                              if (mealJsonSnapshot.hasError) {
                                 return Container(
                                     height: 400,
                                     child: Center(
@@ -124,57 +109,33 @@ class _MealListState extends State<MealList> {
                                       textAlign: TextAlign.center,
                                     )));
                               }
-                              if (ingredientJsonSnapshot.connectionState ==
+
+                              if (mealJsonSnapshot.connectionState ==
                                   ConnectionState.waiting) {
                                 return Container(
                                     height: 400,
                                     child: Center(
                                         child: CircularProgressIndicator()));
                               }
-                              //Make ingredients from firestore to new list.
-                              List<Ingredient> allIngredients =
-                                  objManager.jsonToListIngredient(
-                                      ingredientJsonSnapshot.data);
-                              //JOIN meals with updated ingredients.
-                              meals.forEach((meal) {
-                                meal.ingredients.forEach((mIngredient) {
-                                  allIngredients.forEach((aIngredient) {
-                                    if (mIngredient.id == aIngredient.id) {
-                                      mIngredient.name = aIngredient.name;
-                                      mIngredient.color = aIngredient.color;
-                                      mIngredient.kgPrice = aIngredient.kgPrice;
-                                      mIngredient.measureUnit =
-                                          aIngredient.measureUnit;
-                                    }
-                                  });
-                                });
-                              });
+                              if (mealJsonSnapshot.data.length == 0 ||
+                                  mealJsonSnapshot.data == '[]' &&
+                                      widget.isMealList) {
+                                return InitialFutureWidget();
+                              }
+                              //Map data from firestore to list of objects
+                              List<Meal> meals = objManager
+                                  .jsonToListMeal(mealJsonSnapshot.data);
 
-                              if (widget.isMealList) {
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 40),
-                                      child: ListView.builder(
-                                        itemCount: meals.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return mealListTile(meals[index]);
-                                        },
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                      ),
-                                    ),
-                                    SizedBox(height: 400),
-                                  ],
-                                );
-                              } else {
-                                return FutureBuilder(
-                                  future: fileManagement.readFile(menuJsonFile),
+                              meals.sort((b, a) => a
+                                  .profitMargin(_hourPrice)
+                                  .compareTo(b.profitMargin(_hourPrice)));
+
+                              return FutureBuilder(
+                                  future: fileManagement
+                                      .readFile(ingredientJsonFile),
                                   initialData: '',
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot menuJsonSnapshot) {
-                                    if (menuJsonSnapshot.hasError) {
+                                  builder: (context, ingredientJsonSnapshot) {
+                                    if (ingredientJsonSnapshot.hasError) {
                                       return Container(
                                           height: 400,
                                           child: Center(
@@ -183,7 +144,8 @@ class _MealListState extends State<MealList> {
                                             textAlign: TextAlign.center,
                                           )));
                                     }
-                                    if (menuJsonSnapshot.connectionState ==
+                                    if (ingredientJsonSnapshot
+                                            .connectionState ==
                                         ConnectionState.waiting) {
                                       return Container(
                                           height: 400,
@@ -191,14 +153,13 @@ class _MealListState extends State<MealList> {
                                               child:
                                                   CircularProgressIndicator()));
                                     }
-                                    if (menuJsonSnapshot.data.length == 0) {
-                                      return InitialFutureWidget();
-                                    }
-                                    List<Menu> menus = objManager
-                                        .jsonToListMenu(menuJsonSnapshot.data);
-                                    //JOIN menus with updated ingredients.
-                                    menus.forEach((menu) {
-                                      menu.ingredients.forEach((mIngredient) {
+                                    //Make ingredients from firestore to new list.
+                                    List<Ingredient> allIngredients =
+                                        objManager.jsonToListIngredient(
+                                            ingredientJsonSnapshot.data);
+                                    //JOIN meals with updated ingredients.
+                                    meals.forEach((meal) {
+                                      meal.ingredients.forEach((mIngredient) {
                                         allIngredients.forEach((aIngredient) {
                                           if (mIngredient.id ==
                                               aIngredient.id) {
@@ -212,41 +173,125 @@ class _MealListState extends State<MealList> {
                                           }
                                         });
                                       });
-                                      menu.meals.forEach((mMeal) {
-                                        meals.forEach((aMeal) {
-                                          if (mMeal.id == aMeal.id) {
-                                            mMeal.name = aMeal.name;
-                                            mMeal.salePrice = aMeal.salePrice;
-                                          }
-                                        });
-                                      });
                                     });
 
-                                    return Column(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 40),
-                                          child: ListView.builder(
-                                            itemCount: menus.length,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return menuListTile(menus[index]);
-                                            },
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
+                                    if (widget.isMealList) {
+                                      return Column(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 40),
+                                            child: ListView.builder(
+                                              itemCount: meals.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return mealListTile(
+                                                    meals[index]);
+                                              },
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 400),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            });
-                      },
-                    ),
+                                          SizedBox(height: 400),
+                                        ],
+                                      );
+                                    } else {
+                                      return FutureBuilder(
+                                        future: fileManagement
+                                            .readFile(menuJsonFile),
+                                        initialData: '',
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot menuJsonSnapshot) {
+                                          if (menuJsonSnapshot.hasError) {
+                                            return Container(
+                                                height: 400,
+                                                child: Center(
+                                                    child: Text(
+                                                  'Something went wrong.\nPlease try restarting your app.',
+                                                  textAlign: TextAlign.center,
+                                                )));
+                                          }
+                                          if (menuJsonSnapshot
+                                                  .connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Container(
+                                                height: 400,
+                                                child: Center(
+                                                    child:
+                                                        CircularProgressIndicator()));
+                                          }
+                                          if (menuJsonSnapshot.data.length ==
+                                                  0 ||
+                                              menuJsonSnapshot.data == '[]') {
+                                            return InitialFutureWidget();
+                                          }
+                                          List<Menu> menus =
+                                              objManager.jsonToListMenu(
+                                                  menuJsonSnapshot.data);
+                                          menus.sort((b, a) => a
+                                              .profitMargin(_hourPrice)
+                                              .compareTo(
+                                                  b.profitMargin(_hourPrice)));
+                                          //JOIN menus with updated ingredients.
+                                          menus.forEach((menu) {
+                                            menu.ingredients
+                                                .forEach((mIngredient) {
+                                              allIngredients
+                                                  .forEach((aIngredient) {
+                                                if (mIngredient.id ==
+                                                    aIngredient.id) {
+                                                  mIngredient.name =
+                                                      aIngredient.name;
+                                                  mIngredient.color =
+                                                      aIngredient.color;
+                                                  mIngredient.kgPrice =
+                                                      aIngredient.kgPrice;
+                                                  mIngredient.measureUnit =
+                                                      aIngredient.measureUnit;
+                                                }
+                                              });
+                                            });
+                                            menu.meals.forEach((mMeal) {
+                                              meals.forEach((aMeal) {
+                                                if (mMeal.id == aMeal.id) {
+                                                  mMeal.name = aMeal.name;
+                                                  mMeal.salePrice =
+                                                      aMeal.salePrice;
+                                                }
+                                              });
+                                            });
+                                          });
+
+                                          return Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 40),
+                                                child: ListView.builder(
+                                                  itemCount: menus.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return menuListTile(
+                                                        menus[index]);
+                                                  },
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                ),
+                                              ),
+                                              SizedBox(height: 400),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  });
+                            },
+                          );
+                        }),
                   ),
                 ),
               ),
@@ -263,7 +308,7 @@ class _MealListState extends State<MealList> {
                         style: TextStyle(fontSize: 16),
                       ),
                       trailing: Text(
-                        'Price/Profit',
+                        'Price / Profit',
                         style: TextStyle(fontSize: 16),
                       ),
                       dense: true,
@@ -277,6 +322,7 @@ class _MealListState extends State<MealList> {
 
 //List Tile for every meal
   Widget mealListTile(Meal meal) {
+    //double profitWMinutes = meal.profit - (_hourPrice/60*meal.minutesToMake);
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: ListTile(
@@ -291,7 +337,7 @@ class _MealListState extends State<MealList> {
             ),
             Text(' / '),
             Text(
-              '${meal.profit.toStringAsFixed(2)},-',
+              '${meal.profitMargin(_hourPrice).round()}%',
               style: TextStyle(
                   color: meal.profit > 0 ? Colors.green : Colors.orange[700]),
             ),

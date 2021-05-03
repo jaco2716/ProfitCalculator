@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MealPages/SingleMeal.dart';
+import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
@@ -36,12 +37,15 @@ class _CreateMealState extends State<CreateMeal> {
 
   List<Ingredient> _selectedIngredients = <Ingredient>[];
   List<Meal> _selectedMeals = <Meal>[];
+  List<Extra> _selectedExtras = <Extra>[];
   List<Ingredient> ingredients = <Ingredient>[];
   List<Meal> meals = <Meal>[];
+  List<Extra> extras = <Extra>[];
 
   String ingredientJsonFile = config.ingredientJsonFile;
   String mealJsonFile = config.mealJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  String extraJsonFile = config.extraJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   //Get all ingredients from firestore
@@ -55,12 +59,12 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
   getMealsFromFile() async {
-    String fileContent = await fileManagement.readFile(mealJsonFile);
-    List<Meal> tempMeals = <Meal>[];
+    String mealFileContent = await fileManagement.readFile(mealJsonFile);
+    String extraFileContent = await fileManagement.readFile(extraJsonFile);
+    // List<Meal> tempMeals = <Meal>[];
 
-    tempMeals = objManager.jsonToListMeal(fileContent);
-    meals = tempMeals;
-    // tempIngredients.where((element) => element.archived == false).toList();
+    meals = objManager.jsonToListMeal(mealFileContent);
+    extras = objManager.jsonToListExtra(extraFileContent);
   }
 
 //Check if meal is being edited and insert object.
@@ -82,6 +86,8 @@ class _CreateMealState extends State<CreateMeal> {
     _selectedIngredients =
         widget.editMenu.ingredients?.map((e) => Ingredient.clone(e))?.toList();
     _selectedMeals = widget.editMenu.meals?.map((e) => Meal.clone(e))?.toList();
+    _selectedExtras =
+        widget.editMenu.extras?.map((e) => Extra.clone(e))?.toList();
   }
 
   @override
@@ -119,6 +125,7 @@ class _CreateMealState extends State<CreateMeal> {
                           EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: TextFormField(
                         decoration: InputDecoration(
+                          border: OutlineInputBorder(),
                           labelText: 'Name',
                         ),
                         initialValue: _name,
@@ -134,18 +141,21 @@ class _CreateMealState extends State<CreateMeal> {
                       children: [
                         !_salePriceChosen
                             ? Container(
-                                width: 170,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 30,
                                 child: Text(
                                   'Sale Price',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey),
                                 ))
                             : Container(
-                                width: 170,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 30,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 10),
                                 child: TextFormField(
                                   decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
                                     labelText: 'Sale Price',
                                   ),
                                   initialValue: _salePrice,
@@ -175,18 +185,21 @@ class _CreateMealState extends State<CreateMeal> {
                         ),
                         _salePriceChosen
                             ? Container(
-                                width: 130,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 30,
                                 child: Text(
                                   'Profit %',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey),
                                 ))
                             : Container(
-                                width: 130,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 30,
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 10),
                                 child: TextFormField(
                                   decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
                                     labelText: 'Profit %',
                                   ),
                                   initialValue: _profitMargin,
@@ -209,6 +222,7 @@ class _CreateMealState extends State<CreateMeal> {
                                 horizontal: 20, vertical: 10),
                             child: TextFormField(
                               decoration: InputDecoration(
+                                border: OutlineInputBorder(),
                                 labelText: 'Minutes to make meal',
                               ),
                               initialValue: _minutesToMake,
@@ -220,15 +234,8 @@ class _CreateMealState extends State<CreateMeal> {
                           )
                         : Center(),
                     Divider(thickness: 1),
-                    Text(
-                      _selectedIngredients.length == 0
-                          ? 'No ingredients added.'
-                          : 'Ingredients:',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w300),
-                    ),
+                    itemListTitle('Ingredients:', 'No ingredients added.',
+                        _selectedIngredients.length),
                     Container(
                       // color: Colors.red,
                       padding: EdgeInsets.all(10),
@@ -252,21 +259,13 @@ class _CreateMealState extends State<CreateMeal> {
                           color: Colors.pink,
                           onPressed: () {
                             _showEditIngredients(
-                                eIngredients: ingredients,
-                                eIsIngredients: true);
+                                eIngredients: ingredients, type: 0);
                           }),
                     ),
                     Divider(thickness: 1),
                     !widget.isMeals
-                        ? Text(
-                            _selectedMeals.length == 0
-                                ? 'No meals added.'
-                                : 'Meals:',
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w300),
-                          )
+                        ? itemListTitle(
+                            'Meals:', 'No meals added.', _selectedMeals.length)
                         : Center(),
                     Container(
                       padding: EdgeInsets.all(10),
@@ -280,6 +279,7 @@ class _CreateMealState extends State<CreateMeal> {
                         physics: NeverScrollableScrollPhysics(),
                       ),
                     ),
+
                     // SizedBox(
                     //   height: 20,
                     // ),
@@ -300,7 +300,7 @@ class _CreateMealState extends State<CreateMeal> {
                     // ),
                     !widget.isMeals
                         ? Container(
-                            padding: EdgeInsets.only(bottom: 20),
+                            // padding: EdgeInsets.only(bottom: 20),
                             width: 200,
                             child: RaisedButton.icon(
                                 padding: EdgeInsets.all(15),
@@ -308,14 +308,42 @@ class _CreateMealState extends State<CreateMeal> {
                                 label: Text('Add Meals'),
                                 color: Colors.pink,
                                 onPressed: () {
-                                  _showEditIngredients(
-                                      eMeals: meals, eIsIngredients: false);
+                                  _showEditIngredients(eMeals: meals, type: 1);
                                 }),
                           )
                         : Center(),
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
+                    Divider(thickness: 1),
+                    !widget.isMeals
+                        ? itemListTitle('Extras:', 'No extras added.',
+                            _selectedExtras.length)
+                        : Center(),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(0),
+                        itemCount: _selectedExtras.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return extraListTile(_selectedExtras[index]);
+                        },
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                      ),
+                    ),
+                    !widget.isMeals
+                        ? Container(
+                            padding: EdgeInsets.only(bottom: 20),
+                            width: 200,
+                            child: RaisedButton.icon(
+                                padding: EdgeInsets.all(15),
+                                icon: Icon(Icons.add),
+                                label: Text('Add Extras'),
+                                color: Colors.pink,
+                                onPressed: () {
+                                  _showEditIngredients(
+                                      eExtras: extras, type: 2);
+                                }),
+                          )
+                        : Center(),
                     Container(
                       width: 200,
                       child: RaisedButton.icon(
@@ -367,19 +395,42 @@ class _CreateMealState extends State<CreateMeal> {
 
   //Show a menu to choose wich ingredients are in the meal
   _showEditIngredients(
-      {List<Ingredient> eIngredients, List<Meal> eMeals, bool eIsIngredients}) {
-    String ingredientOrMeal = eIsIngredients ? 'ingredients' : 'meals';
+      {List<Ingredient> eIngredients,
+      List<Meal> eMeals,
+      List<Extra> eExtras,
+      int type}) {
+    String ingredientOrMeal; // = eIsIngredients ? 'ingredients' : 'meals';
     bool listIsEmpty = false;
-    if (eIsIngredients) {
-      if (eIngredients.length == 0) {
-        listIsEmpty = true;
-      }
-    } else {
-      if (eMeals.length == 0) {
-        listIsEmpty = true;
-      }
+    int listLenght = 0;
+    switch (type) {
+      case 0:
+        ingredientOrMeal = 'ingredients';
+        if (eIngredients.length == 0) {
+          listIsEmpty = true;
+        } else {
+          listLenght = eIngredients.length;
+        }
+        break;
+      case 1:
+        ingredientOrMeal = 'meals';
+        if (eMeals.length == 0) {
+          listIsEmpty = true;
+        } else {
+          listLenght = eMeals.length;
+        }
+        break;
+      case 2:
+        ingredientOrMeal = 'extras';
+        if (eExtras.length == 0) {
+          listIsEmpty = true;
+        } else {
+          listLenght = eExtras.length;
+        }
+        break;
+      default:
+        ingredientOrMeal = 'ingredients';
     }
-    //bool showArchived = false;
+
     showModalBottomSheet(
       enableDrag: false,
       isScrollControlled: true,
@@ -405,14 +456,24 @@ class _CreateMealState extends State<CreateMeal> {
                                 color: Colors.grey,
                               )))
                       : ListView.builder(
-                          itemCount: eIsIngredients
-                              ? eIngredients.length
-                              : eMeals.length,
+                          itemCount: listLenght,
                           itemBuilder: (BuildContext context, int index) {
-                            return eIsIngredients
-                                ? addIngredientListTile(
-                                    eIngredients[index], setModalState)
-                                : addMealListTile(eMeals[index], setModalState);
+                            switch (type) {
+                              case 0:
+                                return addIngredientListTile(
+                                    eIngredients[index], setModalState);
+                                break;
+                              case 1:
+                                return addMealListTile(
+                                    eMeals[index], setModalState);
+                                break;
+                              case 2:
+                                return addExtraListTile(
+                                    eExtras[index], setModalState);
+                                break;
+                              default:
+                                ingredientOrMeal = 'ingredients';
+                            }
                           },
                         ),
                 ),
@@ -441,13 +502,6 @@ class _CreateMealState extends State<CreateMeal> {
 // Create final meal object and save it
   _saveMeal(bool dublicate) async {
     if (_formKey.currentState.validate()) {
-      // if (_selectedIngredients.length == 0) {
-      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //     content: Text('No ingredients added.'),
-      //   ));
-      //   return;
-      // }
-
       int nullIndex = _selectedIngredients
           .indexWhere((ingredient) => ingredient.amountInGrams == null);
 
@@ -455,6 +509,8 @@ class _CreateMealState extends State<CreateMeal> {
         _formKey.currentState.save();
         double _finalSalePrice;
         int _finalMinutesToMake = 0;
+        int _hourPrice =
+            await _sharedValueHandler.getIntSharedP('hourPrice', 100);
         if (widget.isMeals) _finalMinutesToMake = int.parse(_minutesToMake);
 
         double _totalPrice = 0;
@@ -466,7 +522,11 @@ class _CreateMealState extends State<CreateMeal> {
         });
         if (!widget.isMeals) {
           _selectedMeals.forEach((m) {
-            _totalPrice += m.totalCost * m.amount;
+            _totalPrice +=
+                (m.totalCost + (_hourPrice / 60 * m.minutesToMake)) * m.amount;
+          });
+          _selectedExtras.forEach((m) {
+            _totalPrice += m.buyPrice * m.amount;
           });
         }
 
@@ -475,15 +535,10 @@ class _CreateMealState extends State<CreateMeal> {
           _finalSalePrice = double.parse(tempSale);
         } else {
           String tempProfit = _profitMargin.replaceAll(',', '.');
+
           if (widget.isMeals) {
-            int _hourPrice =
-                await _sharedValueHandler.getIntSharedP('hourPrice', 100);
-
-            print('MINUTES!!!::::.::________');
-            print(_finalMinutesToMake);
-
             _totalPrice = _totalPrice + (_hourPrice / 60 * _finalMinutesToMake);
-          }
+          } else {}
 
           //_finalSalePrice = _totalPrice / (1 - double.parse(tempProfit) / 100);
 
@@ -515,7 +570,7 @@ class _CreateMealState extends State<CreateMeal> {
           print(newMeal);
         } else {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
-              _selectedMeals);
+              _selectedMeals, _selectedExtras);
         }
 
         // print('${newMeal.id}, ${newMeal.ingredients}, ${newMeal.name}, ${newMeal.salePrice},');
@@ -668,6 +723,38 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
+  Widget extraListTile(Extra ltExtra) {
+    return Card(
+      child: ListTile(
+          title: Text(ltExtra.name),
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            IconButton(
+                icon: Icon(Icons.remove),
+                onPressed: () {
+                  if (ltExtra.amount > 1) {
+                    setState(() {
+                      ltExtra.amount--;
+                    });
+                    int extraIndex = _selectedExtras
+                        .indexWhere((extra) => extra.id == ltExtra.id);
+                    _selectedExtras[extraIndex].amount = ltExtra.amount;
+                  }
+                }),
+            Text('${ltExtra.amount}'),
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    ltExtra.amount++;
+                  });
+                  int extraIndex = _selectedExtras
+                      .indexWhere((extra) => extra.id == ltExtra.id);
+                  _selectedExtras[extraIndex].amount = ltExtra.amount;
+                }),
+          ])),
+    );
+  }
+
   //Give ingredients an amountInGrams value
   void takeNumber(String text, int itemId) {
     try {
@@ -710,6 +797,18 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
+  Widget addExtraListTile(Extra aExtra, Function setModalState) {
+    return Card(
+      child: CheckboxListTile(
+        title: Text(aExtra.name),
+        value: _selectedExtras.indexWhere((e) => e.id == aExtra.id) != -1,
+        onChanged: (bool selected) {
+          _onExtraSelected(selected, aExtra, setModalState);
+        },
+      ),
+    );
+  }
+
 // Add or remove the ingredient pressed to a new list of selected ingredients
   void _onIngredientSelected(
       bool iSelected, Ingredient sIngredient, Function setModalState) {
@@ -735,6 +834,27 @@ class _CreateMealState extends State<CreateMeal> {
         _selectedMeals.removeWhere((e) => e.id == sMeal.id);
       });
     }
+  }
+
+  void _onExtraSelected(bool mSelected, Extra sExtra, Function setModalState) {
+    if (mSelected == true) {
+      setModalState(() {
+        sExtra.amount = 1;
+        _selectedExtras.add(sExtra);
+      });
+    } else {
+      setModalState(() {
+        _selectedExtras.removeWhere((e) => e.id == sExtra.id);
+      });
+    }
+  }
+
+  Widget itemListTitle(String _title, String _altTitle, int listLenght) {
+    return Text(
+      listLenght == 0 ? _altTitle : _title,
+      style: TextStyle(
+          fontSize: 20, color: Colors.grey, fontWeight: FontWeight.w300),
+    );
   }
 
 // change the focus from fx a textfield to remove keyboard when background is pressed

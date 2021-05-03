@@ -109,7 +109,7 @@ class _IngredientListState extends State<IngredientList> {
                           height: 400,
                           child: Center(child: CircularProgressIndicator()));
                     }
-                    if (ingredientJsonSnapshot.data.length == 0) {
+                    if (ingredientJsonSnapshot.data.length == 0 || ingredientJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
 //Map data from firestore to objects in list.

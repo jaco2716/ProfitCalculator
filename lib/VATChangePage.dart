@@ -23,7 +23,7 @@ class _VATChangePageState extends State<VATChangePage> {
     return Scaffold(
       appBar: MyAppBarWithCalc('Set VAT & Currency'),
       body: SingleChildScrollView(
-              child: Container(
+        child: Container(
           padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -42,7 +42,8 @@ class _VATChangePageState extends State<VATChangePage> {
                 future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
                 initialData: '',
                 builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
-                  if(vatSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                  if (vatSnapshot.connectionState == ConnectionState.waiting)
+                    return CircularProgressIndicator();
                   if (initialLoads[0]) {
                     print('vatSnapshot');
                     print(vatSnapshot);
@@ -51,79 +52,72 @@ class _VATChangePageState extends State<VATChangePage> {
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                        color: Colors.grey[300],
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('VAT in %:       '),
-                              Expanded(
-                                child: TextField(
-                                  // onChanged: (value) {
-                                  //   tec.text = value;
-                                  // },
-
-                                  controller: vatTec,
-                                  // decoration: InputDecoration(hintText: 'VAT in %'),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'[0-9]'))
-                                  ],
-                                ),
-                              ),
-                            ],
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Expanded(
+                        child: TextField(
+                          // onChanged: (value) {
+                          //   tec.text = value;
+                          // },
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            prefix: Text('VAT in %:       '),
                           ),
-                        )),
+                          controller: vatTec,
+                          // decoration: InputDecoration(hintText: 'VAT in %'),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
               FutureBuilder(
                 future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
                 initialData: '',
-                builder: (BuildContext context, AsyncSnapshot hourPriceSnapshot) {
-                  if(hourPriceSnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                builder:
+                    (BuildContext context, AsyncSnapshot hourPriceSnapshot) {
+                  if (hourPriceSnapshot.connectionState ==
+                      ConnectionState.waiting)
+                    return CircularProgressIndicator();
                   // if (initialLoads[0]) {
-                    hourPriceTec.text = hourPriceSnapshot.data.toString();
+                  hourPriceTec.text = hourPriceSnapshot.data.toString();
                   //   initialLoads[0] = false;
                   // }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
-                        color: Colors.grey[300],
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Hourly rate:   '),
-                              Expanded(
-                                child: TextField(
-                                  // onChanged: (value) {
-                                  //   tec.text = value;
-                                  // },
-
-                                  controller: hourPriceTec,
-                                  // decoration: InputDecoration(hintText: 'VAT in %'),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'[0-9]'))
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Expanded(
+                        child: TextField(
+                          // onChanged: (value) {
+                          //   tec.text = value;
+                          // },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              prefix: Text('Hourly rate:   ')),
+                          controller: hourPriceTec,
+                          // decoration: InputDecoration(hintText: 'VAT in %'),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
               FutureBuilder(
-                  future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
+                  future: _sharedValueHandler.getStringSharedP(
+                      'CurrencyChosen', 'DKK'),
                   builder: (context, currencySnapshot) {
-                  if(currencySnapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                    if (currencySnapshot.connectionState ==
+                        ConnectionState.waiting)
+                      return CircularProgressIndicator();
 
                     if (initialLoads[1]) {
                       initialLoads[1] = false;
@@ -132,12 +126,19 @@ class _VATChangePageState extends State<VATChangePage> {
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Card(
-                          color: Colors.grey[300],
+                      child: Container(
+                        // height: 60,
+                        margin: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          border: Border.all(color: Colors.black38)
+                        ),
+                          // color: Colors.grey[300],
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Currency:       '),
                                   Expanded(
@@ -215,7 +216,7 @@ class _VATChangePageState extends State<VATChangePage> {
   Widget drawerListTile(
       {Icon tileIcon, String tileTitle, void Function() myOnPressed}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       child: SizedBox(
         height: 60,
         child: ElevatedButton.icon(

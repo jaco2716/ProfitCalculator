@@ -104,19 +104,17 @@ class _SingleMealState extends State<SingleMeal> {
                           ConnectionState.waiting)
                         return CircularProgressIndicator();
                       int _hourPrice = hourPriceSnapshot.data;
-                      double _totalWithHour = 0;
-                      print('minutes:');
-                      print('hourprice: ${_hourPrice}');
+                      double _priceForMinutes = 0;
                       if (widget.isMeal) {
                         _profitMargin = widget.meal.profitMargin(_hourPrice);
-
-                        _totalWithHour = _totalCost +
+                        _priceForMinutes =
                             (_hourPrice / 60) * widget.meal.minutesToMake;
                       } else {
                         _profitMargin = widget.menu.profitMargin(_hourPrice);
-                        _totalWithHour = _totalCost +
+                        _priceForMinutes =
                             (_hourPrice / 60) * widget.menu.totalMinutesToMake;
                       }
+                      _profit = _profit - _priceForMinutes;
                       return Column(
                         children: [
                           Card(
@@ -132,7 +130,7 @@ class _SingleMealState extends State<SingleMeal> {
                                     style: TextStyle(color: Colors.red[700]),
                                   ),
                                   trailing: Text(
-                                    '${_totalWithHour.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                    '${(_totalCost + _priceForMinutes).toStringAsFixed(2)},- ${currencySnapshot.data}',
                                     style: TextStyle(color: Colors.red[700]),
                                   ),
                                 )),
@@ -396,7 +394,7 @@ class _SingleMealState extends State<SingleMeal> {
                     return ListTile(
                       title: Text(_iMeals[index].name),
                       subtitle: Text(' - x${_iMeals[index].amount} '),
-                      trailing: Text('$_iTotalPrice ,- $currencyString'),
+                      trailing: Text('${_iTotalPrice.toStringAsFixed(2)} ,- $currencyString'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),

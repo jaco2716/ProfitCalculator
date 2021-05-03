@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import '../Model/Meal.dart';
@@ -14,6 +15,16 @@ class ObjectManager {
           tempIngredientIterable?.map((e) => Ingredient.fromJson(e))?.toList();
     }
     return ingredients;
+  }
+  List<Extra> jsonToListExtra(String extraJsonSnapshot) {
+    List<Extra> extras = <Extra>[];
+    Iterable tempExtraIterable;
+    if (extraJsonSnapshot.length != 0) {
+      tempExtraIterable = json.decode(extraJsonSnapshot);
+      extras =
+          tempExtraIterable?.map((e) => Extra.fromJson(e))?.toList();
+    }
+    return extras;
   }
   List<Meal> jsonToListMeal(String mealJsonSnapshot) {
     List<Meal> meals = <Meal>[];

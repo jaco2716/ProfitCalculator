@@ -4,6 +4,7 @@ import 'package:profit_calculator/MealPages/MealList.dart';
 import 'package:profit_calculator/BackupAndRestore/BackupAndRestorePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'ExtraListPage.dart';
 import 'VATChangePage.dart';
 
 class FrontPageMenu extends StatelessWidget {
@@ -38,6 +39,14 @@ class FrontPageMenu extends StatelessWidget {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => IngredientList()));
+            },
+          ),
+          drawerListTile(
+            Icon(Icons.list),
+            "Drinks & Extras",
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ExtraListPage()));
             },
           ),
           drawerListTile(
