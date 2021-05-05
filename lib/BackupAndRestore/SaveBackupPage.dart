@@ -18,6 +18,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
   final FileManagement fileManagement = FileManagement();
 
   final String ingredientJsonFile = config.ingredientJsonFile;
+  final String extraJsonFile = config.extraJsonFile;
   final String mealJsonFile = config.mealJsonFile;
   final String menuJsonFile = config.menuJsonFile;
 
@@ -46,7 +47,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       appBar: MyAppBarWithCalc(
           widget.restorePageSelected ? 'Restore Backup' : 'Save Backup'),
       body: SingleChildScrollView(
-              child: Container(
+        child: Container(
           width: double.infinity,
           // color: Colors.amber,
           padding: EdgeInsets.all(20),
@@ -168,6 +169,8 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
           await fileManagement.readFile(ingredientJsonFile);
       fileManagement.writeFile(
           '$ingredientJsonFile$index', ingredientFileContent);
+      String extraFileContent = await fileManagement.readFile(extraJsonFile);
+      fileManagement.writeFile('$extraJsonFile$index', extraFileContent);
       String mealFileContent = await fileManagement.readFile(mealJsonFile);
       fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
       String menuFileContent = await fileManagement.readFile(menuJsonFile);
@@ -188,12 +191,15 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
     try {
       String ingredientFileContent =
           await fileManagement.readFile('$ingredientJsonFile$index');
+      String extraFileContent =
+          await fileManagement.readFile('$extraJsonFile$index');
       String mealFileContent =
           await fileManagement.readFile('$mealJsonFile$index');
       String menuFileContent =
           await fileManagement.readFile('$menuJsonFile$index');
 
       fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
+      fileManagement.writeFile(extraJsonFile, extraFileContent);
       fileManagement.writeFile(mealJsonFile, mealFileContent);
       fileManagement.writeFile(menuJsonFile, menuFileContent);
 

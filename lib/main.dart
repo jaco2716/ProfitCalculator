@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Profit Calculator',
       theme: ThemeData(
           // brightness: Brightness.light,
           appBarTheme: AppBarTheme(brightness: Brightness.dark),
@@ -49,32 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MyAppBarWithCalc('Profit Calculator'),
-        // appBar: AppBar(//MyAppBarWithCalc('Profit Calculator'),
-        // title: Text('Profit Calculator'),
-        // actions: [
-        //   IconButton(
-        //     icon: Icon(Icons.save),
-        //     onPressed: () {
-        //       fileManagement.exportData(
-        //           context, ingredientJsonFile, mealJsonFile);
-        //     },
-        //   ),
-        //   IconButton(
-        //     icon: Icon(Icons.download_rounded),
-        //     onPressed: () async {
-        //       await fileManagement.importData();
-        //       setState(() {
-
-        //       });
-        //       // FilePickerResult result =
-        //       //     await FilePicker.platform.pickFiles();
-        //     },
-        //   )
-        // ],
-        // ),
-        // drawer: MyDrawer(),
-        // body: MealList());
+        // appBar: MyAppBarWithCalc('Menu'),
         body: FrontPageMenu());
   }
 }

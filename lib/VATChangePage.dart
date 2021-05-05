@@ -21,7 +21,7 @@ class _VATChangePageState extends State<VATChangePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc('Set VAT & Currency'),
+      appBar: MyAppBarWithCalc('VAT, Currency & Hourly rate'),
       body: SingleChildScrollView(
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 30),
@@ -30,50 +30,11 @@ class _VATChangePageState extends State<VATChangePage> {
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Center(
-                  child: Icon(
-                    Icons.attach_money,
-                    size: 60,
-                    color: Colors.blue[200],
-                  ),
+                child: Text(
+                  'Here you can change the hourly rate that is used to calculate the expense of time to make your meals.\nAdditionaly you can change to the VAT and Currency that is relevant in your region.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey),
                 ),
-              ),
-              FutureBuilder(
-                future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
-                initialData: '',
-                builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
-                  if (vatSnapshot.connectionState == ConnectionState.waiting)
-                    return CircularProgressIndicator();
-                  if (initialLoads[0]) {
-                    print('vatSnapshot');
-                    print(vatSnapshot);
-                    vatTec.text = vatSnapshot.data.toString();
-                    initialLoads[0] = false;
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Expanded(
-                        child: TextField(
-                          // onChanged: (value) {
-                          //   tec.text = value;
-                          // },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefix: Text('VAT in %:       '),
-                          ),
-                          controller: vatTec,
-                          // decoration: InputDecoration(hintText: 'VAT in %'),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
               ),
               FutureBuilder(
                 future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
@@ -82,30 +43,67 @@ class _VATChangePageState extends State<VATChangePage> {
                     (BuildContext context, AsyncSnapshot hourPriceSnapshot) {
                   if (hourPriceSnapshot.connectionState ==
                       ConnectionState.waiting)
-                    return CircularProgressIndicator();
+                    return Container(
+                        height: 98, child: CircularProgressIndicator());
+                  if (initialLoads[1]) {
+                    hourPriceTec.text = hourPriceSnapshot.data.toString();
+                    initialLoads[1] = false;
+                  }
                   // if (initialLoads[0]) {
-                  hourPriceTec.text = hourPriceSnapshot.data.toString();
+                  // hourPriceTec.text = hourPriceSnapshot.data.toString();
                   //   initialLoads[0] = false;
                   // }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Expanded(
-                        child: TextField(
-                          // onChanged: (value) {
-                          //   tec.text = value;
-                          // },
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              prefix: Text('Hourly rate:   ')),
-                          controller: hourPriceTec,
-                          // decoration: InputDecoration(hintText: 'VAT in %'),
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
-                          ],
+                      child: TextField(
+                        // onChanged: (value) {
+                        //   tec.text = value;
+                        // },
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            prefix: Text('Hourly rate:   ')),
+                        controller: hourPriceTec,
+                        // decoration: InputDecoration(hintText: 'VAT in %'),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              FutureBuilder(
+                future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
+                initialData: '',
+                builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
+                  if (vatSnapshot.connectionState == ConnectionState.waiting)
+                    return Container(
+                        height: 98, child: CircularProgressIndicator());
+                  if (initialLoads[0]) {
+                    vatTec.text = vatSnapshot.data.toString();
+                    initialLoads[0] = false;
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        // onChanged: (value) {
+                        //   tec.text = value;
+                        // },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          prefix: Text('VAT in %:       '),
                         ),
+                        controller: vatTec,
+                        // decoration: InputDecoration(hintText: 'VAT in %'),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        ],
                       ),
                     ),
                   );
@@ -119,20 +117,20 @@ class _VATChangePageState extends State<VATChangePage> {
                         ConnectionState.waiting)
                       return CircularProgressIndicator();
 
-                    if (initialLoads[1]) {
-                      initialLoads[1] = false;
+                    // if (initialLoads[1]) {
+                    //   initialLoads[1] = false;
                       dropdownValue = currencySnapshot.data;
-                    }
+                    // }
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Container(
-                        // height: 60,
-                        margin: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          border: Border.all(color: Colors.black38)
-                        ),
+                          // height: 60,
+                          margin: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                              border: Border.all(color: Colors.black38)),
                           // color: Colors.grey[300],
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -140,7 +138,7 @@ class _VATChangePageState extends State<VATChangePage> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Currency:       '),
+                                  Text('Currency:           '),
                                   Expanded(
                                     child: DropdownButton<String>(
                                       isExpanded: true,

@@ -245,7 +245,7 @@ class _CreateMealState extends State<CreateMeal> {
                         itemCount: _selectedIngredients.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ingredientListTile(
-                              _selectedIngredients[index]);
+                              _selectedIngredients[index], setState);
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -274,7 +274,7 @@ class _CreateMealState extends State<CreateMeal> {
                         padding: EdgeInsets.all(0),
                         itemCount: _selectedMeals.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return mealListTile(_selectedMeals[index]);
+                          return mealListTile(_selectedMeals[index], setState);
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -324,7 +324,7 @@ class _CreateMealState extends State<CreateMeal> {
                         padding: EdgeInsets.all(0),
                         itemCount: _selectedExtras.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return extraListTile(_selectedExtras[index]);
+                          return extraListTile(_selectedExtras[index], setState);
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -437,8 +437,7 @@ class _CreateMealState extends State<CreateMeal> {
       isScrollControlled: true,
       builder: (context) {
         return StatefulBuilder(
-          builder: (BuildContext context,
-              void Function(void Function()) setModalState) {
+          builder: (context, setModalState) {
             return SingleChildScrollView(
               child: Column(children: [
                 AppBar(
@@ -680,16 +679,22 @@ class _CreateMealState extends State<CreateMeal> {
   }
 
 // Each ingredient tile of the selected ingredients.
-  Widget ingredientListTile(Ingredient ltIngredient) {
+  Widget ingredientListTile(
+      Ingredient ltIngredient, void Function(void Function()) setModalState) {
+    List<String> amountNoDot =
+        ltIngredient.amountInGrams?.toString()?.split('.');
     TextEditingController tec = TextEditingController(
         text: ltIngredient.amountInGrams?.toString() ?? '');
+    if (amountNoDot != null) {
+      tec = TextEditingController(text: amountNoDot[0] ?? '');
+    }
     return Card(
       child: ListTile(
           title: Text(ltIngredient.name),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             Container(
                 padding: EdgeInsets.all(5),
-                width: 90,
+                width: 80,
                 child: TextField(
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
@@ -704,12 +709,23 @@ class _CreateMealState extends State<CreateMeal> {
                       counterText: ''),
                   onChanged: (value) => takeNumber(value, ltIngredient.id),
                 )),
-            Text(ltIngredient.measureUnit == 'Kg' ? 'g  ' : 'ml')
+            Text(ltIngredient.measureUnit == 'Kg' ? 'g  ' : 'ml'),
+            Container(
+              width: 15,
+              height: 30,
+              child: IconButton(
+                iconSize: 15,
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  _onIngredientSelected(false, ltIngredient, setModalState);
+                },
+              ),
+            )
           ])),
     );
   }
 
-  Widget mealListTile(Meal ltMeal) {
+  Widget mealListTile(Meal ltMeal, void Function(void Function()) setModalState) {
     return Card(
       child: ListTile(
           title: Text(ltMeal.name),
@@ -737,11 +753,22 @@ class _CreateMealState extends State<CreateMeal> {
                       _selectedMeals.indexWhere((meal) => meal.id == ltMeal.id);
                   _selectedMeals[mealIndex].amount = ltMeal.amount;
                 }),
+                Container(
+              width: 15,
+              height: 30,
+              child: IconButton(
+                iconSize: 15,
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  _onMealSelected(false, ltMeal, setModalState);
+                },
+              ),
+            )
           ])),
     );
   }
 
-  Widget extraListTile(Extra ltExtra) {
+  Widget extraListTile(Extra ltExtra, void Function(void Function()) setModalState) {
     return Card(
       child: ListTile(
           title: Text(ltExtra.name),
@@ -769,6 +796,17 @@ class _CreateMealState extends State<CreateMeal> {
                       .indexWhere((extra) => extra.id == ltExtra.id);
                   _selectedExtras[extraIndex].amount = ltExtra.amount;
                 }),
+                Container(
+              width: 15,
+              height: 30,
+              child: IconButton(
+                iconSize: 15,
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  _onExtraSelected(false, ltExtra, setModalState);
+                },
+              ),
+            )
           ])),
     );
   }
