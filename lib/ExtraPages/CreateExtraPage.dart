@@ -7,8 +7,8 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
-import '../Handlers/SharedValueHandler.dart';
-import 'Model/Extra.dart';
+import '../../Handlers/SharedValueHandler.dart';
+import '../Model/Extra.dart';
 
 class CreateExtra extends StatefulWidget {
   final bool editMode;
@@ -51,7 +51,7 @@ class _CreateExtraState extends State<CreateExtra> {
     if (widget.editMode ?? false) {
       _name = widget.editExtra.name;
       tempSalePrice = widget.editExtra.salePrice.toString();
-      tempBuyPrice = widget.editExtra.buyPrice.toString();
+      tempBuyPrice = widget.editExtra.costPrice.toString();
       _salePrice = tempSalePrice.replaceAll('.', ',');
       _buyPrice = tempBuyPrice.replaceAll('.', ',');
       _nameController.text = _name;
@@ -89,7 +89,8 @@ class _CreateExtraState extends State<CreateExtra> {
                                 border: OutlineInputBorder(),
                                 labelText: 'Name',
                               ),
-                              keyboardType: TextInputType.name,
+                              textCapitalization: TextCapitalization.words,
+                              keyboardType: TextInputType.text,
                               validator: (value) => validateString(value),
                               onSaved: (value) => _name = value,
                               onFieldSubmitted: (value) => changeFocus(),
@@ -193,7 +194,8 @@ class _CreateExtraState extends State<CreateExtra> {
         newID = DateTime.now().millisecondsSinceEpoch;
 
 //Create object
-      Extra newExtra = Extra(newID, _name, finalSalePrice, finalBuyPrice, amount: 1);
+      Extra newExtra =
+          Extra(newID, _name, finalSalePrice, finalBuyPrice, amount: 1);
 
       bool saveSucess = false;
 //Save Extra to json file.
@@ -221,9 +223,26 @@ class _CreateExtraState extends State<CreateExtra> {
       List<Extra> allExtrasFromFile = objManager.jsonToListExtra(fileContent);
 
       if (widget.editMode ?? false) {
-        int editIndex = allExtrasFromFile
+        int editExtraIndex = allExtrasFromFile
             .indexWhere((element) => element.id == newExtra.id);
-        allExtrasFromFile[editIndex] = newExtra;
+        allExtrasFromFile[editExtraIndex] = newExtra;
+
+        String menuFileContent = await fileManagement.readFile(menuJsonFile);
+        List<Menu> allMenusFromFile =
+            objManager.jsonToListMenu(menuFileContent);
+
+        //Update data of extras in menus
+        allMenusFromFile.forEach((menu) {
+          int menuEditIndex =
+              menu.extras.indexWhere((element) => element.id == newExtra.id);
+          if (menuEditIndex != -1) {
+            Extra newExtraWGrams = newExtra;
+            int amount = menu.extras[menuEditIndex].amount;
+            newExtraWGrams.amount = amount;
+            menu.extras[menuEditIndex] = newExtraWGrams;
+          }
+        });
+        fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
       } else {
         allExtrasFromFile.add(newExtra);
       }

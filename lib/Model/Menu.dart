@@ -28,7 +28,7 @@ class Menu {
       totalPrice += e.totalCost * e.amount;
     });
     extras?.forEach((e) {
-      totalPrice += e.buyPrice * e.amount;
+      totalPrice += e.costPrice * e.amount;
     });
     return totalPrice;
   }

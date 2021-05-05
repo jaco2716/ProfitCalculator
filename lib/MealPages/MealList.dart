@@ -3,6 +3,7 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MealPages/CreateMeal.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
@@ -27,6 +28,7 @@ class _MealListState extends State<MealList> {
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String mealJsonFile = config.mealJsonFile;
   final String menuJsonFile = config.menuJsonFile;
+  final String extraJsonFile = config.extraJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
@@ -158,22 +160,22 @@ class _MealListState extends State<MealList> {
                                         objManager.jsonToListIngredient(
                                             ingredientJsonSnapshot.data);
                                     //JOIN meals with updated ingredients.
-                                    meals.forEach((meal) {
-                                      meal.ingredients.forEach((mIngredient) {
-                                        allIngredients.forEach((aIngredient) {
-                                          if (mIngredient.id ==
-                                              aIngredient.id) {
-                                            mIngredient.name = aIngredient.name;
-                                            mIngredient.color =
-                                                aIngredient.color;
-                                            mIngredient.kgPrice =
-                                                aIngredient.kgPrice;
-                                            mIngredient.measureUnit =
-                                                aIngredient.measureUnit;
-                                          }
-                                        });
-                                      });
-                                    });
+                                    // meals.forEach((meal) {
+                                    //   meal.ingredients.forEach((mIngredient) {
+                                    //     allIngredients.forEach((aIngredient) {
+                                    //       if (mIngredient.id ==
+                                    //           aIngredient.id) {
+                                    //         mIngredient.name = aIngredient.name;
+                                    //         mIngredient.color =
+                                    //             aIngredient.color;
+                                    //         mIngredient.kgPrice =
+                                    //             aIngredient.kgPrice;
+                                    //         mIngredient.measureUnit =
+                                    //             aIngredient.measureUnit;
+                                    //       }
+                                    //     });
+                                    //   });
+                                    // });
 
                                     if (widget.isMealList) {
                                       return Column(
@@ -199,94 +201,137 @@ class _MealListState extends State<MealList> {
                                       );
                                     } else {
                                       return FutureBuilder(
-                                        future: fileManagement
-                                            .readFile(menuJsonFile),
-                                        initialData: '',
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot menuJsonSnapshot) {
-                                          if (menuJsonSnapshot.hasError) {
-                                            return Container(
-                                                height: 400,
-                                                child: Center(
-                                                    child: Text(
-                                                  'Something went wrong.\nPlease try restarting your app.',
-                                                  textAlign: TextAlign.center,
-                                                )));
-                                          }
-                                          if (menuJsonSnapshot
-                                                  .connectionState ==
-                                              ConnectionState.waiting) {
-                                            return Container(
-                                                height: 400,
-                                                child: Center(
-                                                    child:
-                                                        CircularProgressIndicator()));
-                                          }
-                                          if (menuJsonSnapshot.data.length ==
-                                                  0 ||
-                                              menuJsonSnapshot.data == '[]') {
-                                            return InitialFutureWidget();
-                                          }
-                                          List<Menu> menus =
-                                              objManager.jsonToListMenu(
-                                                  menuJsonSnapshot.data);
-                                          menus.sort((b, a) => a
-                                              .profitMargin(_hourPrice)
-                                              .compareTo(
-                                                  b.profitMargin(_hourPrice)));
-                                          //JOIN menus with updated ingredients.
-                                          menus.forEach((menu) {
-                                            menu.ingredients
-                                                .forEach((mIngredient) {
-                                              allIngredients
-                                                  .forEach((aIngredient) {
-                                                if (mIngredient.id ==
-                                                    aIngredient.id) {
-                                                  mIngredient.name =
-                                                      aIngredient.name;
-                                                  mIngredient.color =
-                                                      aIngredient.color;
-                                                  mIngredient.kgPrice =
-                                                      aIngredient.kgPrice;
-                                                  mIngredient.measureUnit =
-                                                      aIngredient.measureUnit;
-                                                }
-                                              });
-                                            });
-                                            menu.meals.forEach((mMeal) {
-                                              meals.forEach((aMeal) {
-                                                if (mMeal.id == aMeal.id) {
-                                                  mMeal.name = aMeal.name;
-                                                  mMeal.salePrice =
-                                                      aMeal.salePrice;
-                                                }
-                                              });
-                                            });
-                                          });
+                                          future: fileManagement
+                                              .readFile(extraJsonFile),
+                                          builder:
+                                              (context, extraJsonSnapshot) {
+                                            if (extraJsonSnapshot
+                                                    .connectionState ==
+                                                ConnectionState.waiting) {
+                                              return Container(
+                                                  height: 400,
+                                                  child: Center(
+                                                      child:
+                                                          CircularProgressIndicator()));
+                                            }
 
-                                          return Column(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 40),
-                                                child: ListView.builder(
-                                                  itemCount: menus.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return menuListTile(
-                                                        menus[index]);
-                                                  },
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                ),
-                                              ),
-                                              SizedBox(height: 400),
-                                            ],
-                                          );
-                                        },
-                                      );
+                                            return FutureBuilder(
+                                              future: fileManagement
+                                                  .readFile(menuJsonFile),
+                                              initialData: '',
+                                              builder: (BuildContext context,
+                                                  AsyncSnapshot
+                                                      menuJsonSnapshot) {
+                                                if (menuJsonSnapshot.hasError) {
+                                                  return Container(
+                                                      height: 400,
+                                                      child: Center(
+                                                          child: Text(
+                                                        'Something went wrong.\nPlease try restarting your app.',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      )));
+                                                }
+                                                if (menuJsonSnapshot
+                                                        .connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return Container(
+                                                      height: 400,
+                                                      child: Center(
+                                                          child:
+                                                              CircularProgressIndicator()));
+                                                }
+                                                if (menuJsonSnapshot
+                                                            .data.length ==
+                                                        0 ||
+                                                    menuJsonSnapshot.data ==
+                                                        '[]') {
+                                                  return InitialFutureWidget();
+                                                }
+                                                List<Extra> extras =
+                                                    objManager.jsonToListExtra(
+                                                        extraJsonSnapshot.data);
+                                                List<Menu> menus =
+                                                    objManager.jsonToListMenu(
+                                                        menuJsonSnapshot.data);
+                                                menus.sort((b, a) => a
+                                                    .profitMargin(_hourPrice)
+                                                    .compareTo(b.profitMargin(
+                                                        _hourPrice)));
+                                                //JOIN menus with updated ingredients.
+                                                // menus.forEach((menu) {
+                                                //   menu.ingredients
+                                                //       .forEach((mIngredient) {
+                                                //     allIngredients
+                                                //         .forEach((aIngredient) {
+                                                //       if (mIngredient.id ==
+                                                //           aIngredient.id) {
+                                                //         mIngredient.name =
+                                                //             aIngredient.name;
+                                                //         mIngredient.color =
+                                                //             aIngredient.color;
+                                                //         mIngredient.kgPrice =
+                                                //             aIngredient.kgPrice;
+                                                //         mIngredient
+                                                //                 .measureUnit =
+                                                //             aIngredient
+                                                //                 .measureUnit;
+                                                //       }
+                                                //     });
+                                                //   });
+                                                //   menu.meals.forEach((mMeal) {
+                                                //     meals.forEach((aMeal) {
+                                                //       if (mMeal.id ==
+                                                //           aMeal.id) {
+                                                //         mMeal.name = aMeal.name;
+                                                //         mMeal.salePrice =
+                                                //             aMeal.salePrice;
+                                                //         mMeal.ingredients =
+                                                //             aMeal.ingredients;
+                                                //       }
+                                                //     });
+                                                //   });
+                                                //   menu.extras.forEach((mExtra) {
+                                                //     extras.forEach((aExtra) {
+                                                //       if (mExtra.id ==
+                                                //           aExtra.id) {
+                                                //         mExtra.name =
+                                                //             aExtra.name;
+                                                //         mExtra.salePrice =
+                                                //             aExtra.salePrice;
+                                                //         mExtra.costPrice =
+                                                //             aExtra.costPrice;
+                                                //       }
+                                                //     });
+                                                //   });
+                                                // });
+
+                                                return Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 40),
+                                                      child: ListView.builder(
+                                                        itemCount: menus.length,
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index) {
+                                                          return menuListTile(
+                                                              menus[index]);
+                                                        },
+                                                        shrinkWrap: true,
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 400),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          });
                                     }
                                   });
                             },
@@ -365,7 +410,7 @@ class _MealListState extends State<MealList> {
         contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         title: Text(menu.name),
         subtitle: Text(
-            '${menu.ingredients.length} Ingredients\n${menu.meals.length} Meals'),
+            '${menu.ingredients.length} Ingredients\n${menu.meals.length} Meals\n${menu.extras.length} Extras'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

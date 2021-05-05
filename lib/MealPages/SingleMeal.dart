@@ -6,6 +6,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import '../Model/EnvironmentConfig.dart' as config;
@@ -164,15 +165,15 @@ class _SingleMealState extends State<SingleMeal> {
                                     future: sharedVH.getIntSharedP(
                                         'VATPercent', 25),
                                     initialData: 0,
-                                    builder: (context, snapshot) {
+                                    builder: (context, vatSnapshot) {
                                       return ListTile(
                                           title: Text(
-                                            'Gross Price (${snapshot.data}% VAT):',
+                                            'Gross Price (${vatSnapshot.data}% VAT):',
                                             style: TextStyle(
                                                 color: Colors.blue[700]),
                                           ),
                                           trailing: Text(
-                                            '${(_salePrice * (snapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                            '${(_salePrice * (vatSnapshot.data / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
                                             style: TextStyle(
                                                 color: Colors.blue[700]),
                                           ));
@@ -216,12 +217,11 @@ class _SingleMealState extends State<SingleMeal> {
                           //     }),
 
                           ingredientList(currencySnapshot.data, _ingredients),
+
                           !widget.isMeal
                               ? mealList(currencySnapshot.data,
                                   widget.menu.meals, _hourPrice)
-                              : Center(),
-                          widget.isMeal
-                              ? Card(
+                              : Card(
                                   margin: EdgeInsets.all(20),
                                   child: ListTile(
                                     title: Text(
@@ -231,7 +231,11 @@ class _SingleMealState extends State<SingleMeal> {
                                     trailing: Text(
                                         '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- DKK'),
                                   ),
-                                )
+                                ),
+
+                          !widget.isMeal
+                              ? extraList(
+                                  currencySnapshot.data, widget.menu.extras)
                               : Center(),
                           // widget.meal.ingredients.length == 0
                           //     ? Padding(
@@ -394,7 +398,58 @@ class _SingleMealState extends State<SingleMeal> {
                     return ListTile(
                       title: Text(_iMeals[index].name),
                       subtitle: Text(' - x${_iMeals[index].amount} '),
-                      trailing: Text('${_iTotalPrice.toStringAsFixed(2)} ,- $currencyString'),
+                      trailing: Text(
+                          '${_iTotalPrice.toStringAsFixed(2)} ,- $currencyString'),
+                    );
+                  },
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget extraList(String currencyString, List<Extra> _iExtra) {
+    return Card(
+      margin: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('Extras',
+                style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 22,
+                  color: Colors.pink[200],
+                )),
+          ),
+          Divider(
+            thickness: 1,
+          ),
+          _iExtra.length == 0
+              ? Padding(
+                  padding: const EdgeInsets.all(25.0),
+                  child: Text('No extras added.'),
+                )
+              : ListView.separated(
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider(
+                      height: 1,
+                      thickness: 2,
+                    );
+                  },
+                  itemCount: _iExtra.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    double _iTotalPrice =
+                        _iExtra[index].costPrice * _iExtra[index].amount;
+
+                    return ListTile(
+                      title: Text(_iExtra[index].name),
+                      subtitle: Text(' - x${_iExtra[index].amount} '),
+                      trailing: Text(
+                          '${_iTotalPrice.toStringAsFixed(2)} ,- $currencyString'),
                     );
                   },
                   physics: NeverScrollableScrollPhysics(),

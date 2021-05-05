@@ -182,7 +182,7 @@ class _IngredientListState extends State<IngredientList> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                '${ingredient.kgPrice.toString()} $currency/${ingredient.measureUnit}'),
+                '${ingredient.kgPrice.toStringAsFixed(2)} $currency/${ingredient.measureUnit}'),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Icon(

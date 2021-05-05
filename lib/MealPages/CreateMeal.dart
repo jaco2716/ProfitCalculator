@@ -129,7 +129,8 @@ class _CreateMealState extends State<CreateMeal> {
                           labelText: 'Name',
                         ),
                         initialValue: _name,
-                        keyboardType: TextInputType.name,
+                        textCapitalization: TextCapitalization.words,
+                        keyboardType: TextInputType.text,
                         validator: (value) => validateString(value),
                         onSaved: (value) => _name = value,
                         onFieldSubmitted: (value) => changeFocus(),
@@ -526,7 +527,7 @@ class _CreateMealState extends State<CreateMeal> {
                 (m.totalCost + (_hourPrice / 60 * m.minutesToMake)) * m.amount;
           });
           _selectedExtras.forEach((m) {
-            _totalPrice += m.buyPrice * m.amount;
+            _totalPrice += m.costPrice * m.amount;
           });
         }
 
@@ -631,6 +632,23 @@ class _CreateMealState extends State<CreateMeal> {
         int editIndex =
             allMealsFromFile.indexWhere((element) => element.id == newMeal.id);
         allMealsFromFile[editIndex] = newMeal;
+
+        String menuFileContent = await fileManagement.readFile(menuJsonFile);
+        List<Menu> allMenusFromFile =
+            objManager.jsonToListMenu(menuFileContent);
+
+        //Update data of meals in menus
+        allMenusFromFile.forEach((menu) {
+          int menuEditIndex =
+              menu.meals.indexWhere((element) => element.id == newMeal.id);
+          if (menuEditIndex != -1) {
+            Meal newMealWGrams = newMeal;
+            int amount = menu.meals[menuEditIndex].amount;
+            newMealWGrams.amount = amount;
+            menu.meals[menuEditIndex] = newMealWGrams;
+          }
+        });
+        fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
       } else {
         allMealsFromFile.add(newMeal);
       }

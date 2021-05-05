@@ -2,17 +2,17 @@ class Extra {
   int id;
   String name;
   double salePrice;
-  double buyPrice;
+  double costPrice;
   int amount;
 
   //Constructor
-  Extra(this.id, this.name, this.salePrice, this.buyPrice,
+  Extra(this.id, this.name, this.salePrice, this.costPrice,
       {this.amount}); // , this.archived = false});
 
   //Clone the object without any refference
   Extra.clone(Extra extraCopy)
       : this(extraCopy.id, extraCopy.name, extraCopy.salePrice,
-            extraCopy.buyPrice,
+            extraCopy.costPrice,
             amount: extraCopy.amount);
 
   //Json convert, fromJson and toJson.
@@ -20,19 +20,19 @@ class Extra {
       : id = json['id'],
         name = json['name'],
         salePrice = json['salePrice'],
-        buyPrice = json['buyPrice'],
+        costPrice = json['buyPrice'],
         amount = json['amount'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'salePrice': salePrice,
-        'buyPrice': buyPrice,
+        'buyPrice': costPrice,
         'amount': amount,
       };
 
   @override
   String toString() {
-    return 'Id: $id, Name: $name, salePrice: $salePrice, buyPrice: $buyPrice';
+    return 'Id: $id, Name: $name, salePrice: $salePrice, buyPrice: $costPrice';
   }
 }

@@ -90,8 +90,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         border: OutlineInputBorder(),
                         labelText: 'Name',
                       ),
+                      textCapitalization: TextCapitalization.words,
                       // initialValue: widget.editMode ?? false ? _name : null,
-                      keyboardType: TextInputType.name,
+                      keyboardType: TextInputType.text,
                       validator: (value) => validateString(value),
                       onSaved: (value) => _name = value,
                       onFieldSubmitted: (value) => changeFocus(),
@@ -267,14 +268,62 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //Save to firestore database
   Future<bool> _saveIngredientToFile(Ingredient newIngredient) async {
     try {
-      String fileContent = await fileManagement.readFile(ingredientJsonFile);
+      String ingredientFileContent =
+          await fileManagement.readFile(ingredientJsonFile);
       List<Ingredient> allIngredientsFromFile =
-          objManager.jsonToListIngredient(fileContent);
+          objManager.jsonToListIngredient(ingredientFileContent);
 
       if (widget.editMode ?? false) {
-        int editIndex = allIngredientsFromFile
+        String mealFileContent = await fileManagement.readFile(mealJsonFile);
+        String menuFileContent = await fileManagement.readFile(menuJsonFile);
+        List<Meal> allMealsFromFile =
+            objManager.jsonToListMeal(mealFileContent);
+        List<Menu> allMenusFromFile =
+            objManager.jsonToListMenu(menuFileContent);
+
+        int ingredientEditIndex = allIngredientsFromFile
             .indexWhere((element) => element.id == newIngredient.id);
-        allIngredientsFromFile[editIndex] = newIngredient;
+        allIngredientsFromFile[ingredientEditIndex] = newIngredient;
+
+        //Update data of ingredients in meals
+        allMealsFromFile.forEach((meal) {
+          int mealEditIndex = meal.ingredients
+              .indexWhere((element) => element.id == newIngredient.id);
+          if (mealEditIndex != -1) {
+            Ingredient newIngredientWGrams = newIngredient;
+            double amountInGrams =
+                meal.ingredients[mealEditIndex].amountInGrams;
+            newIngredientWGrams.amountInGrams = amountInGrams;
+            meal.ingredients[mealEditIndex] = newIngredientWGrams;
+          }
+        });
+        //Update data of ingredients in menus
+        allMenusFromFile.forEach((menu) {
+          int menuEditIndex = menu.ingredients
+              .indexWhere((element) => element.id == newIngredient.id);
+          if (menuEditIndex != -1) {
+            Ingredient newIngredientWGrams = newIngredient;
+            double amountInGrams =
+                menu.ingredients[menuEditIndex].amountInGrams;
+            newIngredientWGrams.amountInGrams = amountInGrams;
+            menu.ingredients[menuEditIndex] = newIngredientWGrams;
+          }
+
+          //Update data of ingredients in menu's meals
+          menu.meals.forEach((meal) {
+            int menuMealEditIndex = meal.ingredients
+                .indexWhere((element) => element.id == newIngredient.id);
+            if (menuMealEditIndex != -1) {
+              Ingredient newIngredientWGramsMeal = newIngredient;
+              double amountInGramsMeal =
+                  menu.ingredients[menuMealEditIndex].amountInGrams;
+              newIngredientWGramsMeal.amountInGrams = amountInGramsMeal;
+              meal.ingredients[menuMealEditIndex] = newIngredientWGramsMeal;
+            }
+          });
+        });
+        fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
+        fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
       } else {
         allIngredientsFromFile.add(newIngredient);
       }

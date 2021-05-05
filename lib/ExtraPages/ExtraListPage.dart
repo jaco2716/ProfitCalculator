@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CreateExtraPage.dart';
+import 'package:profit_calculator/ExtraPages/CreateExtraPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
-import '../Model/EnvironmentConfig.dart' as config;
-import 'Model/Extra.dart';
-import 'MyAppBarWithCalc.dart';
+import '../../Model/EnvironmentConfig.dart' as config;
+import '../Model/Extra.dart';
+import '../MyAppBarWithCalc.dart';
 
 class ExtraListPage extends StatefulWidget {
   ExtraListPage({Key key}) : super(key: key);
@@ -142,7 +142,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-                '${extra.buyPrice.toString()} / ${extra.salePrice.toString()},- $currency'),
+                '${extra.costPrice.toStringAsFixed(2)} / ${extra.salePrice.toStringAsFixed(2)},- $currency'),
             Padding(
               padding: const EdgeInsets.only(left: 8.0),
               child: Icon(

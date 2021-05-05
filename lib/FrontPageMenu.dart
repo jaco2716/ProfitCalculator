@@ -4,7 +4,7 @@ import 'package:profit_calculator/MealPages/MealList.dart';
 import 'package:profit_calculator/BackupAndRestore/BackupAndRestorePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'ExtraListPage.dart';
+import 'ExtraPages/ExtraListPage.dart';
 import 'VATChangePage.dart';
 
 class FrontPageMenu extends StatelessWidget {
@@ -34,23 +34,23 @@ class FrontPageMenu extends StatelessWidget {
           // drawerListTile(Icon(Icons.add), "Create Meal", CreateMeal(), context),
 
           drawerListTile(
-            Icon(Icons.list),
+            Icon(Icons.local_dining),
             "Ingredients",
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => IngredientList()));
             },
           ),
-          drawerListTile(
-            Icon(Icons.list),
-            "Drinks & Extras",
+          drawerListTile(//emoji_food_beverage
+            Icon(Icons.liquor),
+            "Extras",
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ExtraListPage()));
             },
           ),
           drawerListTile(
-            Icon(Icons.list),
+            Icon(Icons.lunch_dining),
             "Meals",
             onTap: () {
               Navigator.push(
@@ -58,7 +58,7 @@ class FrontPageMenu extends StatelessWidget {
             },
           ),
           drawerListTile(
-            Icon(Icons.list),
+            Icon(Icons.fastfood),
             "Menus",
             onTap: () {
               Navigator.push(
