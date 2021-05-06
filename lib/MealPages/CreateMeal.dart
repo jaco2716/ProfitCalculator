@@ -522,8 +522,7 @@ class _CreateMealState extends State<CreateMeal> {
         });
         if (!widget.isMeals) {
           _selectedMeals.forEach((m) {
-            _totalPrice +=
-                (m.totalCost + (_hourPrice / 60 * m.minutesToMake)) * m.amount;
+            _totalPrice += m.totalCost(_hourPrice);
           });
           _selectedExtras.forEach((m) {
             _totalPrice += m.costPrice * m.amount;

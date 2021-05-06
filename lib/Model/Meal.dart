@@ -18,29 +18,30 @@ class Meal {
             amount: mealCopy.amount);
 
   //Get the total cost of the meal, calculated from all ingredients
-  double get totalCost {
+  double totalCost(int hourPrice) {
     double totalPrice = 0;
-    // print(ingredients);
-    // if (ingredients.length != 0 || ingredients != null) {
     ingredients?.forEach((e) {
       if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
         totalPrice += (e.amountInGrams) * e.kgPrice;
       } else
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
-    // }
+    totalPrice += (hourPrice / 60) * minutesToMake;
     return totalPrice;
   }
 
   //Get the profit, calculated with salePrice and totalCost
-  double get profit {
-    return (salePrice - totalCost);
+  double profit(int hourPrice) {
+    return (salePrice - totalCost(hourPrice));
   }
 
-  double profitMargin(int hourPrice) {
-    if (salePrice != 0 && totalCost != 0) {
-      double totalWithHour = totalCost + ((hourPrice / 60) * minutesToMake);
-      return ((salePrice - totalWithHour) / totalWithHour) * 100;
+  double profitMargin(int hourPrice, int vatPercent) {
+    double totalWithHour = totalCost(hourPrice);
+    if (salePrice != 0 && totalWithHour != 0) {
+      // double totalWithHour = totalCost + ((hourPrice / 60) * minutesToMake);
+      double salePriceNoVat = salePrice / (vatPercent / 100 + 1);
+
+      return ((salePriceNoVat - totalWithHour) / totalWithHour) * 100;
     } else {
       return 0;
     }

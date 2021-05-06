@@ -109,7 +109,8 @@ class _IngredientListState extends State<IngredientList> {
                           height: 400,
                           child: Center(child: CircularProgressIndicator()));
                     }
-                    if (ingredientJsonSnapshot.data.length == 0 || ingredientJsonSnapshot.data == '[]') {
+                    if (ingredientJsonSnapshot.data.length == 0 ||
+                        ingredientJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
 //Map data from firestore to objects in list.
@@ -117,23 +118,30 @@ class _IngredientListState extends State<IngredientList> {
                         .jsonToListIngredient(ingredientJsonSnapshot.data);
 
                     return FutureBuilder(
-                      future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
-                  initialData: '',
-                      builder: (context, currencySnapshot) {
-                        print(ingredients[0].toString());
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 40),
-                          child: ListView.builder(
-                            itemCount: ingredients.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ingredientListTile(ingredients[index], currencySnapshot.data);
-                            },
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                          ),
-                        );
-                      }
-                    );
+                        future: _sharedValueHandler.getStringSharedP(
+                            'CurrencyChosen', 'DKK'),
+                        initialData: '',
+                        builder: (context, currencySnapshot) {
+                          if (currencySnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                                height: 400,
+                                child:
+                                    Center(child: CircularProgressIndicator()));
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 40),
+                            child: ListView.builder(
+                              itemCount: ingredients.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ingredientListTile(
+                                    ingredients[index], currencySnapshot.data);
+                              },
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                            ),
+                          );
+                        });
                   },
                 ),
                 SizedBox(height: 400),

@@ -13,7 +13,7 @@ class _VATChangePageState extends State<VATChangePage> {
   final TextEditingController vatTec = TextEditingController();
   final TextEditingController hourPriceTec = TextEditingController();
   String dropdownValue = 'USD';
-  List<bool> initialLoads = [true, true];
+  List<bool> initialLoads = [true, true, true];
 
   // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   SharedValueHandler _sharedValueHandler = SharedValueHandler();
@@ -45,9 +45,9 @@ class _VATChangePageState extends State<VATChangePage> {
                       ConnectionState.waiting)
                     return Container(
                         height: 98, child: CircularProgressIndicator());
-                  if (initialLoads[1]) {
+                  if (initialLoads[0]) {
                     hourPriceTec.text = hourPriceSnapshot.data.toString();
-                    initialLoads[1] = false;
+                    initialLoads[0] = false;
                   }
                   // if (initialLoads[0]) {
                   // hourPriceTec.text = hourPriceSnapshot.data.toString();
@@ -82,9 +82,9 @@ class _VATChangePageState extends State<VATChangePage> {
                   if (vatSnapshot.connectionState == ConnectionState.waiting)
                     return Container(
                         height: 98, child: CircularProgressIndicator());
-                  if (initialLoads[0]) {
+                  if (initialLoads[1]) {
                     vatTec.text = vatSnapshot.data.toString();
-                    initialLoads[0] = false;
+                    initialLoads[1] = false;
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -117,10 +117,10 @@ class _VATChangePageState extends State<VATChangePage> {
                         ConnectionState.waiting)
                       return CircularProgressIndicator();
 
-                    // if (initialLoads[1]) {
-                    //   initialLoads[1] = false;
+                    if (initialLoads[2]) {
+                      initialLoads[2] = false;
                       dropdownValue = currencySnapshot.data;
-                    // }
+                    }
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),

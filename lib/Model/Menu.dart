@@ -16,7 +16,7 @@ class Menu {
   Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals, this.extras);
 
   //Get the total cost of the menu, calculated from all ingredients and meals
-  double get totalCost {
+  double totalCost(int hourPrice) {
     double totalPrice = 0;
     ingredients?.forEach((e) {
       if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
@@ -25,7 +25,7 @@ class Menu {
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
     meals?.forEach((e) {
-      totalPrice += e.totalCost * e.amount;
+      totalPrice += e.totalCost(hourPrice) * e.amount;
     });
     extras?.forEach((e) {
       totalPrice += e.costPrice * e.amount;
@@ -42,15 +42,17 @@ class Menu {
   }
 
   //Get the profit, calculated with salePrice and totalCost
-  double get profit {
-    return (salePrice - totalCost);
+  double profit(int hourPrice) {
+    return (salePrice - totalCost(hourPrice));
   }
 
-  double profitMargin(int hourPrice) {
-    if (salePrice != 0 && totalCost != 0) {
-      double totalWithHour = totalCost + ((hourPrice / 60) * totalMinutesToMake);
-
-      return ((salePrice - totalWithHour) / totalWithHour) * 100;
+  double profitMargin(int hourPrice, int vatPercent) {
+      double totalWithHour = totalCost(hourPrice);
+      print( 'total W h: $totalWithHour');
+    if (salePrice != 0 && totalCost(hourPrice) != 0) {
+      double salePriceNoVat = salePrice / (vatPercent / 100 + 1);
+    
+      return ((salePriceNoVat - totalWithHour) / totalWithHour) * 100;
     } else {
       return 0;
     }
