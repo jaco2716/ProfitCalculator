@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/IngredientPages/IngredientList.dart';
 import 'package:profit_calculator/MealPages/MealList.dart';
 import 'package:profit_calculator/BackupAndRestore/BackupAndRestorePage.dart';
+import 'package:profit_calculator/VideoAppGuidePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'ExtraPages/ExtraListPage.dart';
@@ -108,8 +109,10 @@ class FrontPageMenu extends StatelessWidget {
             }, color: Colors.blue[800]),
             // Divider(),
             drawerListTile(Icon(Icons.help), "App Guide \n(Placeholder video)",
-                onTap: () =>
-                    _launchURL('https://www.youtube.com/watch?v=pEPLLQToLxU'),
+                onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => VideoAppGuidePage()));
+            },
                 color: Colors.blueGrey[700]),
             drawerListTile(Icon(Icons.info), "Contact Support",
                 onTap: () => _launchURL('https://wejeo.dk/#Contact'),

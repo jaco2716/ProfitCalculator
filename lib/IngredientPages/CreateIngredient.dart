@@ -301,6 +301,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
         allMenusFromFile.forEach((menu) {
           int menuEditIndex = menu.ingredients
               .indexWhere((element) => element.id == newIngredient.id);
+              print('index: $menuEditIndex');
           if (menuEditIndex != -1) {
             Ingredient newIngredientWGrams = newIngredient;
             double amountInGrams =
@@ -313,10 +314,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
           menu.meals.forEach((meal) {
             int menuMealEditIndex = meal.ingredients
                 .indexWhere((element) => element.id == newIngredient.id);
+              print('index Meal: $menuMealEditIndex');
+
             if (menuMealEditIndex != -1) {
               Ingredient newIngredientWGramsMeal = newIngredient;
               double amountInGramsMeal =
-                  menu.ingredients[menuMealEditIndex].amountInGrams;
+                  meal.ingredients[menuMealEditIndex].amountInGrams;
               newIngredientWGramsMeal.amountInGrams = amountInGramsMeal;
               meal.ingredients[menuMealEditIndex] = newIngredientWGramsMeal;
             }
