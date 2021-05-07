@@ -144,7 +144,8 @@ class _MealListState extends State<MealList> {
 
                                     meals.sort((b, a) => a
                                         .profitMargin(_hourPrice, _vatPercent)
-                                        .compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                        .compareTo(b.profitMargin(
+                                            _hourPrice, _vatPercent)));
 
                                     if (widget.isMealList) {
                                       return Column(
@@ -204,8 +205,7 @@ class _MealListState extends State<MealList> {
                                               .profitMargin(
                                                   _hourPrice, _vatPercent)
                                               .compareTo(b.profitMargin(
-                                                  _hourPrice,
-                                                  _vatPercent)));
+                                                  _hourPrice, _vatPercent)));
 
                                           return Column(
                                             children: [
@@ -282,7 +282,7 @@ class _MealListState extends State<MealList> {
             Text(
               '${meal.profitMargin(_hourPrice, _vatPercent).round()}%',
               style: TextStyle(
-                  color: meal.profit(_hourPrice) > 0
+                  color: meal.profit(_hourPrice, _vatPercent) > 0
                       ? Colors.green
                       : Colors.orange[700]),
             ),
@@ -322,7 +322,7 @@ class _MealListState extends State<MealList> {
             Text(
               '${menu.profitMargin(_hourPrice, _vatPercent).round()}%',
               style: TextStyle(
-                  color: menu.profit(_hourPrice) > 0
+                  color: menu.profit(_hourPrice, _vatPercent) > 0
                       ? Colors.green
                       : Colors.orange[700]),
             ),

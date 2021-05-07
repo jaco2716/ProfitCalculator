@@ -112,12 +112,12 @@ class _SingleMealState extends State<SingleMeal> {
                             int _hourPrice = hourPriceSnapshot.data;
                             if (widget.isMeal) {
                               _totalCost = widget.meal.totalCost(_hourPrice);
-                              _profit = widget.meal.profit(_hourPrice);
+                              _profit = widget.meal.profit(_hourPrice, _vatPercent);
                               _profitMargin =
                                   widget.meal.profitMargin(_hourPrice, _vatPercent);
                             } else {
                               _totalCost = widget.menu.totalCost(_hourPrice);
-                              _profit = widget.menu.profit(_hourPrice);
+                              _profit = widget.menu.profit(_hourPrice, _vatPercent);
                               _profitMargin = widget.menu
                                   .profitMargin(_hourPrice, _vatPercent);
                             }
@@ -171,8 +171,15 @@ class _SingleMealState extends State<SingleMeal> {
                                   child: Container(
                                     width: double.infinity,
                                     child: ListTile(
+                                      dense: true,
                                         title: Text(
-                                          'Gross Price ($_vatPercent% VAT):',
+                                          'Sale Price:',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                              color: Colors.blue[700]),
+                                        ),
+                                        subtitle: Text(
+                                          '($_vatPercent% VAT):',
                                           style: TextStyle(
                                               color: Colors.blue[700]),
                                         ),

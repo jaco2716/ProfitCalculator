@@ -31,8 +31,8 @@ class Meal {
   }
 
   //Get the profit, calculated with salePrice and totalCost
-  double profit(int hourPrice) {
-    return (salePrice - totalCost(hourPrice));
+  double profit(int hourPrice, int vatPercent) {
+    return ((salePrice / (vatPercent / 100 + 1)) - totalCost(hourPrice));
   }
 
   double profitMargin(int hourPrice, int vatPercent) {
