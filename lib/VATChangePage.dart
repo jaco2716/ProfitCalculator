@@ -14,6 +14,8 @@ class _VATChangePageState extends State<VATChangePage> {
   final TextEditingController hourPriceTec = TextEditingController();
   String dropdownValue = 'USD';
   List<bool> initialLoads = [true, true, true];
+  String vatErrorText;
+  String hourErrorText;
 
   // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   SharedValueHandler _sharedValueHandler = SharedValueHandler();
@@ -62,8 +64,10 @@ class _VATChangePageState extends State<VATChangePage> {
                         //   tec.text = value;
                         // },
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefix: Text('Hourly rate:   ')),
+                          border: OutlineInputBorder(),
+                          prefix: Text('Hourly rate:   '),
+                          errorText: hourErrorText,
+                        ),
                         controller: hourPriceTec,
                         // decoration: InputDecoration(hintText: 'VAT in %'),
                         keyboardType: TextInputType.number,
@@ -97,7 +101,9 @@ class _VATChangePageState extends State<VATChangePage> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           prefix: Text('VAT in %:       '),
+                          errorText: vatErrorText,
                         ),
+
                         controller: vatTec,
                         // decoration: InputDecoration(hintText: 'VAT in %'),
                         keyboardType: TextInputType.number,
@@ -187,6 +193,20 @@ class _VATChangePageState extends State<VATChangePage> {
                   String currencytext = dropdownValue;
                   int vatInt = int.parse(vattext);
                   int hourPriceInt = int.parse(hourPrice);
+                  bool validateSuccess = true;
+                  if (vatInt <= 0) {
+                    vatErrorText = 'VAT must be grater than 0';
+                    validateSuccess = false;
+                  }
+                  if (hourPriceInt <= 0) {
+                    hourErrorText = 'Hourly rate must be grater than 0';
+                    validateSuccess = false;
+                  }
+                  if (!validateSuccess) {
+                    setState(() {});
+                    return;
+                  }
+
                   bool saveSucces = await _sharedValueHandler.saveIntSharedP(
                       vatInt, 'VATPercent');
                   saveSucces = await _sharedValueHandler.saveIntSharedP(
