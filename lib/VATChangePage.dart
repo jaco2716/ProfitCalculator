@@ -33,7 +33,7 @@ class _VATChangePageState extends State<VATChangePage> {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Text(
-                  'Here you can change the hourly rate that is used to calculate the expense of time to make your meals.\nAdditionaly you can change to the VAT and Currency that is relevant in your region.',
+                  'Here you can change the hourly rate that is used to calculate the expense of time to make your meals.\nAdditionaly you can change the VAT and Currency that is relevant in your region.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),

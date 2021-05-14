@@ -48,7 +48,7 @@ class Menu {
 
   double profitMargin(int hourPrice, int vatPercent) {
       double totalWithHour = totalCost(hourPrice);
-      print( 'total W h: $totalWithHour');
+      // print( 'total W h: $totalWithHour');
     if (salePrice != 0 && totalCost(hourPrice) != 0) {
       double salePriceNoVat = salePrice / (vatPercent / 100 + 1);
     

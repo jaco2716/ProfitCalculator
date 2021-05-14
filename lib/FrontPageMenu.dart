@@ -13,8 +13,8 @@ class FrontPageMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('apsect ratio:');
-    print(MediaQuery.of(context).size.aspectRatio);
+    // print('apsect ratio:');
+    // print(MediaQuery.of(context).size.aspectRatio);
     double gridPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 80 : 50;
     return SingleChildScrollView(
       child: Container(

@@ -177,7 +177,7 @@ class _CreateMealState extends State<CreateMeal> {
                                 ? Icons.arrow_back
                                 : Icons.arrow_forward),
                             onPressed: () {
-                              print(_minutesToMake);
+                              // print(_minutesToMake);
                               setState(() {
                                 _salePriceChosen = !_salePriceChosen;
                               });
@@ -263,12 +263,13 @@ class _CreateMealState extends State<CreateMeal> {
                                 eIngredients: ingredients, type: 0);
                           }),
                     ),
-                    Divider(thickness: 1),
+                    !widget.isMeals
+                        ? Divider(thickness: 1) : Center(),
                     !widget.isMeals
                         ? itemListTitle(
                             'Meals:', 'No meals added.', _selectedMeals.length)
                         : Center(),
-                    Container(
+                    !widget.isMeals? Container(
                       padding: EdgeInsets.all(10),
                       child: ListView.builder(
                         padding: EdgeInsets.all(0),
@@ -279,7 +280,7 @@ class _CreateMealState extends State<CreateMeal> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                       ),
-                    ),
+                    ):Center(),
 
                     // SizedBox(
                     //   height: 20,
@@ -313,7 +314,8 @@ class _CreateMealState extends State<CreateMeal> {
                                 }),
                           )
                         : Center(),
-                    Divider(thickness: 1),
+                    !widget.isMeals
+                        ? Divider(thickness: 1) : Center(),
                     !widget.isMeals
                         ? itemListTitle('Extras:', 'No extras added.',
                             _selectedExtras.length)
@@ -324,7 +326,8 @@ class _CreateMealState extends State<CreateMeal> {
                         padding: EdgeInsets.all(0),
                         itemCount: _selectedExtras.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return extraListTile(_selectedExtras[index], setState);
+                          return extraListTile(
+                              _selectedExtras[index], setState);
                         },
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -511,6 +514,8 @@ class _CreateMealState extends State<CreateMeal> {
         int _finalMinutesToMake = 0;
         int _hourPrice =
             await _sharedValueHandler.getIntSharedP('hourPrice', 100);
+        int _vatPercent =
+            await _sharedValueHandler.getIntSharedP('VATPercent', 25);
         if (widget.isMeals) _finalMinutesToMake = int.parse(_minutesToMake);
 
         double _totalPrice = 0;
@@ -520,10 +525,12 @@ class _CreateMealState extends State<CreateMeal> {
           } else
             _totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
         });
+
         if (!widget.isMeals) {
           _selectedMeals.forEach((m) {
-            _totalPrice += m.totalCost(_hourPrice);
+            _totalPrice += m.totalCost(_hourPrice) * m.amount;
           });
+
           _selectedExtras.forEach((m) {
             _totalPrice += m.costPrice * m.amount;
           });
@@ -537,12 +544,13 @@ class _CreateMealState extends State<CreateMeal> {
 
           if (widget.isMeals) {
             _totalPrice = _totalPrice + (_hourPrice / 60 * _finalMinutesToMake);
-          } else {}
+          }
 
           //_finalSalePrice = _totalPrice / (1 - double.parse(tempProfit) / 100);
 
           _finalSalePrice =
-              ((double.parse(tempProfit) / 100) * _totalPrice) + _totalPrice;
+              (((double.parse(tempProfit) / 100) * _totalPrice) + _totalPrice) *
+                  (_vatPercent / 100 + 1);
         }
 
         _finalSalePrice = (_finalSalePrice * 100).roundToDouble() / 100;
@@ -566,7 +574,7 @@ class _CreateMealState extends State<CreateMeal> {
           newMeal = Meal(newID, _name, _finalSalePrice, _selectedIngredients,
               _finalMinutesToMake,
               amount: 1);
-          print(newMeal);
+          // print(newMeal);
         } else {
           newMenu = Menu(newID, _name, _finalSalePrice, _selectedIngredients,
               _selectedMeals, _selectedExtras);
@@ -710,8 +718,9 @@ class _CreateMealState extends State<CreateMeal> {
                 )),
             Text(ltIngredient.measureUnit == 'Kg' ? 'g  ' : 'ml'),
             Container(
-              width: 15,
-              height: 30,
+              width: 20,
+              // height: 30,
+              
               child: IconButton(
                 iconSize: 15,
                 icon: Icon(Icons.close),
@@ -724,7 +733,8 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
-  Widget mealListTile(Meal ltMeal, void Function(void Function()) setModalState) {
+  Widget mealListTile(
+      Meal ltMeal, void Function(void Function()) setModalState) {
     return Card(
       child: ListTile(
           title: Text(ltMeal.name),
@@ -752,7 +762,7 @@ class _CreateMealState extends State<CreateMeal> {
                       _selectedMeals.indexWhere((meal) => meal.id == ltMeal.id);
                   _selectedMeals[mealIndex].amount = ltMeal.amount;
                 }),
-                Container(
+            Container(
               width: 15,
               height: 30,
               child: IconButton(
@@ -767,7 +777,8 @@ class _CreateMealState extends State<CreateMeal> {
     );
   }
 
-  Widget extraListTile(Extra ltExtra, void Function(void Function()) setModalState) {
+  Widget extraListTile(
+      Extra ltExtra, void Function(void Function()) setModalState) {
     return Card(
       child: ListTile(
           title: Text(ltExtra.name),
@@ -795,7 +806,7 @@ class _CreateMealState extends State<CreateMeal> {
                       .indexWhere((extra) => extra.id == ltExtra.id);
                   _selectedExtras[extraIndex].amount = ltExtra.amount;
                 }),
-                Container(
+            Container(
               width: 15,
               height: 30,
               child: IconButton(

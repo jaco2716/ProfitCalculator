@@ -32,6 +32,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   String _amountValue = '';
   String _amountPrice = '';
   Color currentColor = Colors.red;
+  String _currencyChosen = 'DKK';
 
   String ingredientJsonFile = config.ingredientJsonFile;
   String mealJsonFile = config.mealJsonFile;
@@ -105,6 +106,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             'CurrencyChosen', 'DKK'),
                         initialData: '',
                         builder: (context, currencySnapshot) {
+                          if (currencySnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          }
+
+                          _currencyChosen = currencySnapshot.data;
                           return Container(
                             // width: MediaQuery.of(context).size.width - 110,
                             child: TextFormField(
@@ -116,8 +123,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
                               decoration: InputDecoration(
                                 suffixText:
                                     _measureUnit == 'Kg' || _measureUnit == 'g'
-                                        ? '${currencySnapshot.data}/Kg'
-                                        : '${currencySnapshot.data}/Liter',
+                                        ? '$_currencyChosen/Kg'
+                                        : '$_currencyChosen/Liter',
                                 border: OutlineInputBorder(),
                                 labelText: 'Kg Price / Liter Price',
                               ),
@@ -290,7 +297,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
           int mealEditIndex = meal.ingredients
               .indexWhere((element) => element.id == newIngredient.id);
           if (mealEditIndex != -1) {
-            Ingredient newIngredientWGrams = newIngredient;
+            Ingredient newIngredientWGrams = Ingredient.clone(newIngredient);
             double amountInGrams =
                 meal.ingredients[mealEditIndex].amountInGrams;
             newIngredientWGrams.amountInGrams = amountInGrams;
@@ -301,9 +308,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
         allMenusFromFile.forEach((menu) {
           int menuEditIndex = menu.ingredients
               .indexWhere((element) => element.id == newIngredient.id);
-              print('index: $menuEditIndex');
+          print('index: $menuEditIndex');
           if (menuEditIndex != -1) {
-            Ingredient newIngredientWGrams = newIngredient;
+            Ingredient newIngredientWGrams = Ingredient.clone(newIngredient);
             double amountInGrams =
                 menu.ingredients[menuEditIndex].amountInGrams;
             newIngredientWGrams.amountInGrams = amountInGrams;
@@ -314,10 +321,10 @@ class _CreateIngredientState extends State<CreateIngredient> {
           menu.meals.forEach((meal) {
             int menuMealEditIndex = meal.ingredients
                 .indexWhere((element) => element.id == newIngredient.id);
-              print('index Meal: $menuMealEditIndex');
+            print('index Meal: $menuMealEditIndex');
 
             if (menuMealEditIndex != -1) {
-              Ingredient newIngredientWGramsMeal = newIngredient;
+              Ingredient newIngredientWGramsMeal = Ingredient.clone(newIngredient);
               double amountInGramsMeal =
                   meal.ingredients[menuMealEditIndex].amountInGrams;
               newIngredientWGramsMeal.amountInGrams = amountInGramsMeal;
@@ -534,7 +541,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-
+                            suffixText: ',- $_currencyChosen',
                             labelText: 'Price for amount',
                             errorStyle: TextStyle(height: 0.5),
                             // counterStyle: TextStyle(height: -0.5),
@@ -562,6 +569,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Amount in $_measureUnit',
+                            suffixText: _measureUnit,
                             errorStyle: TextStyle(height: 0.5),
                             // counterStyle: TextStyle(height: 1),
                             // counterText: ' ',

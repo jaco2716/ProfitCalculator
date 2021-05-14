@@ -308,7 +308,7 @@ class _SingleMealState extends State<SingleMeal> {
                             : 1;
                     String _lowMeasureUnit =
                         _iIngredients[index].measureUnit == 'Kg' ? 'g' : 'ml';
-                    print(_iIngredients.toString());
+                    // print(_iIngredients.toString());
 
                     return ListTile(
                       title: Text(_iIngredients[index].name),
