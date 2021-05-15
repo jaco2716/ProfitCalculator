@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/FrontPageMenu.dart';
-import 'package:profit_calculator/MyAppBarWithCalc.dart';
-import 'Model/EnvironmentConfig.dart' as config;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,9 +40,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final FileManagement fileManagement = FileManagement();
-  final String ingredientJsonFile = config.ingredientJsonFile;
-  final String mealJsonFile = config.mealJsonFile;
+  // final FileManagement fileManagement = FileManagement();
+  // final String ingredientJsonFile = config.ingredientJsonFile;
+  // final String mealJsonFile = config.mealJsonFile;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

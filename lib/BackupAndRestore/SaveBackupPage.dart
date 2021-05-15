@@ -127,15 +127,16 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
           title: Text(title),
           content: Text(content),
           actions: [
-            RaisedButton(
+            TextButton(
               child: Text('  Cancel  '),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text('  I\'m sure  '),
-              color: Colors.red,
+              // color: Colors.red,
+              style: ElevatedButton.styleFrom(primary: Colors.red),
               onPressed: () {
                 myOnPressed();
                 Navigator.pop(context);

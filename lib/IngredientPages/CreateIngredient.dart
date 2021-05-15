@@ -356,15 +356,16 @@ class _CreateIngredientState extends State<CreateIngredient> {
           content: Text(
               'This cannot be undone, are you sure you want to delete this ingredient?'),
           actions: [
-            RaisedButton(
+            TextButton(
               child: Text('No'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text('Yes'),
-              color: Colors.red,
+              style: ElevatedButton.styleFrom(primary: Colors.red),
+
               onPressed: () => _deleteIngredient(context),
             )
           ],

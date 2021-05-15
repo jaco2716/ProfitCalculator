@@ -253,34 +253,39 @@ class _CreateMealState extends State<CreateMeal> {
                     ),
                     Container(
                       width: 200,
-                      child: RaisedButton.icon(
+                      child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.all(15),
+                            primary: Colors.pink,
+                          ),
                           icon: Icon(Icons.add),
                           label: Text('Add Ingredients'),
-                          color: Colors.pink,
+
                           onPressed: () {
                             _showEditIngredients(
                                 eIngredients: ingredients, type: 0);
                           }),
                     ),
-                    !widget.isMeals
-                        ? Divider(thickness: 1) : Center(),
+                    !widget.isMeals ? Divider(thickness: 1) : Center(),
                     !widget.isMeals
                         ? itemListTitle(
                             'Meals:', 'No meals added.', _selectedMeals.length)
                         : Center(),
-                    !widget.isMeals? Container(
-                      padding: EdgeInsets.all(10),
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(0),
-                        itemCount: _selectedMeals.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return mealListTile(_selectedMeals[index], setState);
-                        },
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                      ),
-                    ):Center(),
+                    !widget.isMeals
+                        ? Container(
+                            padding: EdgeInsets.all(10),
+                            child: ListView.builder(
+                              padding: EdgeInsets.all(0),
+                              itemCount: _selectedMeals.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return mealListTile(
+                                    _selectedMeals[index], setState);
+                              },
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                            ),
+                          )
+                        : Center(),
 
                     // SizedBox(
                     //   height: 20,
@@ -302,20 +307,20 @@ class _CreateMealState extends State<CreateMeal> {
                     // ),
                     !widget.isMeals
                         ? Container(
-                            // padding: EdgeInsets.only(bottom: 20),
                             width: 200,
-                            child: RaisedButton.icon(
-                                padding: EdgeInsets.all(15),
+                            child: ElevatedButton.icon(
                                 icon: Icon(Icons.add),
                                 label: Text('Add Meals'),
-                                color: Colors.pink,
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.all(15),
+                                  primary: Colors.pink,
+                                ),
                                 onPressed: () {
                                   _showEditIngredients(eMeals: meals, type: 1);
                                 }),
                           )
                         : Center(),
-                    !widget.isMeals
-                        ? Divider(thickness: 1) : Center(),
+                    !widget.isMeals ? Divider(thickness: 1) : Center(),
                     !widget.isMeals
                         ? itemListTitle('Extras:', 'No extras added.',
                             _selectedExtras.length)
@@ -337,11 +342,13 @@ class _CreateMealState extends State<CreateMeal> {
                         ? Container(
                             padding: EdgeInsets.only(bottom: 20),
                             width: 200,
-                            child: RaisedButton.icon(
-                                padding: EdgeInsets.all(15),
+                            child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.pink,
+                                  padding: EdgeInsets.all(15),
+                                ),
                                 icon: Icon(Icons.add),
                                 label: Text('Add Extras'),
-                                color: Colors.pink,
                                 onPressed: () {
                                   _showEditIngredients(
                                       eExtras: extras, type: 2);
@@ -484,8 +491,10 @@ class _CreateMealState extends State<CreateMeal> {
                   width: double.infinity,
                   height: 90,
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                  child: RaisedButton(
-                    elevation: 5,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                    ),
                     child: Text('Done'),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -720,7 +729,7 @@ class _CreateMealState extends State<CreateMeal> {
             Container(
               width: 20,
               // height: 30,
-              
+
               child: IconButton(
                 iconSize: 15,
                 icon: Icon(Icons.close),

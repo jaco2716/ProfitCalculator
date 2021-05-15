@@ -146,9 +146,11 @@ class _CreateExtraState extends State<CreateExtra> {
                             ),
                             Container(
                                 width: 200,
-                                child: RaisedButton.icon(
+                                child: ElevatedButton.icon(
                                     icon: Icon(Icons.save),
-                                    padding: EdgeInsets.all(15),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.all(15),
+                                    ),
                                     label: Text('Save Extra'),
                                     onPressed: () => _saveExtra())),
                             SizedBox(
@@ -264,15 +266,15 @@ class _CreateExtraState extends State<CreateExtra> {
           content: Text(
               'This cannot be undone, are you sure you want to delete this element?'),
           actions: [
-            RaisedButton(
+            TextButton(
               child: Text('No'),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text('Yes'),
-              color: Colors.red,
+              style: ElevatedButton.styleFrom(primary: Colors.red),
               onPressed: () => _deleteExtra(context),
             )
           ],

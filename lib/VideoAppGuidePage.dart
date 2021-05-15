@@ -11,16 +11,15 @@ class VideoAppGuidePage extends StatefulWidget {
 }
 
 class _VideoAppGuidePageState extends State<VideoAppGuidePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc('App Guide'),
-          // body: Image.asset('assets/icon/icon.png')
-          body: _ButterFlyAssetVideo() 
-          // 
-          // //assets/videos/ProfitDemoTest.MP4
-    );
+        appBar: MyAppBarWithCalc('App Guide'),
+        // body: Image.asset('assets/icon/icon.png')
+        body: _ButterFlyAssetVideo()
+        //
+        // //assets/videos/ProfitDemoTest.MP4
+        );
   }
 }
 
@@ -35,7 +34,8 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/videos/ProfitDemoTest.MP4');
+    _controller =
+        VideoPlayerController.asset('assets/videos/ProfitDemoTest.MP4');
 
     _controller.addListener(() {
       setState(() {});
@@ -59,8 +59,8 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
           Center(
             child: Container(
               // height: 2000,
-              height: MediaQuery.of(context).size.height -130,
-              padding: const EdgeInsets.symmetric( vertical: 30),
+              height: MediaQuery.of(context).size.height - 180,
+              // padding: const EdgeInsets.symmetric( vertical: 0),
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 child: Stack(
@@ -69,14 +69,25 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
                     VideoPlayer(_controller),
                     _ControlsOverlay(controller: _controller),
                     Container(
-                      
-                      height: 30,
-                      child: VideoProgressIndicator(_controller, allowScrubbing: true, padding: EdgeInsets.all(5),)),
+                        height: 30,
+                        child: VideoProgressIndicator(
+                          _controller,
+                          allowScrubbing: true,
+                          padding: EdgeInsets.all(5),
+                        )),
                   ],
                 ),
               ),
             ),
           ),
+          Container(
+            padding: EdgeInsets.all(10),
+            width: double.infinity,
+            height: 70,
+            child: ElevatedButton(onPressed: () {
+              Navigator.of(context).pop();
+            }, child: Text('Close')),
+          )
         ],
       ),
     );
@@ -85,7 +96,6 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 
 class _ControlsOverlay extends StatelessWidget {
   // final VideoPlayerController controller;
-
 
   const _ControlsOverlay({this.controller});
 
