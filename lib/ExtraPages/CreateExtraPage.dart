@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Handlers/SharedValueHandler.dart';
 import '../Model/Extra.dart';
 
@@ -80,6 +81,9 @@ class _CreateExtraState extends State<CreateExtra> {
                           'CurrencyChosen', 'DKK'),
                       initialData: '',
                       builder: (context, currencySnapshot) {
+                        if(currencySnapshot.connectionState == ConnectionState.waiting){
+                          return MyLoadingCircle(500);
+                        }
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [

@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 
 import '../Model/Ingredient.dart';
@@ -93,21 +94,9 @@ class _IngredientListState extends State<IngredientList> {
                   future: fileManagement.readFile(ingredientJsonFile),
                   initialData: '',
                   builder: (context, ingredientJsonSnapshot) {
-                    if (ingredientJsonSnapshot.hasError) {
-                      return Container(
-                          height: 400,
-                          child: Center(
-                              child: Text(
-                            'Something went wrong.\nPlease try restarting your app.',
-                            textAlign: TextAlign.center,
-                          )));
-                    }
-
                     if (ingredientJsonSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return Container(
-                          height: 400,
-                          child: Center(child: CircularProgressIndicator()));
+                      return MyLoadingCircle(500);
                     }
                     if (ingredientJsonSnapshot.data.length == 0 ||
                         ingredientJsonSnapshot.data == '[]') {
@@ -124,10 +113,7 @@ class _IngredientListState extends State<IngredientList> {
                         builder: (context, currencySnapshot) {
                           if (currencySnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Container(
-                                height: 400,
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                            return MyLoadingCircle(500);
                           }
                           return Padding(
                             padding: const EdgeInsets.only(top: 40),

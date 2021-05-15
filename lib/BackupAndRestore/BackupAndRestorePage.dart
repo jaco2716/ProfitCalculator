@@ -3,6 +3,7 @@ import 'package:profit_calculator/BackupAndRestore/SaveBackupPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/MyWidgets/WideMenuIconButton.dart';
 import '../Model/EnvironmentConfig.dart' as config;
+import '../MyAppBarWithCalc.dart';
 
 class BackupAndRestore extends StatelessWidget {
   final FileManagement fileManagement = FileManagement();
@@ -11,12 +12,10 @@ class BackupAndRestore extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Backup & Restore'),
-      ),
+            appBar: MyAppBarWithCalc('Backup & Restore'),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 30),
-        child: ListView(
+        child: Column(
           children: <Widget>[
             Container(
               padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -28,16 +27,6 @@ class BackupAndRestore extends StatelessWidget {
                 ),
               ),
             ),
-            // Container(
-            //   padding: EdgeInsets.all(30),
-            //   child: Center(child: Text('Welcome', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w200,)))),
-            // drawerListTile(
-              // tileIcon: Icon(Icons.save),
-              // tileTitle: "Save Backup",
-              // myOnPressed: () {
-              //   goToPage(SaveBackupPage(false), context);
-              // },
-            // ),
             WideMenuIconButton(
               tileIcon: Icon(Icons.save),
               tileTitle: "Save Backup",
@@ -52,13 +41,6 @@ class BackupAndRestore extends StatelessWidget {
                 goToPage(SaveBackupPage(true), context);
               },
             ),
-            // drawerListTile(
-            //   tileIcon: Icon(Icons.download_rounded),
-            //   tileTitle: "Restore Backup",
-            //   myOnPressed: () {
-            //     goToPage(SaveBackupPage(true), context);
-            //   },
-            // ),
           ],
         ),
       ),

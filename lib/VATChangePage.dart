@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 
 import 'MyAppBarWithCalc.dart';
+import 'MyWidgets/MyLoadingCircle.dart';
 
 class VATChangePage extends StatefulWidget {
   @override
@@ -44,9 +45,9 @@ class _VATChangePageState extends State<VATChangePage> {
                 builder:
                     (BuildContext context, AsyncSnapshot hourPriceSnapshot) {
                   if (hourPriceSnapshot.connectionState ==
-                      ConnectionState.waiting)
-                    return Container(
-                        height: 98, child: CircularProgressIndicator());
+                      ConnectionState.waiting) {
+                    return MyLoadingCircle(500);
+                  }
                   if (initialLoads[0]) {
                     hourPriceTec.text = hourPriceSnapshot.data.toString();
                     initialLoads[0] = false;
@@ -83,9 +84,9 @@ class _VATChangePageState extends State<VATChangePage> {
                 future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
                 initialData: '',
                 builder: (BuildContext context, AsyncSnapshot vatSnapshot) {
-                  if (vatSnapshot.connectionState == ConnectionState.waiting)
-                    return Container(
-                        height: 98, child: CircularProgressIndicator());
+                  if (vatSnapshot.connectionState == ConnectionState.waiting) {
+                    return MyLoadingCircle(500);
+                  }
                   if (initialLoads[1]) {
                     vatTec.text = vatSnapshot.data.toString();
                     initialLoads[1] = false;
@@ -120,8 +121,9 @@ class _VATChangePageState extends State<VATChangePage> {
                       'CurrencyChosen', 'DKK'),
                   builder: (context, currencySnapshot) {
                     if (currencySnapshot.connectionState ==
-                        ConnectionState.waiting)
-                      return CircularProgressIndicator();
+                        ConnectionState.waiting) {
+                      return MyLoadingCircle(500);
+                    }
 
                     if (initialLoads[2]) {
                       initialLoads[2] = false;

@@ -8,6 +8,7 @@ import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MealPages/SingleMeal.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 
 import '../Model/Ingredient.dart';
@@ -92,10 +93,7 @@ class _MealListState extends State<MealList> {
                         builder: (context, vatSnapshot) {
                           if (vatSnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Container(
-                                height: 400,
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                            return MyLoadingCircle(500);
                           }
 
                           _vatPercent = vatSnapshot.data;
@@ -105,40 +103,22 @@ class _MealListState extends State<MealList> {
                               builder: (context, hourSnapshot) {
                                 if (hourSnapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return Container(
-                                      height: 400,
-                                      child: Center(
-                                          child: CircularProgressIndicator()));
+                                  return MyLoadingCircle(500);
                                 }
                                 _hourPrice = hourSnapshot.data;
                                 return FutureBuilder(
                                   future: fileManagement.readFile(mealJsonFile),
                                   initialData: '',
                                   builder: (context, mealJsonSnapshot) {
-                                    // print(mealFileSnapshot.data);
-                                    if (mealJsonSnapshot.hasError) {
-                                      return Container(
-                                          height: 400,
-                                          child: Center(
-                                              child: Text(
-                                            'Something went wrong.\nPlease try restarting your app.',
-                                            textAlign: TextAlign.center,
-                                          )));
-                                    }
-
                                     if (mealJsonSnapshot.connectionState ==
                                         ConnectionState.waiting) {
-                                      return Container(
-                                          height: 400,
-                                          child: Center(
-                                              child:
-                                                  CircularProgressIndicator()));
+                                      return MyLoadingCircle(500);
                                     }
                                     if (mealJsonSnapshot.data.length <= 2 &&
                                         widget.isMealList) {
                                       return InitialFutureWidget();
                                     }
-                                    //Map data from firestore to list of objects
+                                    //Map data from file to list of objects
                                     List<Meal> meals = objManager
                                         .jsonToListMeal(mealJsonSnapshot.data);
 
@@ -176,23 +156,10 @@ class _MealListState extends State<MealList> {
                                         initialData: '',
                                         builder: (BuildContext context,
                                             AsyncSnapshot menuJsonSnapshot) {
-                                          if (menuJsonSnapshot.hasError) {
-                                            return Container(
-                                                height: 400,
-                                                child: Center(
-                                                    child: Text(
-                                                  'Something went wrong.\nPlease try restarting your app.',
-                                                  textAlign: TextAlign.center,
-                                                )));
-                                          }
                                           if (menuJsonSnapshot
                                                   .connectionState ==
                                               ConnectionState.waiting) {
-                                            return Container(
-                                                height: 400,
-                                                child: Center(
-                                                    child:
-                                                        CircularProgressIndicator()));
+                                            return MyLoadingCircle(500);
                                           }
                                           if (menuJsonSnapshot.data.length <=
                                               2) {

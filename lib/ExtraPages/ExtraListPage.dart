@@ -5,6 +5,7 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 import '../Model/Extra.dart';
 import '../MyAppBarWithCalc.dart';
@@ -59,34 +60,26 @@ class _ExtraListPageState extends State<ExtraListPage> {
                   future: fileManagement.readFile(extraJsonFile),
                   initialData: '',
                   builder: (context, extraJsonSnapshot) {
-                    if (extraJsonSnapshot.hasError) {
-                      return Container(
-                          height: 400,
-                          child: Center(
-                              child: Text(
-                            'Something went wrong.\nPlease try restarting your app.',
-                            textAlign: TextAlign.center,
-                          )));
-                    }
-
                     if (extraJsonSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return Container(
-                          height: 400,
-                          child: Center(child: CircularProgressIndicator()));
+                      return MyLoadingCircle(500);
                     }
-                    if (extraJsonSnapshot.data.length == 0 || extraJsonSnapshot.data == '[]') {
+                    if (extraJsonSnapshot.data.length == 0 ||
+                        extraJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
-                    List<Extra> extras = objManager
-                        .jsonToListExtra(extraJsonSnapshot.data);
+                    List<Extra> extras =
+                        objManager.jsonToListExtra(extraJsonSnapshot.data);
 
                     return FutureBuilder(
                         future: _sharedValueHandler.getStringSharedP(
                             'CurrencyChosen', 'DKK'),
                         initialData: '',
                         builder: (context, currencySnapshot) {
-                          // print(extras[0].toString());
+                          if (currencySnapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return MyLoadingCircle(500);
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(top: 40),
                             child: ListView.builder(
@@ -156,8 +149,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
 //when tapped go to edit page.
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) =>
-                CreateExtra(editMode: true, editExtra: extra),
+            builder: (context) => CreateExtra(editMode: true, editExtra: extra),
           ))
               .then((context) {
             setState(() {});

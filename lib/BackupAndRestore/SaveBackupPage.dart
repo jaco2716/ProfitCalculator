@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 import 'package:intl/intl.dart';
 
@@ -56,7 +57,9 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
                   'saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
               builder: (context, saveAndRestoreSnapshot) {
                 if (saveAndRestoreSnapshot.connectionState ==
-                    ConnectionState.waiting) return CircularProgressIndicator();
+                    ConnectionState.waiting) {
+                  return MyLoadingCircle(500);
+                }
                 List<String> saveAndRestoreDates =
                     saveAndRestoreSnapshot.data.toString().split('%');
 

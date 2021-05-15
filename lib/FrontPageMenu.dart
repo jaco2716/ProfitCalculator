@@ -7,6 +7,7 @@ import 'package:profit_calculator/VideoAppGuidePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'ExtraPages/ExtraListPage.dart';
+import 'MyWidgets/MyLoadingCircle.dart';
 import 'VATChangePage.dart';
 
 class FrontPageMenu extends StatefulWidget {
@@ -37,7 +38,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
           future: _sharedValueHandler.getIntSharedP('newUser', 0),
           builder: (context, newUserSnapshot) {
             if (newUserSnapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
+              return MyLoadingCircle(500);
             }
             if (newUserSnapshot.data == 0) {
               return Container(

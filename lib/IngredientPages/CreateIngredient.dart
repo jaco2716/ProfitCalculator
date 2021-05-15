@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../Model/Ingredient.dart';
 import '../Model/Meal.dart';
 import '../Handlers/SharedValueHandler.dart';
@@ -108,7 +109,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         builder: (context, currencySnapshot) {
                           if (currencySnapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return CircularProgressIndicator();
+                            return MyLoadingCircle(500);
                           }
 
                           _currencyChosen = currencySnapshot.data;
@@ -324,7 +325,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
             print('index Meal: $menuMealEditIndex');
 
             if (menuMealEditIndex != -1) {
-              Ingredient newIngredientWGramsMeal = Ingredient.clone(newIngredient);
+              Ingredient newIngredientWGramsMeal =
+                  Ingredient.clone(newIngredient);
               double amountInGramsMeal =
                   meal.ingredients[menuMealEditIndex].amountInGrams;
               newIngredientWGramsMeal.amountInGrams = amountInGramsMeal;
@@ -365,7 +367,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
             ElevatedButton(
               child: Text('Yes'),
               style: ElevatedButton.styleFrom(primary: Colors.red),
-
               onPressed: () => _deleteIngredient(context),
             )
           ],
