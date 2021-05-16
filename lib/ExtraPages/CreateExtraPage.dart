@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Handlers/SharedValueHandler.dart';
 import '../Model/Extra.dart';
@@ -81,24 +82,35 @@ class _CreateExtraState extends State<CreateExtra> {
                           'CurrencyChosen', 'DKK'),
                       initialData: '',
                       builder: (context, currencySnapshot) {
-                        if(currencySnapshot.connectionState == ConnectionState.waiting){
+                        if (currencySnapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return MyLoadingCircle(500);
                         }
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            TextFormField(
-                              controller: _nameController,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                labelText: 'Name',
-                              ),
-                              textCapitalization: TextCapitalization.words,
-                              keyboardType: TextInputType.text,
-                              validator: (value) => validateString(value),
-                              onSaved: (value) => _name = value,
-                              onFieldSubmitted: (value) => changeFocus(),
-                            ),
+                            // CreateElementTextField(
+
+                            //   myValue: _name,
+                            //   textEditingController: _nameController,
+                            //   validate: validateString,
+                            //   setValue: (value) => _name = value,
+                            // ),
+                            // SizedBox(
+                            //   height: 20,
+                            // ),
+                            // TextFormField(
+                            //   controller: _nameController,
+                            //   decoration: InputDecoration(
+                            //     border: OutlineInputBorder(),
+                            //     labelText: 'Name',
+                            //   ),
+                            //   textCapitalization: TextCapitalization.words,
+                            //   keyboardType: TextInputType.text,
+                            //   validator: (value) => validateString(value),
+                            //   onSaved: (value) => _name = value,
+                            //   onFieldSubmitted: (value) => changeFocus(),
+                            // ),
                             SizedBox(
                               height: 20,
                             ),

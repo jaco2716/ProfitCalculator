@@ -7,7 +7,11 @@ import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
+import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
+import 'package:profit_calculator/MyWidgets/CreateElementWidgets/MeasureUnitButtonGridTile.dart';
+import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
+import 'package:profit_calculator/MyWidgets/WideMenuIconButton.dart';
 import '../Model/Ingredient.dart';
 import '../Model/Meal.dart';
 import '../Handlers/SharedValueHandler.dart';
@@ -30,9 +34,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
   String _name = '';
   String _kgPrice = '';
   String _measureUnit = 'g';
+  String _tempMeasureUnit;
   String _amountValue = '';
   String _amountPrice = '';
-  Color currentColor = Colors.red;
   String _currencyChosen = 'DKK';
 
   String ingredientJsonFile = config.ingredientJsonFile;
@@ -55,7 +59,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
   initEditMode() {
     String tempKg;
     if (widget.editMode ?? false) {
-      currentColor = Color(widget.editIngredient.color);
       _name = widget.editIngredient.name;
       tempKg = widget.editIngredient.kgPrice.toString();
       _kgPrice = tempKg.replaceAll('.', ',');
@@ -83,149 +86,111 @@ class _CreateIngredientState extends State<CreateIngredient> {
               child: Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Name',
-                      ),
-                      textCapitalization: TextCapitalization.words,
-                      // initialValue: widget.editMode ?? false ? _name : null,
-                      keyboardType: TextInputType.text,
-                      validator: (value) => validateString(value),
-                      onSaved: (value) => _name = value,
-                      onFieldSubmitted: (value) => changeFocus(),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    FutureBuilder(
-                        future: _sharedValueHandler.getStringSharedP(
-                            'CurrencyChosen', 'DKK'),
-                        initialData: '',
-                        builder: (context, currencySnapshot) {
-                          if (currencySnapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return MyLoadingCircle(500);
-                          }
+                child: FutureBuilder(
+                    future: _sharedValueHandler.getStringSharedP(
+                        'CurrencyChosen', 'DKK'),
+                    initialData: '',
+                    builder: (context, currencySnapshot) {
+                      if (currencySnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return MyLoadingCircle(500);
+                      }
+                      _currencyChosen = currencySnapshot.data;
 
-                          _currencyChosen = currencySnapshot.data;
-                          return Container(
-                            // width: MediaQuery.of(context).size.width - 110,
-                            child: TextFormField(
-                              readOnly: true,
-                              onTap: () {
-                                inputAmuntDialog();
-                              },
-                              controller: _kgPriceController,
-                              decoration: InputDecoration(
-                                suffixText:
-                                    _measureUnit == 'Kg' || _measureUnit == 'g'
-                                        ? '$_currencyChosen/Kg'
-                                        : '$_currencyChosen/Liter',
-                                border: OutlineInputBorder(),
-                                labelText: 'Kg Price / Liter Price',
-                              ),
-                              // initialValue:
-                              //     widget.editMode ?? false ? _kgPrice : null,
-                              inputFormatters: <TextInputFormatter>[
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'[0-9,.]'))
-                              ],
-                              keyboardType: TextInputType.numberWithOptions(
-                                  decimal: true),
-                              validator: (value) => validateDouble(value),
-                              onSaved: (value) => _kgPrice = value,
-                              onFieldSubmitted: (value) => changeFocus(),
-                            ),
-                          );
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                        width: 200,
-                        child: RaisedButton.icon(
-                            icon: Icon(Icons.save),
-                            padding: EdgeInsets.all(15),
-                            label: Text('Save Ingredient'),
-                            onPressed: () => _saveIngredient())),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // TODO delete color picker..
-                    // Text(
-                    //   '\nPick a color as your category',
-                    //   style: TextStyle(
-                    //       fontSize: 15,
-                    //       // fontWeight: FontWeight.w300,
-                    //       fontStyle: FontStyle.italic),
-                    // ),
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 40, vertical: 20),
-                    //   child: Container(
-                    //     // color: Colors.blue[100],
-                    //     padding: EdgeInsets.only(top: 0, right: 20, left: 20),
-                    //     height: 150,
-                    //     width: 320,
-                    //     child: BlockPicker(
-                    //       availableColors: [
-                    //         Colors.red,
-                    //         Colors.orange,
-                    //         Colors.yellow,
-                    //         Colors.purple,
-                    //         Colors.blue,
-                    //         Colors.cyan,
-                    //         Colors.green,
-                    //         Colors.lime,
-                    //         Colors.grey[300],
-                    //         Colors.grey,
-                    //         Colors.black,
-                    //         Colors.brown,
-                    //       ],
-                    //       pickerColor: currentColor,
-                    //       onColorChanged: changeColor,
-                    //     ),
-                    //   ),
-                    // ),
-                    // widget.editMode ?? false
-                    //     ? !widget.editIngredient.archived
-                    //         ? IconButton(
-                    //             padding: EdgeInsets.all(20),
-                    //             iconSize: 40,
-                    //             color: Colors.red,
-                    //             icon: Icon(Icons.archive),
-                    //             onPressed: () =>
-                    //                 _archiveIngredientDialog(context, false),
-                    //           )
-                    //         : IconButton(
-                    //             padding: EdgeInsets.all(20),
-                    //             iconSize: 40,
-                    //             color: Colors.green,
-                    //             icon: Icon(Icons.archive),
-                    //             onPressed: () =>
-                    //                 _archiveIngredientDialog(context, true),
-                    //           )
-                    //     : Center(),
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          //TODO refactor med textfield...
+                          CreateElementTextField(
+                            title: 'my Name',
+                            myValue: _name,
+                            textEditingController: _nameController,
+                            validate: validateString,
+                            setValue: (value) => _name = value,
+                            // textInputType: TextInputType.text,
+                          ),
 
-                    widget.editMode ?? false
-                        ? IconButton(
-                            padding: EdgeInsets.all(40),
-                            iconSize: 40,
-                            color: Colors.red,
-                            icon: Icon(Icons.delete),
-                            onPressed: () => _deleteIngredientDialog(context),
-                          )
-                        : Center(),
-                    SizedBox(
-                      height: 400,
-                    ),
-                  ],
-                ),
+                          CreateElementTextField(
+                            title: 'Kg Price / Liter Price',
+                            myValue: _kgPrice,
+                            textEditingController: _kgPriceController,
+                            validate: validateDouble,
+                            setValue: (value) => _kgPrice = value,
+                            readOnly: true,
+                            onTap: () => inputAmuntDialog(),
+                            suffixText:
+                                _measureUnit == 'Kg' || _measureUnit == 'g'
+                                    ? '$_currencyChosen/Kg'
+                                    : '$_currencyChosen/Liter',
+                          ),
+
+                          // TextFormField(
+                          //   controller: _nameController,
+                          //   decoration: InputDecoration(
+                          //     border: OutlineInputBorder(),
+                          //     labelText: 'Name',
+                          //   ),
+                          //   textCapitalization: TextCapitalization.words,
+                          //   keyboardType: TextInputType.text,
+                          //   validator: (value) => validateString(value),
+                          //   onSaved: (value) => _name = value,
+                          //   onFieldSubmitted: (value) => changeFocus(),
+                          // ),
+                          // SizedBox(
+                          //   height: 20,
+                          // ),
+                          // Container(
+                          //   child: TextFormField(
+                          //     readOnly: true,
+                          //     onTap: () {
+                          //       inputAmuntDialog();
+                          //     },
+                          //     controller: _kgPriceController,
+                          //     decoration: InputDecoration(
+                          //       suffixText:
+                          //           _measureUnit == 'Kg' || _measureUnit == 'g'
+                          //               ? '$_currencyChosen/Kg'
+                          //               : '$_currencyChosen/Liter',
+                          //       border: OutlineInputBorder(),
+                          //       labelText: 'Kg Price / Liter Price',
+                          //     ),
+                          //     inputFormatters: <TextInputFormatter>[
+                          //       FilteringTextInputFormatter.allow(
+                          //           RegExp(r'[0-9,.]'))
+                          //     ],
+                          //     keyboardType: TextInputType.numberWithOptions(
+                          //         decimal: true),
+                          //     validator: (value) => validateDouble(value),
+                          //     onSaved: (value) => _kgPrice = value,
+                          //     onFieldSubmitted: (value) => changeFocus(),
+                          //   ),
+                          // ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          MyIconButton(
+                            tileIcon: Icon(Icons.save),
+                            compact: true,
+                            tileTitle: 'Save Ingredient',
+                            myOnPressed: () => _saveIngredient(),
+                          ),
+
+                          widget.editMode ?? false
+                              ? IconButton(
+                                  padding: EdgeInsets.all(40),
+                                  iconSize: 40,
+                                  color: Colors.red,
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () =>
+                                      _deleteIngredientDialog(context),
+                                )
+                              : Center(),
+                          SizedBox(
+                            height: 400,
+                          ),
+                        ],
+                      );
+                    }),
               ),
             ),
           ),
@@ -251,8 +216,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //Create object
       String _newMeasureUnit =
           _measureUnit == 'Kg' || _measureUnit == 'g' ? 'Kg' : 'Liter';
-      Ingredient newIngredient = Ingredient(
-          newID, _name, finalKgPrice, currentColor.value, _newMeasureUnit);
+      Ingredient newIngredient =
+          Ingredient(newID, _name, finalKgPrice, 4294198070, _newMeasureUnit);
 
       bool saveSucess = false;
 //Save ingredient to json file.
@@ -353,24 +318,32 @@ class _CreateIngredientState extends State<CreateIngredient> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Delete Ingredient'),
-          content: Text(
-              'This cannot be undone, are you sure you want to delete this ingredient?'),
-          actions: [
-            TextButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: Text('Yes'),
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () => _deleteIngredient(context),
-            )
-          ],
+        return MyAlertDialog(
+          title: 'Delete Ingredient',
+          content:
+              'This cannot be undone, are you sure you want to delete this ingredient?',
+          cancelText: 'No',
+          confirmText: 'Yes',
+          myOnPressed: () => _deleteIngredient(context),
         );
+        // return AlertDialog(
+        //   title: Text('Delete Ingredient'),
+        //   content: Text(
+        //       'This cannot be undone, are you sure you want to delete this ingredient?'),
+        //   actions: [
+        //     TextButton(
+        //       child: Text('No'),
+        //       onPressed: () {
+        //         Navigator.pop(context);
+        //       },
+        //     ),
+        //     ElevatedButton(
+        //       child: Text('Yes'),
+        //       style: ElevatedButton.styleFrom(primary: Colors.red),
+        //       onPressed: () => _deleteIngredient(context),
+        //     )
+        //   ],
+        // );
       },
     );
   }
@@ -411,18 +384,25 @@ class _CreateIngredientState extends State<CreateIngredient> {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text(
-                'Could not delete ingredient, because one or more meals or menus are using it.'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Ok'))
-            ],
+          return MyAlertDialog(
+            title: 'Error',
+            content:
+                'Could not delete ingredient, because one or more meals or menus are using it.',
+            cancelText: 'Close',
+            infoDialog: true,
           );
+          // return AlertDialog(
+          //   title: Text('Error'),
+          //   content: Text(
+          //       'Could not delete ingredient, because one or more meals or menus are using it.'),
+          //   actions: [
+          //     TextButton(
+          //         onPressed: () {
+          //           Navigator.of(context).pop();
+          //         },
+          //         child: Text('Ok'))
+          //   ],
+          // );
         },
       );
     } else {
@@ -438,104 +418,22 @@ class _CreateIngredientState extends State<CreateIngredient> {
     }
   }
 
-//Show archive menu box
-  // _archiveIngredientDialog(BuildContext context, bool alreadyArchived) {
-  //   String alertContent;
-  //   String actionText;
-  //   alreadyArchived
-  //       ? alertContent =
-  //           'Are you sure you want to unarchive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.'
-  //       : alertContent =
-  //           'Are you sure you want to archive ${widget.editIngredient.name}?\n\nYou can allways reverse this action.';
-  //   alreadyArchived ? actionText = 'Unarchive' : actionText = 'Archive';
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text(actionText),
-  //         content: Text(alertContent),
-  //         actions: [
-  //           FlatButton(
-  //             child: Text('Cancel'),
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //             },
-  //           ),
-  //           RaisedButton(
-  //             child: Text(actionText),
-  //             color: alreadyArchived ? Colors.green : Colors.red,
-  //             onPressed: () => _archiveIngredient(context, alreadyArchived),
-  //           )
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
-//Archive ingredient and show error or succes messages
-  // _archiveIngredient(BuildContext context, bool alreadyArchived) async {
-  //   bool archiveSuccess = false;
-  //   String archiveText;
-  //   alreadyArchived ? archiveText = 'unarchived' : archiveText = 'archived';
-
-  //   archiveSuccess = await _archiveIngredientFromFile(
-  //       widget.editIngredient, alreadyArchived);
-
-  //   if (archiveSuccess) {
-  //     Navigator.of(context).pop();
-  //     Navigator.of(context).pop();
-  //     // Navigator.of(context).pushReplacement(MaterialPageRoute(
-  //     //   builder: (context) => IngredientList(),
-  //     // ));
-
-  //     // Navigator.of(context).pushAndRemoveUntil(
-  //     //     MaterialPageRoute(
-  //     //       builder: (context) => IngredientList(),
-  //     //     ),
-  //     //     (route) => false);
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text('${widget.editIngredient.name} was $archiveText.'),
-  //     ));
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text('Something went wrong, please try again.'),
-  //     ));
-  //   }
-  // }
-
-//Archive ingredient from firestore database
-  // Future<bool> _archiveIngredientFromFile(
-  //     Ingredient editIngredient, bool alreadyArchived) async {
-  //   try {
-  //     String fileContent = await fileManagement.readFile(ingredientJsonFile);
-  //     List<Ingredient> allIngredients =
-  //         objManager.jsonToListIngredient(fileContent);
-  //     int archiveIndex = allIngredients
-  //         .indexWhere((element) => element.id == editIngredient.id);
-  //     alreadyArchived
-  //         ? allIngredients[archiveIndex].archived = false
-  //         : allIngredients[archiveIndex].archived = true;
-  //     fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredients));
-  //   } catch (error) {
-  //     print('Error archiving ingredient: $error');
-  //     return false;
-  //   }
-  //   return true;
-  // }
-
   void inputAmuntDialog() {
+    _tempMeasureUnit = _measureUnit;
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
+            contentPadding:
+                EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 5),
             content:
                 StatefulBuilder(builder: (BuildContext context, setModalState) {
               return Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKeyDialog,
                 child: Container(
-                  height: 250,
+                  // color: Colors.red,
+                  height: 210,
                   child: Column(
                     children: [
                       Container(
@@ -546,11 +444,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             suffixText: ',- $_currencyChosen',
                             labelText: 'Price for amount',
                             errorStyle: TextStyle(height: 0.5),
-                            // counterStyle: TextStyle(height: -0.5),
-                            // counterText: ' ',
-                            // errorText: '',
                           ),
-                          // initialValue: _kgPrice,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'[0-9,.]'))
@@ -570,13 +464,10 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Amount in $_measureUnit',
-                            suffixText: _measureUnit,
+                            labelText: 'Amount in $_tempMeasureUnit',
+                            suffixText: _tempMeasureUnit,
                             errorStyle: TextStyle(height: 0.5),
-                            // counterStyle: TextStyle(height: 1),
-                            // counterText: ' ',
                           ),
-                          // initialValue: _kgPrice,
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.allow(
                                 RegExp(r'[0-9,.]'))
@@ -588,53 +479,35 @@ class _CreateIngredientState extends State<CreateIngredient> {
                           onFieldSubmitted: (value) => changeFocus(),
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      // Text(''),
-                      Container(
-                        // color: Colors.red,
-                        width: 200,
-                        height: 70,
-                        // padding: EdgeInsets.only(top: 20),
-                        child: GridView.count(
-                          physics: NeverScrollableScrollPhysics(),
-                          crossAxisCount: 4,
-                          children: <String>[
-                            "g",
-                            "ml",
-                            "Kg",
-                            "Liter",
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: meassureUnitGridTile(value, setModalState),
-                            );
-                          }).toList(),
-                        ),
-                        // child: DropdownButton(
-                        //   value: _measureUnit,
-                        //   // style: TextStyle(color: Colors.white),
-                        //   // iconEnabledColor: Colors.white,
-                        //   // dropdownColor: Colors.blue,
-                        //   items: <String>[
-                        //     "g",
-                        //     "ml",
-                        //     "Kg",
-                        //     "Liter",
-                        //   ].map<DropdownMenuItem<String>>((String value) {
-                        //     return DropdownMenuItem<String>(
-                        //       value: value,
-                        //       child: Text(value),
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (newValue) {
-                        //     setModalState(() {
-                        //       _measureUnit = newValue;
-                        //     });
-                        //   },
-                        // ),
-                      )
+                      MeasureUnitButtonGrid(
+                          tempChosenUnit: _tempMeasureUnit,
+                          dropDownValues: ["g", "ml", "Kg", "Liter"],
+                          changeToValue: (value) {
+                            setModalState(() {
+                              changeMeasureUnitValue(value);
+                            });
+                          }),
+                      // Container(
+                      //   // color: Colors.red,
+                      //   width: 200,
+                      //   height: 70,
+                      //   // padding: EdgeInsets.only(top: 20),
+                      //   child: GridView.count(
+                      //     physics: NeverScrollableScrollPhysics(),
+                      //     crossAxisCount: 4,
+                      //     children: <String>[
+                      //       "g",
+                      //       "ml",
+                      //       "Kg",
+                      //       "Liter",
+                      //     ].map<DropdownMenuItem<String>>((String value) {
+                      //       return DropdownMenuItem<String>(
+                      //         value: value,
+                      //         child: meassureUnitGridTile(value, setModalState),
+                      //       );
+                      //     }).toList(),
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -647,29 +520,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
                   },
                   child: Text('Close')),
               ElevatedButton(
-                  onPressed: () {
-                    print(_formKeyDialog.currentState.validate());
-                    if (_formKeyDialog.currentState.validate()) {
-                      _formKeyDialog.currentState.save();
-
-                      String tempAmountValue =
-                          _amountValue.replaceAll(',', '.');
-                      print(tempAmountValue);
-                      String tempAmountPrice =
-                          _amountPrice.replaceAll(',', '.');
-                      double newAmountValue = double.parse(tempAmountValue);
-                      double newAmountPrice = double.parse(tempAmountPrice);
-                      double _newkgPrice = newAmountPrice / newAmountValue;
-                      if (_measureUnit == 'g' || _measureUnit == 'ml') {
-                        _newkgPrice *= 1000;
-                      }
-                      _newkgPrice = (_newkgPrice * 100).roundToDouble() / 100;
-                      _kgPrice = _newkgPrice.toString().replaceAll('.', ',');
-                      _kgPriceController.text = _kgPrice;
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Text('Done'))
+                onPressed: () => setAmountToKgPrice(),
+                child: Text('Done'),
+              )
             ],
           );
         }).then((value) {
@@ -677,31 +530,54 @@ class _CreateIngredientState extends State<CreateIngredient> {
     });
   }
 
-  Widget meassureUnitGridTile(
-      String unit, void Function(void Function()) setModalState) {
-    return AnimatedContainer(
-      curve: Curves.decelerate,
-      duration: Duration(milliseconds: 200),
-      padding: EdgeInsets.all(unit == _measureUnit ? 0 : 5),
-      child: InkWell(
-        onTap: () {
-          setModalState(() {
-            _measureUnit = unit;
-          });
-        },
-        child: Card(
-          margin: EdgeInsets.all(0),
-          color: unit == _measureUnit ? Colors.blue : Colors.blue[100],
-          child: Center(
-              child: Text(
-            unit,
-            style: TextStyle(
-                color: unit == _measureUnit ? Colors.white : Colors.white),
-          )),
-        ),
-      ),
-    );
+  void setAmountToKgPrice() {
+    if (_formKeyDialog.currentState.validate()) {
+      _formKeyDialog.currentState.save();
+      String tempAmountValue = _amountValue.replaceAll(',', '.');
+      String tempAmountPrice = _amountPrice.replaceAll(',', '.');
+      double newAmountValue = double.parse(tempAmountValue);
+      double newAmountPrice = double.parse(tempAmountPrice);
+      double _newkgPrice = newAmountPrice / newAmountValue;
+      if (_tempMeasureUnit == 'g' || _tempMeasureUnit == 'ml') {
+        _newkgPrice *= 1000;
+      }
+      _newkgPrice = (_newkgPrice * 100).roundToDouble() / 100;
+      _kgPrice = _newkgPrice.toString().replaceAll('.', ',');
+      _kgPriceController.text = _kgPrice;
+      _measureUnit = _tempMeasureUnit;
+      Navigator.of(context).pop();
+    }
   }
+
+  void changeMeasureUnitValue(String value) {
+    _tempMeasureUnit = value;
+  }
+
+  // Widget meassureUnitGridTile(
+  //     String unit, void Function(void Function()) setModalState) {
+  //   return AnimatedContainer(
+  //     curve: Curves.decelerate,
+  //     duration: Duration(milliseconds: 200),
+  //     padding: EdgeInsets.all(unit == _tempMeasureUnit ? 0 : 5),
+  //     child: InkWell(
+  //       onTap: () {
+  //         setModalState(() {
+  //           _tempMeasureUnit = unit;
+  //         });
+  //       },
+  //       child: Card(
+  //         margin: EdgeInsets.all(0),
+  //         color: unit == _tempMeasureUnit ? Colors.blue : Colors.blue[100],
+  //         child: Center(
+  //             child: Text(
+  //           unit,
+  //           style: TextStyle(
+  //               color: unit == _tempMeasureUnit ? Colors.white : Colors.white),
+  //         )),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 //change focus to remove keyboard when background is tapped
   void changeFocus() {
@@ -723,7 +599,4 @@ class _CreateIngredientState extends State<CreateIngredient> {
       return "Invalid number.";
     }
   }
-
-//change color in the color selector
-  //void changeColor(Color color) => setState(() => currentColor = color);
 }

@@ -27,14 +27,14 @@ class BackupAndRestore extends StatelessWidget {
                 ),
               ),
             ),
-            WideMenuIconButton(
+            MyIconButton(
               tileIcon: Icon(Icons.save),
               tileTitle: "Save Backup",
               myOnPressed: () {
                 goToPage(SaveBackupPage(false), context);
               },
             ),
-            WideMenuIconButton(
+            MyIconButton(
               tileIcon: Icon(Icons.download_rounded),
               tileTitle: "Restore Backup",
               myOnPressed: () {

@@ -1,31 +1,50 @@
 import 'package:flutter/material.dart';
 
-class WideMenuIconButton extends StatelessWidget {
+class MyIconButton extends StatelessWidget {
   final Icon tileIcon;
+  final Icon trailingIcon;
   final String tileTitle;
   final void Function() myOnPressed;
+  final bool compact;
+  final Color buttonColor;
+  final Color contentColor;
 
-  WideMenuIconButton({this.tileIcon, this.tileTitle, this.myOnPressed});
+  MyIconButton({
+    this.tileIcon,
+    this.trailingIcon = const Icon(Icons.keyboard_arrow_right),
+    @required this.tileTitle,
+    @required this.myOnPressed,
+    this.compact = false,
+    this.buttonColor = Colors.blue,
+    this.contentColor = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Theme(
-        data: ThemeData.dark(),
-        child: Card(
-          color: Colors.blue,
-          child: ListTile(
-              leading: tileIcon,
-              title: Text(tileTitle),
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                myOnPressed();
-                // Navigator.pop(context);
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => navigationPage));
-              }),
+    return Container(
+      width: 310,
+      height: 70,
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: buttonColor,
+          onPrimary: contentColor,
         ),
+        onPressed: () => myOnPressed(),
+        icon: tileIcon,
+        label: compact
+            ? Text(tileTitle)
+            : Container(
+                width: 240,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('   $tileTitle'),
+                    trailingIcon,
+                  ],
+                ),
+              ),
       ),
     );
   }
