@@ -19,7 +19,7 @@ class MyAppBarWithCalc extends StatelessWidget implements PreferredSizeWidget {
             onPressed: () {
               // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
               ScaffoldMessenger.of(context).removeCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: CalculatorPage(),duration: Duration(hours: 24),behavior: SnackBarBehavior.floating,));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: CalculatorWidget(),duration: Duration(hours: 24),behavior: SnackBarBehavior.floating,));
               
             })
       ],

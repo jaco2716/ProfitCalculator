@@ -10,11 +10,12 @@ import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/MeasureUnitButtonGridTile.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
-import '../Model/Ingredient.dart';
-import '../Model/Meal.dart';
-import '../Handlers/SharedValueHandler.dart';
+import '../../Model/Ingredient.dart';
+import '../../Model/Meal.dart';
+import '../../Handlers/SharedValueHandler.dart';
 
 class CreateIngredient extends StatefulWidget {
   final bool editMode;
@@ -125,14 +126,9 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             myOnPressed: () => _saveIngredient(),
                           ),
                           widget.editMode ?? false
-                              ? IconButton(
-                                  padding: EdgeInsets.all(40),
-                                  iconSize: 40,
-                                  color: Colors.red,
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () =>
-                                      _deleteIngredientDialog(context),
-                                )
+                              ? MyDeleteIconButton(
+                                    myOnPressed: () =>
+                                        _deleteIngredientDialog(context))
                               : Center(),
                           SizedBox(
                             height: 400,
@@ -157,8 +153,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
           title: 'Delete Ingredient',
           content:
               'This cannot be undone, are you sure you want to delete this ingredient?',
-          cancelText: 'No',
-          confirmText: 'Yes',
+          cancelText: 'Cancel',
+          confirmText: 'Delete',
           myOnPressed: () => _deleteIngredient(context),
         );
       },

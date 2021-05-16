@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:profit_calculator/FrontPageMenu.dart';
+import 'package:profit_calculator/Pages/FrontPageMenu.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

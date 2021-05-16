@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
-import 'package:profit_calculator/IngredientPages/IngredientList.dart';
-import 'package:profit_calculator/MealPages/MealList.dart';
-import 'package:profit_calculator/BackupAndRestore/BackupAndRestorePage.dart';
-import 'package:profit_calculator/VideoAppGuidePage.dart';
+import 'package:profit_calculator/Pages/VideoAppGuidePage.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import '../MyWidgets/MyLoadingCircle.dart';
+import '../Pages/VATChangePage.dart';
+import 'BackupAndRestore/BackupAndRestorePage.dart';
 import 'ExtraPages/ExtraListPage.dart';
-import 'MyWidgets/MyLoadingCircle.dart';
-import 'VATChangePage.dart';
+import 'IngredientPages/IngredientList.dart';
+import 'MealPages/MealList.dart';
 
 class FrontPageMenu extends StatefulWidget {
   @override

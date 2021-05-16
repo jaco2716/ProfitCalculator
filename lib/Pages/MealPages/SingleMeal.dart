@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/MealPages/CreateMeal.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
+import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementPriceCard.dart';
-import '../Model/EnvironmentConfig.dart' as config;
-import '../Model/Meal.dart';
+import '../../Model/EnvironmentConfig.dart' as config;
+import 'CreateMeal.dart';
+
 
 class SingleMeal extends StatefulWidget {
   Meal meal;

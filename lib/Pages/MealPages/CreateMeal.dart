@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
-import 'package:profit_calculator/MealPages/SingleMeal.dart';
+
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/main.dart';
-import '../Model/Ingredient.dart';
-import '../Model/EnvironmentConfig.dart' as config;
+import '../../Model/Ingredient.dart';
+import '../../Model/EnvironmentConfig.dart' as config;
+import 'SingleMeal.dart';
 
 class CreateMeal extends StatefulWidget {
   final bool editMode;

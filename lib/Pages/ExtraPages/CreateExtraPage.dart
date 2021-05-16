@@ -9,10 +9,11 @@ import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Handlers/SharedValueHandler.dart';
-import '../Model/Extra.dart';
+import '../../Model/Extra.dart';
 
 class CreateExtra extends StatefulWidget {
   final bool editMode;
@@ -45,8 +46,8 @@ class _CreateExtraState extends State<CreateExtra> {
   @override
   void initState() {
     super.initState();
-    _currencyChosenFuture = _sharedValueHandler.getStringSharedP(
-                          'CurrencyChosen', 'DKK');
+    _currencyChosenFuture =
+        _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
     initEditMode();
   }
 
@@ -126,14 +127,9 @@ class _CreateExtraState extends State<CreateExtra> {
                               compact: true,
                             ),
                             widget.editMode ?? false
-                                ? IconButton(
-                                    padding: EdgeInsets.all(40),
-                                    iconSize: 40,
-                                    color: Colors.red,
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () =>
-                                        _deleteExtraDialog(context),
-                                  )
+                                ? MyDeleteIconButton(
+                                    myOnPressed: () =>
+                                        _deleteExtraDialog(context))
                                 : Center(),
                             SizedBox(
                               height: 400,
@@ -157,8 +153,8 @@ class _CreateExtraState extends State<CreateExtra> {
           title: 'Delete element',
           content:
               'This cannot be undone, are you sure you want to delete this element?',
-          cancelText: 'No',
-          confirmText: 'Yes',
+          cancelText: 'Cancel',
+          confirmText: 'Delete',
           myOnPressed: () => _deleteExtra(context),
         );
       },
@@ -255,7 +251,7 @@ class _CreateExtraState extends State<CreateExtra> {
       return false;
     }
     return true;
-  }  
+  }
 
   _deleteExtra(BuildContext context) async {
     String extraFileContent = await fileManagement.readFile(extraJsonFile);

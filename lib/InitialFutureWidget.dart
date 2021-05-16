@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/IngredientPages/CreateIngredient.dart';
-import 'package:profit_calculator/MealPages/CreateMeal.dart';
 
 class InitialFutureWidget extends StatelessWidget {
   @override
