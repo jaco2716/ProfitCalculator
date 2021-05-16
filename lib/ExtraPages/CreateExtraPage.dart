@@ -8,6 +8,8 @@ import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
+import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Handlers/SharedValueHandler.dart';
 import '../Model/Extra.dart';
@@ -28,6 +30,7 @@ class _CreateExtraState extends State<CreateExtra> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _buyPriceController = TextEditingController();
   TextEditingController _salePriceController = TextEditingController();
+  Future _currencyChosenFuture;
   String _name = '';
   String _salePrice = '';
   String _buyPrice = '';
@@ -42,7 +45,8 @@ class _CreateExtraState extends State<CreateExtra> {
   @override
   void initState() {
     super.initState();
-
+    _currencyChosenFuture = _sharedValueHandler.getStringSharedP(
+                          'CurrencyChosen', 'DKK');
     initEditMode();
   }
 
@@ -78,8 +82,7 @@ class _CreateExtraState extends State<CreateExtra> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   key: _formKey,
                   child: FutureBuilder(
-                      future: _sharedValueHandler.getStringSharedP(
-                          'CurrencyChosen', 'DKK'),
+                      future: _currencyChosenFuture,
                       initialData: '',
                       builder: (context, currencySnapshot) {
                         if (currencySnapshot.connectionState ==
@@ -89,88 +92,38 @@ class _CreateExtraState extends State<CreateExtra> {
                         return Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // CreateElementTextField(
-
-                            //   myValue: _name,
-                            //   textEditingController: _nameController,
-                            //   validate: validateString,
-                            //   setValue: (value) => _name = value,
-                            // ),
-                            // SizedBox(
-                            //   height: 20,
-                            // ),
-                            // TextFormField(
-                            //   controller: _nameController,
-                            //   decoration: InputDecoration(
-                            //     border: OutlineInputBorder(),
-                            //     labelText: 'Name',
-                            //   ),
-                            //   textCapitalization: TextCapitalization.words,
-                            //   keyboardType: TextInputType.text,
-                            //   validator: (value) => validateString(value),
-                            //   onSaved: (value) => _name = value,
-                            //   onFieldSubmitted: (value) => changeFocus(),
-                            // ),
-                            SizedBox(
-                              height: 20,
+                            CreateElementTextField(
+                              title: 'Name',
+                              myValue: _name,
+                              textEditingController: _nameController,
+                              validate: validateString,
+                              setValue: (value) => _name = value,
                             ),
-                            Container(
-                              // width: MediaQuery.of(context).size.width - 110,
-                              child: TextFormField(
-                                controller: _buyPriceController,
-                                decoration: InputDecoration(
-                                  suffixText: ',- ${currencySnapshot.data}',
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Buy Price',
-                                ),
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9,.]'))
-                                ],
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                validator: (value) => validateDouble(value),
-                                onSaved: (value) => _buyPrice = value,
-                                onFieldSubmitted: (value) => changeFocus(),
-                              ),
+                            CreateElementTextField(
+                              title: 'Buy Price',
+                              myValue: _buyPrice,
+                              textEditingController: _buyPriceController,
+                              validate: validateDouble,
+                              setValue: (value) => _buyPrice = value,
+                              suffixText: ',- ${currencySnapshot.data}',
+                              textInputType: TextInputType.numberWithOptions(
+                                  decimal: true),
                             ),
-                            SizedBox(
-                              height: 20,
+                            CreateElementTextField(
+                              title: 'Sale Price',
+                              myValue: _salePrice,
+                              textEditingController: _salePriceController,
+                              validate: validateDouble,
+                              setValue: (value) => _salePrice = value,
+                              suffixText: ',- ${currencySnapshot.data}',
+                              textInputType: TextInputType.numberWithOptions(
+                                  decimal: true),
                             ),
-                            Container(
-                              // width: MediaQuery.of(context).size.width - 110,
-                              child: TextFormField(
-                                controller: _salePriceController,
-                                decoration: InputDecoration(
-                                  suffixText: ',- ${currencySnapshot.data}',
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Sale Price',
-                                ),
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'[0-9,.]'))
-                                ],
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                validator: (value) => validateDouble(value),
-                                onSaved: (value) => _salePrice = value,
-                                onFieldSubmitted: (value) => changeFocus(),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                                width: 200,
-                                child: ElevatedButton.icon(
-                                    icon: Icon(Icons.save),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.all(15),
-                                    ),
-                                    label: Text('Save Extra'),
-                                    onPressed: () => _saveExtra())),
-                            SizedBox(
-                              height: 10,
+                            MyIconButton(
+                              tileTitle: 'Save Extra',
+                              tileIcon: Icon(Icons.save),
+                              myOnPressed: () => _saveExtra(),
+                              compact: true,
                             ),
                             widget.editMode ?? false
                                 ? IconButton(
@@ -192,6 +145,38 @@ class _CreateExtraState extends State<CreateExtra> {
           ),
         ),
       ),
+    );
+  }
+
+  //Delete extra menu box
+  _deleteExtraDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyAlertDialog(
+          title: 'Delete element',
+          content:
+              'This cannot be undone, are you sure you want to delete this element?',
+          cancelText: 'No',
+          confirmText: 'Yes',
+          myOnPressed: () => _deleteExtra(context),
+        );
+      },
+    );
+  }
+
+  void showCouldNotDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyAlertDialog(
+          title: 'Error',
+          content:
+              'Could not delete extra, because one or more menus are using it.',
+          cancelText: 'Close',
+          infoDialog: true,
+        );
+      },
     );
   }
 
@@ -234,7 +219,7 @@ class _CreateExtraState extends State<CreateExtra> {
     }
   }
 
-//Save to firestore database
+//Save to File
   Future<bool> _saveExtraToFile(Extra newExtra) async {
     try {
       String fileContent = await fileManagement.readFile(extraJsonFile);
@@ -270,34 +255,7 @@ class _CreateExtraState extends State<CreateExtra> {
       return false;
     }
     return true;
-  }
-
-  //Delete extra menu box
-  _deleteExtraDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Delete element'),
-          content: Text(
-              'This cannot be undone, are you sure you want to delete this element?'),
-          actions: [
-            TextButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: Text('Yes'),
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () => _deleteExtra(context),
-            )
-          ],
-        );
-      },
-    );
-  }
+  }  
 
   _deleteExtra(BuildContext context) async {
     String extraFileContent = await fileManagement.readFile(extraJsonFile);
@@ -316,26 +274,9 @@ class _CreateExtraState extends State<CreateExtra> {
         }
       }
     }
-
     if (extraInMenuFoundIndex != -1) {
       Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text(
-                'Could not delete extra, because one or more menus are using it.'),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Ok'))
-            ],
-          );
-        },
-      );
+      showCouldNotDeleteDialog();
     } else {
       int deleteIndex = allExtrasFromFile
           .indexWhere((element) => element.id == widget.editExtra.id);

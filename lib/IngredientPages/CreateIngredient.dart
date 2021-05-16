@@ -11,7 +11,7 @@ import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTe
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/MeasureUnitButtonGridTile.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
-import 'package:profit_calculator/MyWidgets/WideMenuIconButton.dart';
+import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import '../Model/Ingredient.dart';
 import '../Model/Meal.dart';
 import '../Handlers/SharedValueHandler.dart';
@@ -99,12 +99,11 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CreateElementTextField(
-                            title: 'my Name',
+                            title: 'Name',
                             myValue: _name,
                             textEditingController: _nameController,
                             validate: validateString,
                             setValue: (value) => _name = value,
-                            // textInputType: TextInputType.text,
                           ),
                           CreateElementTextField(
                             title: 'Kg Price / Liter Price',
@@ -199,7 +198,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                   child: Column(
                     children: [
                       CreateElementTextField(
-                        title: 'Price for amount myyyy',
+                        title: 'Price for amount',
                         myValue: _amountPrice,
                         suffixText: ',- $_currencyChosen',
                         textInputType:

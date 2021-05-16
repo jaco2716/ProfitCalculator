@@ -10,7 +10,7 @@ class MyIconButton extends StatelessWidget {
   final Color contentColor;
 
   MyIconButton({
-    this.tileIcon,
+    @required this.tileIcon,
     this.trailingIcon = const Icon(Icons.keyboard_arrow_right),
     @required this.tileTitle,
     @required this.myOnPressed,
