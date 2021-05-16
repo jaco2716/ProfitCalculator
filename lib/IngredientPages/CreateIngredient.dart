@@ -31,6 +31,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   final _formKeyDialog = GlobalKey<FormState>();
   TextEditingController _kgPriceController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
+  Future _currencyChosenFuture;
   String _name = '';
   String _kgPrice = '';
   String _measureUnit = 'g';
@@ -51,7 +52,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
   @override
   void initState() {
     super.initState();
-
+    _currencyChosenFuture =
+        _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
     initEditMode();
   }
 
@@ -73,9 +75,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
     return Scaffold(
       appBar: MyAppBarWithCalc(
           widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
-      // AppBar(
-      //   title: Text('Create Ingredient'),
-      // ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -87,8 +86,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKey,
                 child: FutureBuilder(
-                    future: _sharedValueHandler.getStringSharedP(
-                        'CurrencyChosen', 'DKK'),
+                    future: _currencyChosenFuture,
                     initialData: '',
                     builder: (context, currencySnapshot) {
                       if (currencySnapshot.connectionState ==
@@ -100,7 +98,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          //TODO refactor med textfield...
                           CreateElementTextField(
                             title: 'my Name',
                             myValue: _name,
@@ -109,7 +106,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             setValue: (value) => _name = value,
                             // textInputType: TextInputType.text,
                           ),
-
                           CreateElementTextField(
                             title: 'Kg Price / Liter Price',
                             myValue: _kgPrice,
@@ -123,58 +119,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
                                     ? '$_currencyChosen/Kg'
                                     : '$_currencyChosen/Liter',
                           ),
-
-                          // TextFormField(
-                          //   controller: _nameController,
-                          //   decoration: InputDecoration(
-                          //     border: OutlineInputBorder(),
-                          //     labelText: 'Name',
-                          //   ),
-                          //   textCapitalization: TextCapitalization.words,
-                          //   keyboardType: TextInputType.text,
-                          //   validator: (value) => validateString(value),
-                          //   onSaved: (value) => _name = value,
-                          //   onFieldSubmitted: (value) => changeFocus(),
-                          // ),
-                          // SizedBox(
-                          //   height: 20,
-                          // ),
-                          // Container(
-                          //   child: TextFormField(
-                          //     readOnly: true,
-                          //     onTap: () {
-                          //       inputAmuntDialog();
-                          //     },
-                          //     controller: _kgPriceController,
-                          //     decoration: InputDecoration(
-                          //       suffixText:
-                          //           _measureUnit == 'Kg' || _measureUnit == 'g'
-                          //               ? '$_currencyChosen/Kg'
-                          //               : '$_currencyChosen/Liter',
-                          //       border: OutlineInputBorder(),
-                          //       labelText: 'Kg Price / Liter Price',
-                          //     ),
-                          //     inputFormatters: <TextInputFormatter>[
-                          //       FilteringTextInputFormatter.allow(
-                          //           RegExp(r'[0-9,.]'))
-                          //     ],
-                          //     keyboardType: TextInputType.numberWithOptions(
-                          //         decimal: true),
-                          //     validator: (value) => validateDouble(value),
-                          //     onSaved: (value) => _kgPrice = value,
-                          //     onFieldSubmitted: (value) => changeFocus(),
-                          //   ),
-                          // ),
-                          SizedBox(
-                            height: 20,
-                          ),
                           MyIconButton(
                             tileIcon: Icon(Icons.save),
                             compact: true,
                             tileTitle: 'Save Ingredient',
                             myOnPressed: () => _saveIngredient(),
                           ),
-
                           widget.editMode ?? false
                               ? IconButton(
                                   padding: EdgeInsets.all(40),
@@ -197,6 +147,103 @@ class _CreateIngredientState extends State<CreateIngredient> {
         ),
       ),
     );
+  }
+
+  //Delete ingredient menu box
+  _deleteIngredientDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyAlertDialog(
+          title: 'Delete Ingredient',
+          content:
+              'This cannot be undone, are you sure you want to delete this ingredient?',
+          cancelText: 'No',
+          confirmText: 'Yes',
+          myOnPressed: () => _deleteIngredient(context),
+        );
+      },
+    );
+  }
+
+  void showCouldNotDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return MyAlertDialog(
+          title: 'Error',
+          content:
+              'Could not delete ingredient, because one or more meals or menus are using it.',
+          cancelText: 'Close',
+          infoDialog: true,
+        );
+      },
+    );
+  }
+
+  void inputAmuntDialog() {
+    _tempMeasureUnit = _measureUnit;
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            contentPadding:
+                EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 5),
+            content:
+                StatefulBuilder(builder: (BuildContext context, setModalState) {
+              return Form(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                key: _formKeyDialog,
+                child: Container(
+                  height: 225,
+                  child: Column(
+                    children: [
+                      CreateElementTextField(
+                        title: 'Price for amount myyyy',
+                        myValue: _amountPrice,
+                        suffixText: ',- $_currencyChosen',
+                        textInputType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        validate: (value) => validateDouble(value),
+                        setValue: (value) => _amountPrice = value,
+                      ),
+                      CreateElementTextField(
+                        title: 'Amount in $_tempMeasureUnit',
+                        myValue: _amountValue,
+                        suffixText: _tempMeasureUnit,
+                        textInputType:
+                            TextInputType.numberWithOptions(decimal: true),
+                        validate: (value) => validateDouble(value),
+                        setValue: (value) => _amountValue = value,
+                      ),
+                      MeasureUnitButtonGrid(
+                          tempChosenUnit: _tempMeasureUnit,
+                          dropDownValues: ["g", "ml", "Kg", "Liter"],
+                          changeToValue: (value) {
+                            setModalState(() {
+                              changeMeasureUnitValue(value);
+                            });
+                          }),
+                    ],
+                  ),
+                ),
+              );
+            }),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Close')),
+              ElevatedButton(
+                onPressed: () => setAmountToKgPrice(),
+                child: Text('Done'),
+              )
+            ],
+          );
+        }).then((value) {
+      setState(() {});
+    });
   }
 
 //create object and save
@@ -313,41 +360,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
     return true;
   }
 
-  //Delete ingredient menu box
-  _deleteIngredientDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return MyAlertDialog(
-          title: 'Delete Ingredient',
-          content:
-              'This cannot be undone, are you sure you want to delete this ingredient?',
-          cancelText: 'No',
-          confirmText: 'Yes',
-          myOnPressed: () => _deleteIngredient(context),
-        );
-        // return AlertDialog(
-        //   title: Text('Delete Ingredient'),
-        //   content: Text(
-        //       'This cannot be undone, are you sure you want to delete this ingredient?'),
-        //   actions: [
-        //     TextButton(
-        //       child: Text('No'),
-        //       onPressed: () {
-        //         Navigator.pop(context);
-        //       },
-        //     ),
-        //     ElevatedButton(
-        //       child: Text('Yes'),
-        //       style: ElevatedButton.styleFrom(primary: Colors.red),
-        //       onPressed: () => _deleteIngredient(context),
-        //     )
-        //   ],
-        // );
-      },
-    );
-  }
-
   _deleteIngredient(BuildContext context) async {
     String ingredientFileContent =
         await fileManagement.readFile(ingredientJsonFile);
@@ -381,30 +393,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
     if (ingredientFoundIndex != -1 || ingredientinmenuFoundIndex != -1) {
       Navigator.of(context).pop();
-      showDialog(
-        context: context,
-        builder: (context) {
-          return MyAlertDialog(
-            title: 'Error',
-            content:
-                'Could not delete ingredient, because one or more meals or menus are using it.',
-            cancelText: 'Close',
-            infoDialog: true,
-          );
-          // return AlertDialog(
-          //   title: Text('Error'),
-          //   content: Text(
-          //       'Could not delete ingredient, because one or more meals or menus are using it.'),
-          //   actions: [
-          //     TextButton(
-          //         onPressed: () {
-          //           Navigator.of(context).pop();
-          //         },
-          //         child: Text('Ok'))
-          //   ],
-          // );
-        },
-      );
+      showCouldNotDeleteDialog();
     } else {
       int deleteIndex = allIngredientsFromFile
           .indexWhere((element) => element.id == widget.editIngredient.id);
@@ -416,118 +405,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('${widget.editIngredient.name} was deleted.')));
     }
-  }
-
-  void inputAmuntDialog() {
-    _tempMeasureUnit = _measureUnit;
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            contentPadding:
-                EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 5),
-            content:
-                StatefulBuilder(builder: (BuildContext context, setModalState) {
-              return Form(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                key: _formKeyDialog,
-                child: Container(
-                  // color: Colors.red,
-                  height: 210,
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 70,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            suffixText: ',- $_currencyChosen',
-                            labelText: 'Price for amount',
-                            errorStyle: TextStyle(height: 0.5),
-                          ),
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9,.]'))
-                          ],
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                          validator: (value) => validateDouble(value),
-                          onSaved: (value) => _amountPrice = value,
-                          onFieldSubmitted: (value) => changeFocus(),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        height: 70,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Amount in $_tempMeasureUnit',
-                            suffixText: _tempMeasureUnit,
-                            errorStyle: TextStyle(height: 0.5),
-                          ),
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[0-9,.]'))
-                          ],
-                          keyboardType:
-                              TextInputType.numberWithOptions(decimal: true),
-                          validator: (value) => validateDouble(value),
-                          onSaved: (value) => _amountValue = value,
-                          onFieldSubmitted: (value) => changeFocus(),
-                        ),
-                      ),
-                      MeasureUnitButtonGrid(
-                          tempChosenUnit: _tempMeasureUnit,
-                          dropDownValues: ["g", "ml", "Kg", "Liter"],
-                          changeToValue: (value) {
-                            setModalState(() {
-                              changeMeasureUnitValue(value);
-                            });
-                          }),
-                      // Container(
-                      //   // color: Colors.red,
-                      //   width: 200,
-                      //   height: 70,
-                      //   // padding: EdgeInsets.only(top: 20),
-                      //   child: GridView.count(
-                      //     physics: NeverScrollableScrollPhysics(),
-                      //     crossAxisCount: 4,
-                      //     children: <String>[
-                      //       "g",
-                      //       "ml",
-                      //       "Kg",
-                      //       "Liter",
-                      //     ].map<DropdownMenuItem<String>>((String value) {
-                      //       return DropdownMenuItem<String>(
-                      //         value: value,
-                      //         child: meassureUnitGridTile(value, setModalState),
-                      //       );
-                      //     }).toList(),
-                      //   ),
-                      // )
-                    ],
-                  ),
-                ),
-              );
-            }),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Close')),
-              ElevatedButton(
-                onPressed: () => setAmountToKgPrice(),
-                child: Text('Done'),
-              )
-            ],
-          );
-        }).then((value) {
-      setState(() {});
-    });
   }
 
   void setAmountToKgPrice() {
@@ -551,37 +428,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
   void changeMeasureUnitValue(String value) {
     _tempMeasureUnit = value;
-  }
-
-  // Widget meassureUnitGridTile(
-  //     String unit, void Function(void Function()) setModalState) {
-  //   return AnimatedContainer(
-  //     curve: Curves.decelerate,
-  //     duration: Duration(milliseconds: 200),
-  //     padding: EdgeInsets.all(unit == _tempMeasureUnit ? 0 : 5),
-  //     child: InkWell(
-  //       onTap: () {
-  //         setModalState(() {
-  //           _tempMeasureUnit = unit;
-  //         });
-  //       },
-  //       child: Card(
-  //         margin: EdgeInsets.all(0),
-  //         color: unit == _tempMeasureUnit ? Colors.blue : Colors.blue[100],
-  //         child: Center(
-  //             child: Text(
-  //           unit,
-  //           style: TextStyle(
-  //               color: unit == _tempMeasureUnit ? Colors.white : Colors.white),
-  //         )),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-//change focus to remove keyboard when background is tapped
-  void changeFocus() {
-    FocusScope.of(context).nextFocus();
   }
 
 //validate that input is not empty
