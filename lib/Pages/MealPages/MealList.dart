@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
-import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
-import 'package:profit_calculator/MyAppBarWithCalc.dart';
+import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Model/EnvironmentConfig.dart' as config;

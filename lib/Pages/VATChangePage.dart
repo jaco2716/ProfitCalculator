@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 
-import '../MyAppBarWithCalc.dart';
+import '../MyWidgets/MyAppBarWithCalc.dart';
 import '../MyWidgets/MyLoadingCircle.dart';
 
 class VATChangePage extends StatefulWidget {

@@ -33,10 +33,24 @@ class FileManagement {
         jsonContents = await file.readAsString();
       } else {
         if (fileName == config.ingredientJsonFile) {
-          writeFile(fileName,
-              '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]');
-          jsonContents =
-              '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
+          writeFile(
+              fileName,
+              '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+                  '{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]');
+          jsonContents = '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":19.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445319000,"name":"Pepper (Example)","kgPrice":39.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445320000,"name":"Rice (Example)","kgPrice":12.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445321000,"name":"Noodles (Example)","kgPrice":26.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445322000,"name":"Chicken (Example)","kgPrice":30.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445323000,"name":"Beef (Example)","kgPrice":40.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445324000,"name":"Chili (Example)","kgPrice":130.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+              '{"id":1613445325000,"name":"Soya (Example)","kgPrice":40.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
         } else {
           writeFile(fileName, '');
           jsonContents = '';

@@ -7,7 +7,7 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
-import 'package:profit_calculator/MyAppBarWithCalc.dart';
+import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/main.dart';
 import '../../Model/Ingredient.dart';
@@ -49,7 +49,7 @@ class _CreateMealState extends State<CreateMeal> {
   String extraJsonFile = config.extraJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
-  //Get all ingredients from firestore
+  //Get all ingredients from file
   getIngredientsFromFile() async {
     String fileContent = await fileManagement.readFile(ingredientJsonFile);
     List<Ingredient> tempIngredients = <Ingredient>[];

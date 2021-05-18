@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CalculatorPage.dart';
+import 'package:profit_calculator/MyWidgets/CalculatorPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
-import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';
+import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
-import 'package:profit_calculator/MyAppBarWithCalc.dart';
+import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
@@ -53,9 +54,6 @@ class _IngredientListState extends State<IngredientList> {
             child: Container(
               constraints: BoxConstraints(maxWidth: 700),
               child: Column(children: [
-                // Divider(
-                //   thickness: 2,
-                // ),
                 FutureBuilder(
                   future: fileManagement.readFile(ingredientJsonFile),
                   initialData: '',
@@ -68,7 +66,7 @@ class _IngredientListState extends State<IngredientList> {
                         ingredientJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
-//Map data from firestore to objects in list.
+//Map data from file to objects in list.
                     List<Ingredient> ingredients = objManager
                         .jsonToListIngredient(ingredientJsonSnapshot.data);
 
@@ -86,8 +84,16 @@ class _IngredientListState extends State<IngredientList> {
                             child: ListView.builder(
                               itemCount: ingredients.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return ingredientListTile(
-                                    ingredients[index], currencySnapshot.data);
+                                //${currencySnapshot.data}
+                                Map<String, dynamic> element = {
+                                  'title': ingredients[index].name,
+                                  'trailing':
+                                      '${ingredients[index].kgPrice.toStringAsFixed(2)},- /${ingredients[index].measureUnit}'
+                                };
+                                return SmallElementListTile(
+                                    element: element,
+                                    myOnPressed: () => _goToIngredientPage(
+                                        ingredients[index]));
                               },
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -126,44 +132,14 @@ class _IngredientListState extends State<IngredientList> {
     );
   }
 
-//List tile widget of every ingredient
-  Widget ingredientListTile(Ingredient ingredient, String currency) {
-    // if (!showArchived) {
-    //   if (ingredient.archived) return Center();
-    // } else {
-    //   if (!ingredient.archived) return Center();
-    // }
-
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: ListTile(
-        title: Text(ingredient.name),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-                '${ingredient.kgPrice.toStringAsFixed(2)} $currency/${ingredient.measureUnit}'),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Icon(
-                Icons.edit,
-                color: Colors.grey,
-              ),
-            )
-          ],
-        ),
-        onTap: () {
-//when tapped go to edit page.
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) =>
-                CreateIngredient(editMode: true, editIngredient: ingredient),
-          ))
-              .then((context) {
-            setState(() {});
-          });
-        },
-      ),
-    );
+  void _goToIngredientPage(Ingredient ingredient) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+      builder: (context) =>
+          CreateIngredient(editMode: true, editIngredient: ingredient),
+    ))
+        .then((context) {
+      setState(() {});
+    });
   }
 }

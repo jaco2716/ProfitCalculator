@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/CalculatorPage.dart';
+import 'package:profit_calculator/MyWidgets/CalculatorPage.dart';
 
 class MyAppBarWithCalc extends StatelessWidget implements PreferredSizeWidget {
   final String _title;

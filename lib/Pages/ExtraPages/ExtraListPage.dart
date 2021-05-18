@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
-import 'package:profit_calculator/InitialFutureWidget.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';
+import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
@@ -9,7 +10,7 @@ import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/Pages/ExtraPages/CreateExtraPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 import '../../Model/Extra.dart';
-import '../../MyAppBarWithCalc.dart';
+import '../../MyWidgets/MyAppBarWithCalc.dart';
 
 class ExtraListPage extends StatefulWidget {
   ExtraListPage({Key key}) : super(key: key);
@@ -43,26 +44,6 @@ class _ExtraListPageState extends State<ExtraListPage> {
           });
         },
       ),
-      // floatingActionButton: Container(
-      //   height: 50,
-      //   child: ElevatedButton.icon(
-      //     onPressed: () {
-      //       Navigator.of(context)
-      //           .push(MaterialPageRoute(
-      //         builder: (context) => CreateExtra(),
-      //       ))
-      //           .then((context) {
-      //         setState(() {});
-      //       });
-      //     },
-      //     icon: Icon(Icons.add),
-      //     label: Text('Create Extra'),
-      //     style: ElevatedButton.styleFrom(
-      //       primary: Colors.green, // background
-      //       onPrimary: Colors.white, // foreground
-      //     ),
-      //   ),
-      // ),
       appBar: MyAppBarWithCalc('Extras'),
       body: Stack(children: [
         SingleChildScrollView(
@@ -99,8 +80,16 @@ class _ExtraListPageState extends State<ExtraListPage> {
                             child: ListView.builder(
                               itemCount: extras.length,
                               itemBuilder: (BuildContext context, int index) {
-                                return extraListTile(
-                                    extras[index], currencySnapshot.data);
+                                Map<String, dynamic> element = {
+                                  'title': extras[index].name,
+                                  'trailing':
+                                      '${extras[index].costPrice.toStringAsFixed(2)},- / ${extras[index].salePrice.toStringAsFixed(2)},-'
+                                };
+
+                                return SmallElementListTile(
+                                    element: element,
+                                    myOnPressed: () =>
+                                        _goToExtraPage(extras[index]));
                               },
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -139,37 +128,13 @@ class _ExtraListPageState extends State<ExtraListPage> {
     );
   }
 
-//List tile widget of every extra
-  Widget extraListTile(Extra extra, String currency) {
-    return Card(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: ListTile(
-        title: Text(extra.name),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-                '${extra.costPrice.toStringAsFixed(2)} / ${extra.salePrice.toStringAsFixed(2)},- $currency'),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Icon(
-                Icons.edit,
-                color: Colors.grey,
-              ),
-            )
-          ],
-        ),
-        onTap: () {
-//when tapped go to edit page.
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => CreateExtra(editMode: true, editExtra: extra),
-          ))
-              .then((context) {
-            setState(() {});
-          });
-        },
-      ),
-    );
+  void _goToExtraPage(Extra extra) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+      builder: (context) => CreateExtra(editMode: true, editExtra: extra),
+    ))
+        .then((context) {
+      setState(() {});
+    });
   }
 }

@@ -40,7 +40,10 @@ class MyIconButton extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('   $tileTitle'),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text('$tileTitle'),
+                    ),
                     trailingIcon,
                   ],
                 ),
