@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
+import 'package:profit_calculator/Pages/MenuPages/MenuListPage.dart';
 import 'package:profit_calculator/Pages/VideoAppGuidePage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../MyWidgets/MyLoadingCircle.dart';
@@ -8,7 +9,7 @@ import '../Pages/VATChangePage.dart';
 import 'BackupAndRestore/BackupAndRestorePage.dart';
 import 'ExtraPages/ExtraListPage.dart';
 import 'IngredientPages/IngredientList.dart';
-import 'MealPages/MealList.dart';
+import 'MealPages/MealListPage.dart';
 
 class FrontPageMenu extends StatefulWidget {
   @override
@@ -95,7 +96,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              MealList(true)));
+                                              MealListPage()));
                                 }),
                             gridListTile(
                                 title: 'Menus',
@@ -106,7 +107,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              MealList(false)));
+                                              MenuListPage()));
                                 }),
                           ],
                           physics: NeverScrollableScrollPhysics(),
@@ -127,7 +128,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => MealList(false)));
+                                    builder: (context) => MenuListPage()));
                           },
                         ),
                       ),

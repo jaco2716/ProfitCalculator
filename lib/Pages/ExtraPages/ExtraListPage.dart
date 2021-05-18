@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
@@ -103,27 +104,29 @@ class _ExtraListPageState extends State<ExtraListPage> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 45.0),
-              child: ListTile(
-                visualDensity: VisualDensity.compact,
-                title: Text(
-                  'Name',
-                  style: TextStyle(fontSize: 16),
-                ),
-                trailing: Text(
-                  'Buy / Saleprice',
-                  style: TextStyle(fontSize: 16),
-                ),
-                dense: true,
-              ),
-            ),
-          ),
-        ),
+        MyTopListLabel(title: 'Name', trailing: 'Buy / Saleprice'),
+
+        // Align(
+        //   alignment: Alignment.topCenter,
+        //   child: Container(
+        //     color: Colors.white,
+        //     child: Padding(
+        //       padding: const EdgeInsets.symmetric(horizontal: 45.0),
+        //       child: ListTile(
+        //         visualDensity: VisualDensity.compact,
+        //         title: Text(
+        //           'Name',
+        //           style: TextStyle(fontSize: 16),
+        //         ),
+        //         trailing: Text(
+        //           'Buy / Saleprice',
+        //           style: TextStyle(fontSize: 16),
+        //         ),
+        //         dense: true,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ]),
     );
   }
