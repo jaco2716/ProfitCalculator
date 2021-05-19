@@ -10,7 +10,8 @@ import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/Pages/MealPages/CreateMeal.dart';
-import 'package:profit_calculator/Pages/MealPages/SingleMeal.dart';
+import 'package:profit_calculator/Pages/MealPages/SingleMealPage.dart';
+import 'package:profit_calculator/Pages/MenuPages/SingleMenuPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 
 class MenuListPage extends StatefulWidget {
@@ -141,7 +142,7 @@ class _MenuListPageState extends State<MenuListPage> {
     //Go to menu page when tapped.
           Navigator.of(context)
               .push(MaterialPageRoute(
-            builder: (context) => SingleMeal(menu: menu, isMeal: false),
+            builder: (context) => SingleMenuPage(menu),
           ))
               .then((context) {
             setState(() {});

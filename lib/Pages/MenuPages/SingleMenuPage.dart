@@ -1,32 +1,28 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
-import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementPriceCard.dart';
+import 'package:profit_calculator/Pages/MealPages/CreateMeal.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
-import 'CreateMeal.dart';
 
-
-class SingleMeal extends StatefulWidget {
-  Meal meal;
+class SingleMenuPage extends StatefulWidget {
   Menu menu;
-  bool isMeal;
-
-  SingleMeal({this.meal, this.menu, this.isMeal});
+  SingleMenuPage(this.menu);
 
   @override
-  _SingleMealState createState() => _SingleMealState();
+  _SingleMenuPageState createState() => _SingleMenuPageState();
 }
 
-class _SingleMealState extends State<SingleMeal> {
-  SharedValueHandler sharedVH = SharedValueHandler();
+class _SingleMenuPageState extends State<SingleMenuPage> {
+  SharedValueHandler sharedValueHandler = SharedValueHandler();
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   String mealJsonFile = config.mealJsonFile;
@@ -44,15 +40,9 @@ class _SingleMealState extends State<SingleMeal> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.isMeal) {
-      _name = widget.meal.name;
-      _salePrice = widget.meal.salePrice;
-      _ingredients = widget.meal.ingredients;
-    } else {
-      _name = widget.menu.name;
-      _salePrice = widget.menu.salePrice;
-      _ingredients = widget.menu.ingredients;
-    }
+    _name = widget.menu.name;
+    _salePrice = widget.menu.salePrice;
+    _ingredients = widget.menu.ingredients;
     return Scaffold(
       appBar: AppBar(
         title: Text(_name),
@@ -60,28 +50,15 @@ class _SingleMealState extends State<SingleMeal> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-                if (widget.isMeal) {
-                  Meal newEditedMeal;
-                  newEditedMeal = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => CreateMeal(
-                              editMode: true,
-                              editMeal: widget.meal,
-                              isMeals: true)));
-                  if (newEditedMeal != null) {
-                    widget.meal = newEditedMeal;
-                  }
-                } else {
-                  Menu newEditedMenu;
-                  newEditedMenu = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => CreateMeal(
-                              editMode: true,
-                              editMenu: widget.menu,
-                              isMeals: false)));
-                  if (newEditedMenu != null) {
-                    widget.menu = newEditedMenu;
-                  }
+                Menu newEditedMenu;
+                newEditedMenu = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => CreateMeal(
+                            editMode: true,
+                            editMenu: widget.menu,
+                            isMeals: false)));
+                if (newEditedMenu != null) {
+                  widget.menu = newEditedMenu;
                 }
                 setState(() {});
               })
@@ -114,19 +91,12 @@ class _SingleMealState extends State<SingleMeal> {
                             }
 
                             _hourPrice = hourPriceSnapshot.data;
-                            if (widget.isMeal) {
-                              _totalCost = widget.meal.totalCost(_hourPrice);
-                              _profit =
-                                  widget.meal.profit(_hourPrice, _vatPercent);
-                              _profitMargin = widget.meal
-                                  .profitMargin(_hourPrice, _vatPercent);
-                            } else {
-                              _totalCost = widget.menu.totalCost(_hourPrice);
-                              _profit =
-                                  widget.menu.profit(_hourPrice, _vatPercent);
-                              _profitMargin = widget.menu
-                                  .profitMargin(_hourPrice, _vatPercent);
-                            }
+                            _totalCost = widget.menu.totalCost(_hourPrice);
+                            _profit =
+                                widget.menu.profit(_hourPrice, _vatPercent);
+                            _profitMargin = widget.menu
+                                .profitMargin(_hourPrice, _vatPercent);
+                            // }
                             return Column(
                               children: [
                                 SingleElementPriceCard(
@@ -169,38 +139,29 @@ class _SingleMealState extends State<SingleMeal> {
                                             })
                                         ?.toList(),
                                     'Ingredients'),
-                                !widget.isMeal
-                                    ? SingleElementExtraList(
-                                        currencySnapshot.data,
-                                        widget.menu.meals
-                                            ?.map<Map<String, dynamic>>((e) => {
-                                                  'title': e.name,
-                                                  'subtitle': 'x${e.amount}',
-                                                  'trailing':
-                                                      e.totalCost(_hourPrice) *
-                                                          e.amount,
-                                                })
-                                            ?.toList(),
-                                        'Ingredients')
-                                    : Card(
-                                        margin: EdgeInsets.all(20),
-                                        child: SingleElementExtraListTile(
-                                            'Time spent making meal.',
-                                            '${widget.meal.minutesToMake} min',
-                                            '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
-                                !widget.isMeal
-                                    ? SingleElementExtraList(
-                                        currencySnapshot.data,
-                                        widget.menu.extras
-                                            ?.map<Map<String, dynamic>>((e) => {
-                                                  'title': e.name,
-                                                  'subtitle': 'x${e.amount}',
-                                                  'trailing':
-                                                      e.costPrice * e.amount,
-                                                })
-                                            ?.toList(),
-                                        'Extras')
-                                    : Center(),
+                                SingleElementExtraList(
+                                    currencySnapshot.data,
+                                    widget.menu.meals
+                                        ?.map<Map<String, dynamic>>((e) => {
+                                              'title': e.name,
+                                              'subtitle': 'x${e.amount}',
+                                              'trailing':
+                                                  e.totalCost(_hourPrice) *
+                                                      e.amount,
+                                            })
+                                        ?.toList(),
+                                    'Ingredients'),
+                                SingleElementExtraList(
+                                    currencySnapshot.data,
+                                    widget.menu.extras
+                                        ?.map<Map<String, dynamic>>((e) => {
+                                              'title': e.name,
+                                              'subtitle': 'x${e.amount}',
+                                              'trailing':
+                                                  e.costPrice * e.amount,
+                                            })
+                                        ?.toList(),
+                                    'Extras'),
                                 Container(
                                   padding: EdgeInsets.all(20),
                                   width: 200,
@@ -249,11 +210,7 @@ class _SingleMealState extends State<SingleMeal> {
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-    if (widget.isMeal) {
-      deleteSuccess = await _deleteMealFromFile(widget.meal);
-    } else {
-      deleteSuccess = await _deleteMenuFromFile(widget.menu);
-    }
+    deleteSuccess = await _deleteMenuFromFile(widget.menu);
 
     if (deleteSuccess) {
       Navigator.of(context).pop();
@@ -266,56 +223,6 @@ class _SingleMealState extends State<SingleMeal> {
         content: Text('Something went wrong, please try again.'),
       ));
     }
-  }
-
-  Future<bool> _deleteMealFromFile(Meal newMeal) async {
-    try {
-      String fileContent = await fileManagement.readFile(mealJsonFile);
-      List<Meal> allMeals = objManager.jsonToListMeal(fileContent);
-
-      String menuFileContent = await fileManagement.readFile(menuJsonFile);
-      List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
-      int mealFoundIndex = -1;
-      if (allMenusFromFile != null) {
-        for (var m in allMenusFromFile) {
-          mealFoundIndex = m.meals.indexWhere((i) => i.id == widget.meal.id);
-          if (mealFoundIndex >= 0) {
-            break;
-          }
-        }
-      }
-
-      if (mealFoundIndex != -1) {
-        Navigator.of(context).pop();
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text(
-                  'Could not delete ingredient, because one or more meals are using it.'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Ok'))
-              ],
-            );
-          },
-        );
-        return false;
-      } else {
-        int deleteIndex =
-            allMeals.indexWhere((element) => element.id == newMeal.id);
-        allMeals.removeAt(deleteIndex);
-        fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
-      }
-    } catch (error) {
-      print('Error deleting meal: $error');
-      return false;
-    }
-    return true;
   }
 
   Future<bool> _deleteMenuFromFile(Menu newMenu) async {

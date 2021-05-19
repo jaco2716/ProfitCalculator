@@ -9,10 +9,10 @@ import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
-import 'package:profit_calculator/main.dart';
+import 'package:profit_calculator/Pages/MenuPages/SingleMenuPage.dart';
 import '../../Model/Ingredient.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
-import 'SingleMeal.dart';
+import 'SingleMealPage.dart';
 
 class CreateMeal extends StatefulWidget {
   final bool editMode;
@@ -256,12 +256,11 @@ class _CreateMealState extends State<CreateMeal> {
                       width: 200,
                       child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(15),
+                            padding: EdgeInsets.all(15),
                             primary: Colors.pink,
                           ),
                           icon: Icon(Icons.add),
                           label: Text('Add Ingredients'),
-
                           onPressed: () {
                             _showEditIngredients(
                                 eIngredients: ingredients, type: 0);
@@ -614,12 +613,10 @@ class _CreateMealState extends State<CreateMeal> {
             } else {
               if (widget.isMeals) {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) =>
-                        SingleMeal(meal: newMeal, isMeal: true)));
+                    builder: (context) => SingleMealPage(newMeal)));
               } else {
                 Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) =>
-                        SingleMeal(menu: newMenu, isMeal: false)));
+                    builder: (context) => SingleMenuPage(newMenu)));
               }
               // Navigator.of(context).pushAndRemoveUntil(
               //     MaterialPageRoute(builder: (context) => MyHomePage()),

@@ -12,7 +12,7 @@ import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 import 'CreateMeal.dart';
-import 'SingleMeal.dart';
+import 'SingleMealPage.dart';
 
 class MealListPage extends StatefulWidget {
   @override
@@ -136,7 +136,7 @@ class _MealListPageState extends State<MealListPage> {
     //Go to menu page when tapped.
     Navigator.of(context)
         .push(MaterialPageRoute(
-      builder: (context) => SingleMeal(meal: meal, isMeal: false),
+      builder: (context) => SingleMealPage(meal),
     ))
         .then((context) {
       setState(() {});
