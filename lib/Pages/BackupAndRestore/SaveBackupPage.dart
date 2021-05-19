@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
@@ -126,26 +127,15 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              child: Text('  Cancel  '),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: Text('  I\'m sure  '),
-              // color: Colors.red,
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () {
-                myOnPressed();
-                Navigator.pop(context);
-              },
-            )
-          ],
+        return MyAlertDialog(
+          title: title,
+          content: content,
+          cancelText: 'Cancel',
+          confirmText: 'I\'m sure',
+          myOnPressed: () {
+            myOnPressed();
+            Navigator.pop(context);
+          },
         );
       },
     );

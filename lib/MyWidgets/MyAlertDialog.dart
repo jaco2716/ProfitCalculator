@@ -26,16 +26,22 @@ class MyAlertDialog extends StatelessWidget {
       content: Text(content),
       actions: [
         TextButton(
+          style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 25)),
           child: Text(cancelText),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        infoDialog ? null : ElevatedButton(
-          child: Text(confirmText),
-          style: ElevatedButton.styleFrom(primary: Colors.red),
-          onPressed: () => myOnPressed(),
-        )
+        infoDialog
+            ? null
+            : ElevatedButton(
+                child: Text(confirmText),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 25)),
+                onPressed: () => myOnPressed(),
+              )
       ],
     );
   }

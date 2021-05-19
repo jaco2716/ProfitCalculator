@@ -6,13 +6,13 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
+import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementPriceCard.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 import 'CreateMeal.dart';
-
 
 class SingleMealPage extends StatefulWidget {
   Meal meal;
@@ -42,10 +42,10 @@ class _SingleMealPageState extends State<SingleMealPage> {
 
   @override
   Widget build(BuildContext context) {
-      _name = widget.meal.name;
-      _salePrice = widget.meal.salePrice;
-      _ingredients = widget.meal.ingredients;
-   
+    _name = widget.meal.name;
+    _salePrice = widget.meal.salePrice;
+    _ingredients = widget.meal.ingredients;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_name),
@@ -53,17 +53,16 @@ class _SingleMealPageState extends State<SingleMealPage> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-
-                  Meal newEditedMeal;
-                  newEditedMeal = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => CreateMeal(
-                              editMode: true,
-                              editMeal: widget.meal,
-                              isMeals: true)));
-                  if (newEditedMeal != null) {
-                    widget.meal = newEditedMeal;
-                  }
+                Meal newEditedMeal;
+                newEditedMeal = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => CreateMeal(
+                            editMode: true,
+                            editMeal: widget.meal,
+                            isMeals: true)));
+                if (newEditedMeal != null) {
+                  widget.meal = newEditedMeal;
+                }
                 setState(() {});
               })
         ],
@@ -96,11 +95,11 @@ class _SingleMealPageState extends State<SingleMealPage> {
 
                             _hourPrice = hourPriceSnapshot.data;
 
-                              _totalCost = widget.meal.totalCost(_hourPrice);
-                              _profit =
-                                  widget.meal.profit(_hourPrice, _vatPercent);
-                              _profitMargin = widget.meal
-                                  .profitMargin(_hourPrice, _vatPercent);
+                            _totalCost = widget.meal.totalCost(_hourPrice);
+                            _profit =
+                                widget.meal.profit(_hourPrice, _vatPercent);
+                            _profitMargin = widget.meal
+                                .profitMargin(_hourPrice, _vatPercent);
                             return Column(
                               children: [
                                 SingleElementPriceCard(
@@ -144,11 +143,11 @@ class _SingleMealPageState extends State<SingleMealPage> {
                                         ?.toList(),
                                     'Ingredients'),
                                 Card(
-                                        margin: EdgeInsets.all(20),
-                                        child: SingleElementExtraListTile(
-                                            'Time spent making meal.',
-                                            '${widget.meal.minutesToMake} min',
-                                            '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
+                                    margin: EdgeInsets.all(20),
+                                    child: SingleElementExtraListTile(
+                                        'Time spent making meal.',
+                                        '${widget.meal.minutesToMake} min',
+                                        '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
                                 Container(
                                   padding: EdgeInsets.all(20),
                                   width: 200,
@@ -172,23 +171,12 @@ class _SingleMealPageState extends State<SingleMealPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Delete'),
-          content: Text('Are you sure you want to delete $_name?'),
-          actions: [
-            TextButton(
-              child: Text('cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: Text('Delete'),
-              // color: Colors.red,
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () => _deleteMeal(context),
-            )
-          ],
+        return MyAlertDialog(
+          title: 'Delete',
+          content: 'Are you sure you want to delete $_name?',
+          cancelText: 'cancel',
+          confirmText: 'Delete',
+          myOnPressed: () => _deleteMeal(context),
         );
       },
     );
@@ -197,9 +185,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-
-      deleteSuccess = await _deleteMealFromFile(widget.meal);
-   
+    deleteSuccess = await _deleteMealFromFile(widget.meal);
 
     if (deleteSuccess) {
       Navigator.of(context).pop();
@@ -236,17 +222,12 @@ class _SingleMealPageState extends State<SingleMealPage> {
         showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text(
-                  'Could not delete ingredient, because one or more meals are using it.'),
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Ok'))
-              ],
+            return MyAlertDialog(
+              title: 'Error',
+              content:
+                  'Could not delete meal, because one or more menus are using it.',
+              cancelText: 'Close',
+              infoDialog: true,
             );
           },
         );
@@ -263,5 +244,4 @@ class _SingleMealPageState extends State<SingleMealPage> {
     }
     return true;
   }
-
 }

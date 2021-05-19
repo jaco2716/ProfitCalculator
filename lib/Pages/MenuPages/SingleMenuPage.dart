@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
+import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
@@ -185,23 +186,12 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Delete'),
-          content: Text('Are you sure you want to delete $_name?'),
-          actions: [
-            TextButton(
-              child: Text('cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: Text('Delete'),
-              // color: Colors.red,
-              style: ElevatedButton.styleFrom(primary: Colors.red),
-              onPressed: () => _deleteMeal(context),
-            )
-          ],
+        return MyAlertDialog(
+          title: 'Delete',
+          content: 'Are you sure you want to delete $_name?',
+          cancelText: 'cancel',
+          confirmText: 'Delete',
+          myOnPressed: () => _deleteMeal(context),
         );
       },
     );
