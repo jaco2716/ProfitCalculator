@@ -54,7 +54,6 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                     alignment: Alignment.center,
                     children: [
                       Container(
-                        // padding: EdgeInsets.symmetric(horizontal: gridPadding),
                         color: Colors.blue,
                         child: GridView.count(
                           padding: EdgeInsets.only(

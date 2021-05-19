@@ -4,6 +4,7 @@ class CreateElementTextField extends StatelessWidget {
   final String myValue;
   final String title;
   final String suffixText;
+  final String prefixText;
   final String Function(String) validate;
   final void Function(String) setValue;
   final TextEditingController textEditingController;
@@ -19,6 +20,7 @@ class CreateElementTextField extends StatelessWidget {
     this.textEditingController,
     this.textInputType,
     this.suffixText,
+    this.prefixText,
     this.readOnly = false,
     this.onTap,
   });
@@ -31,6 +33,7 @@ class CreateElementTextField extends StatelessWidget {
       child: TextFormField(
         controller: textEditingController,
         decoration: InputDecoration(
+          prefix: prefixText == null ? null : Text(prefixText),
           border: OutlineInputBorder(),
           labelText: title,
           suffixText: suffixText,
