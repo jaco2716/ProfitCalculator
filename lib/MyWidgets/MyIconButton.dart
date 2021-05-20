@@ -8,6 +8,7 @@ class MyIconButton extends StatelessWidget {
   final bool compact;
   final Color buttonColor;
   final Color contentColor;
+  final double height;
 
   MyIconButton({
     @required this.tileIcon,
@@ -17,13 +18,14 @@ class MyIconButton extends StatelessWidget {
     this.compact = false,
     this.buttonColor = Colors.blue,
     this.contentColor = Colors.white,
+    this.height = 70
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 310,
-      height: 70,
+      height: height,
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(

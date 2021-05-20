@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -42,6 +43,7 @@ class _CreateExtraState extends State<CreateExtra> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final ValidateValues _validateValues = ValidateValues();
 
   @override
   void initState() {
@@ -97,14 +99,14 @@ class _CreateExtraState extends State<CreateExtra> {
                               title: 'Name',
                               myValue: _name,
                               textEditingController: _nameController,
-                              validate: validateString,
+                              validate: _validateValues.validateString,
                               setValue: (value) => _name = value,
                             ),
                             CreateElementTextField(
                               title: 'Buy Price',
                               myValue: _buyPrice,
                               textEditingController: _buyPriceController,
-                              validate: validateDouble,
+                              validate: _validateValues.validateDouble,
                               setValue: (value) => _buyPrice = value,
                               suffixText: ',- ${currencySnapshot.data}',
                               textInputType: TextInputType.numberWithOptions(
@@ -114,7 +116,7 @@ class _CreateExtraState extends State<CreateExtra> {
                               title: 'Sale Price',
                               myValue: _salePrice,
                               textEditingController: _salePriceController,
-                              validate: validateDouble,
+                              validate: _validateValues.validateDouble,
                               setValue: (value) => _salePrice = value,
                               suffixText: ',- ${currencySnapshot.data}',
                               textInputType: TextInputType.numberWithOptions(
@@ -288,21 +290,5 @@ class _CreateExtraState extends State<CreateExtra> {
 //change focus to remove keyboard when background is tapped
   void changeFocus() {
     FocusScope.of(context).nextFocus();
-  }
-
-//validate that input is not empty
-  String validateString(String value) {
-    return value.isEmpty ? 'Required' : null;
-  }
-
-//validate that the number is valid
-  String validateDouble(String value) {
-    try {
-      value = value.replaceAll(',', '.');
-      double.parse(value);
-      return null;
-    } catch (error) {
-      return "Invalid number.";
-    }
   }
 }

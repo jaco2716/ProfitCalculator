@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -49,6 +50,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final ValidateValues _validateValues = ValidateValues();
 
   @override
   void initState() {
@@ -103,14 +105,14 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             title: 'Name',
                             myValue: _name,
                             textEditingController: _nameController,
-                            validate: validateString,
+                            validate: _validateValues.validateString,
                             setValue: (value) => _name = value,
                           ),
                           CreateElementTextField(
                             title: 'Kg Price / Liter Price',
                             myValue: _kgPrice,
                             textEditingController: _kgPriceController,
-                            validate: validateDouble,
+                            validate: _validateValues.validateDouble,
                             setValue: (value) => _kgPrice = value,
                             readOnly: true,
                             onTap: () => inputAmuntDialog(),
@@ -199,7 +201,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         suffixText: ',- $_currencyChosen',
                         textInputType:
                             TextInputType.numberWithOptions(decimal: true),
-                        validate: (value) => validateDouble(value),
+                        validate: (value) => _validateValues.validateDouble(value),
                         setValue: (value) => _amountPrice = value,
                       ),
                       CreateElementTextField(
@@ -208,7 +210,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         suffixText: _tempMeasureUnit,
                         textInputType:
                             TextInputType.numberWithOptions(decimal: true),
-                        validate: (value) => validateDouble(value),
+                        validate: (value) => _validateValues.validateDouble(value),
                         setValue: (value) => _amountValue = value,
                       ),
                       MeasureUnitButtonGrid(
@@ -423,21 +425,5 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
   void changeMeasureUnitValue(String value) {
     _tempMeasureUnit = value;
-  }
-
-//validate that input is not empty
-  String validateString(String value) {
-    return value.isEmpty ? 'Required' : null;
-  }
-
-//validate that the number is valid
-  String validateDouble(String value) {
-    try {
-      value = value.replaceAll(',', '.');
-      double.parse(value);
-      return null;
-    } catch (error) {
-      return "Invalid number.";
-    }
   }
 }

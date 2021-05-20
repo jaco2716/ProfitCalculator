@@ -11,6 +11,7 @@ import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/Pages/MealPages/CreateMeal.dart';
 import 'package:profit_calculator/Pages/MealPages/SingleMealPage.dart';
+import 'package:profit_calculator/Pages/MenuPages/CreateMenuPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/SingleMenuPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 
@@ -44,9 +45,7 @@ class _MenuListPageState extends State<MenuListPage> {
           myOnPressed: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-              builder: (context) => CreateMeal(
-                isMeals: false,
-              ),
+              builder: (context) => CreateMenuPage(editMode: false,),
             ))
                 .then((value) {
               setState(() {});
@@ -140,12 +139,12 @@ class _MenuListPageState extends State<MenuListPage> {
 
   void goToElementPage(Menu menu) {
     //Go to menu page when tapped.
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => SingleMenuPage(menu),
-          ))
-              .then((context) {
-            setState(() {});
-          });
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+      builder: (context) => SingleMenuPage(menu),
+    ))
+        .then((context) {
+      setState(() {});
+    });
   }
 }

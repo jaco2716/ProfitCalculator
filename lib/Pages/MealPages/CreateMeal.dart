@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Handlers/ValidateValues.dart';
 
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Meal.dart';
@@ -48,6 +49,7 @@ class _CreateMealState extends State<CreateMeal> {
   String menuJsonFile = config.menuJsonFile;
   String extraJsonFile = config.extraJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final ValidateValues _validateValues = ValidateValues();
 
   //Get all ingredients from file
   getIngredientsFromFile() async {
@@ -132,7 +134,7 @@ class _CreateMealState extends State<CreateMeal> {
                         initialValue: _name,
                         textCapitalization: TextCapitalization.words,
                         keyboardType: TextInputType.text,
-                        validator: (value) => validateString(value),
+                        validator: (value) => _validateValues.validateString(value),
                         onSaved: (value) => _name = value,
                         onFieldSubmitted: (value) => changeFocus(),
                       ),
@@ -167,7 +169,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   ],
                                   keyboardType: TextInputType.numberWithOptions(
                                       decimal: true),
-                                  validator: (value) => validateDouble(value),
+                                  validator: (value) => _validateValues.validateDouble(value),
                                   onSaved: (value) => _salePrice = value,
                                   onFieldSubmitted: (value) => changeFocus(),
                                 ),
@@ -211,7 +213,7 @@ class _CreateMealState extends State<CreateMeal> {
                                   ],
                                   keyboardType: TextInputType.numberWithOptions(
                                       decimal: true),
-                                  validator: (value) => validateDouble(value),
+                                  validator: (value) => _validateValues.validateDouble(value),
                                   onSaved: (value) => _profitMargin = value,
                                   onFieldSubmitted: (value) => changeFocus(),
                                 ),
@@ -229,7 +231,7 @@ class _CreateMealState extends State<CreateMeal> {
                               ),
                               initialValue: _minutesToMake,
                               keyboardType: TextInputType.number,
-                              validator: (value) => validateInt(value),
+                              validator: (value) => _validateValues.validateInt(value),
                               onSaved: (value) => _minutesToMake = value,
                               onFieldSubmitted: (value) => changeFocus(),
                             ),
@@ -933,30 +935,5 @@ class _CreateMealState extends State<CreateMeal> {
 // change the focus from fx a textfield to remove keyboard when background is pressed
   void changeFocus() {
     FocusScope.of(context).nextFocus();
-  }
-
-//check if string is empty
-  String validateString(String value) {
-    return value.isEmpty ? 'Required' : null;
-  }
-
-// Check if the number value is valid
-  String validateDouble(String value) {
-    try {
-      value = value.replaceAll(',', '.');
-      double.parse(value);
-      return null;
-    } catch (error) {
-      return "Invalid number.";
-    }
-  }
-
-  String validateInt(String value) {
-    try {
-      int.parse(value);
-      return null;
-    } catch (error) {
-      return "Invalid number.";
-    }
   }
 }

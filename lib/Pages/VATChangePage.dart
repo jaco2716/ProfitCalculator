@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 
@@ -27,7 +28,8 @@ class _VATChangePageState extends State<VATChangePage> {
 
   String _hourlyRate = '';
   String _vatPercent = '';
-  SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final ValidateValues _validateValues = ValidateValues();
 
   @override
   void initState() {
@@ -80,7 +82,7 @@ class _VATChangePageState extends State<VATChangePage> {
                         suffixText: dropdownValue,
                         textEditingController: hourPriceTec,
                         textInputType: TextInputType.number,
-                        validate: (value) => validateInt(value),
+                        validate: (value) => _validateValues.validateInt(value, aboveValue: 0),
                         setValue: (value) => _hourlyRate = value,
                       );
                     },
@@ -103,7 +105,7 @@ class _VATChangePageState extends State<VATChangePage> {
                         suffixText: '%',
                         textEditingController: vatTec,
                         textInputType: TextInputType.number,
-                        validate: (value) => validateInt(value),
+                        validate: (value) => _validateValues.validateInt(value, aboveValue: 0),
                         setValue: (value) => _vatPercent = value,
                       );
                     },
@@ -210,18 +212,6 @@ class _VATChangePageState extends State<VATChangePage> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Something went wrong.')));
       }
-    }
-  }
-
-  String validateInt(String value) {
-    try {
-      int intvalue = int.parse(value);
-      if (intvalue <= 0) {
-        return 'Must be greater than 0.';
-      }
-      return null;
-    } catch (error) {
-      return "Invalid number.";
     }
   }
 }
