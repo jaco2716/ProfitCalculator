@@ -21,9 +21,6 @@ class Meal {
   double totalCost(int hourPrice) {
     double totalPrice = 0;
     ingredients?.forEach((e) {
-      if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
-        totalPrice += (e.amountInGrams) * e.kgPrice;
-      } else
         totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
     totalPrice += (hourPrice / 60) * minutesToMake;
@@ -61,9 +58,9 @@ class Meal {
         salePrice = json['salePrice'],
         ingredients = (json['ingredients'] as List)
             ?.map((e) => Ingredient.fromJson(e))
-            ?.toList(), //Når man konverterer en liste af objector fra Json.
+            ?.toList()?? <Ingredient>[], //Når man konverterer en liste af objector fra Json.
         minutesToMake = json['minutesToMake'],
-        amount = json['amount'];
+        amount = json['amount'] ?? 1;
 
   Map<String, dynamic> toJson() => {
         'id': id,

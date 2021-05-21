@@ -8,7 +8,7 @@ import '../../Model/EnvironmentConfig.dart' as config;
 import 'package:intl/intl.dart';
 
 class SaveBackupPage extends StatefulWidget {
-  bool restorePageSelected;
+  final bool restorePageSelected;
 
   SaveBackupPage(this.restorePageSelected);
 

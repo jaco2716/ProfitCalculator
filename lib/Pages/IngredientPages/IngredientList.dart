@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/MyWidgets/CalculatorPage.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';

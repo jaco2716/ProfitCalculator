@@ -9,8 +9,6 @@ import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
-import 'package:profit_calculator/Pages/MealPages/CreateMeal.dart';
-import 'package:profit_calculator/Pages/MealPages/SingleMealPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/CreateMenuPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/SingleMenuPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CreateElementTextField extends StatelessWidget {
   final String myValue;
@@ -9,6 +10,7 @@ class CreateElementTextField extends StatelessWidget {
   final void Function(String) setValue;
   final TextEditingController textEditingController;
   final TextInputType textInputType;
+  final String allowedInput;
   final bool readOnly;
   final void Function() onTap;
 
@@ -21,6 +23,7 @@ class CreateElementTextField extends StatelessWidget {
     this.textInputType,
     this.suffixText,
     this.prefixText,
+    this.allowedInput,
     this.readOnly = false,
     this.onTap,
   });
@@ -39,6 +42,11 @@ class CreateElementTextField extends StatelessWidget {
           suffixText: suffixText,
           errorStyle: TextStyle(height: 0.5),
         ),
+        inputFormatters: allowedInput != null
+            ? <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(allowedInput))
+              ]
+            : null,
         textCapitalization: TextCapitalization.words,
         keyboardType: textInputType,
         validator: (value) => validate(value),

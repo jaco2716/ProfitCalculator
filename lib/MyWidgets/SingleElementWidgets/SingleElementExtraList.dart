@@ -19,7 +19,7 @@ class SingleElementExtraList extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.w300,
                   fontSize: 22,
-                  color: Colors.pink[200],
+                  color: Colors.orange[200],
                 )),
           ),
           Divider(

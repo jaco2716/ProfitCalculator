@@ -9,10 +9,9 @@ import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
-import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
-import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
+import 'package:profit_calculator/Pages/ExtraPages/SingleExtraPage.dart';
 import '../../Handlers/SharedValueHandler.dart';
 import '../../Model/Extra.dart';
 
@@ -28,7 +27,6 @@ class CreateExtra extends StatefulWidget {
 
 class _CreateExtraState extends State<CreateExtra> {
   final _formKey = GlobalKey<FormState>();
-  final _formKeyDialog = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _buyPriceController = TextEditingController();
   TextEditingController _salePriceController = TextEditingController();
@@ -128,11 +126,11 @@ class _CreateExtraState extends State<CreateExtra> {
                               myOnPressed: () => _saveExtra(),
                               compact: true,
                             ),
-                            widget.editMode ?? false
-                                ? MyDeleteIconButton(
-                                    myOnPressed: () =>
-                                        _deleteExtraDialog(context))
-                                : Center(),
+                            // widget.editMode ?? false
+                            //     ? MyDeleteIconButton(
+                            //         myOnPressed: () =>
+                            //             _deleteExtraDialog(context))
+                            //     : Center(),
                             SizedBox(
                               height: 400,
                             )
@@ -146,37 +144,37 @@ class _CreateExtraState extends State<CreateExtra> {
     );
   }
 
-  //Delete extra menu box
-  _deleteExtraDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return MyAlertDialog(
-          title: 'Delete element',
-          content:
-              'This cannot be undone, are you sure you want to delete this element?',
-          cancelText: 'Cancel',
-          confirmText: 'Delete',
-          myOnPressed: () => _deleteExtra(context),
-        );
-      },
-    );
-  }
+  // //Delete extra menu box
+  // _deleteExtraDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return MyAlertDialog(
+  //         title: 'Delete element',
+  //         content:
+  //             'This cannot be undone, are you sure you want to delete this element?',
+  //         cancelText: 'Cancel',
+  //         confirmText: 'Delete',
+  //         myOnPressed: () => _deleteExtra(context),
+  //       );
+  //     },
+  //   );
+  // }
 
-  void showCouldNotDeleteDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return MyAlertDialog(
-          title: 'Error',
-          content:
-              'Could not delete extra, because one or more menus are using it.',
-          cancelText: 'Close',
-          infoDialog: true,
-        );
-      },
-    );
-  }
+  // void showCouldNotDeleteDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return MyAlertDialog(
+  //         title: 'Error',
+  //         content:
+  //             'Could not delete extra, because one or more menus are using it.',
+  //         cancelText: 'Close',
+  //         infoDialog: true,
+  //       );
+  //     },
+  //   );
+  // }
 
 //create object and save
   _saveExtra() async {
@@ -208,7 +206,13 @@ class _CreateExtraState extends State<CreateExtra> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(_name + ' has been saved.'),
         ));
-        Navigator.of(context).pop();
+
+        if (widget.editMode ?? false) {
+          Navigator.of(context).pop(newExtra);
+        } else {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) => SingleExtraPage(newExtra)));
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Something went wrong, try again.'),
@@ -255,40 +259,35 @@ class _CreateExtraState extends State<CreateExtra> {
     return true;
   }
 
-  _deleteExtra(BuildContext context) async {
-    String extraFileContent = await fileManagement.readFile(extraJsonFile);
-    List<Extra> allExtrasFromFile =
-        objManager.jsonToListExtra(extraFileContent);
+  // _deleteExtra(BuildContext context) async {
+  //   String extraFileContent = await fileManagement.readFile(extraJsonFile);
+  //   List<Extra> allExtrasFromFile =
+  //       objManager.jsonToListExtra(extraFileContent);
 
-    String menuFileContent = await fileManagement.readFile(menuJsonFile);
-    List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
-    int extraInMenuFoundIndex = -1;
-    if (allMenusFromFile != null) {
-      for (var m in allMenusFromFile) {
-        extraInMenuFoundIndex =
-            m.extras.indexWhere((i) => i.id == widget.editExtra.id);
-        if (extraInMenuFoundIndex >= 0) {
-          break;
-        }
-      }
-    }
-    if (extraInMenuFoundIndex != -1) {
-      Navigator.of(context).pop();
-      showCouldNotDeleteDialog();
-    } else {
-      int deleteIndex = allExtrasFromFile
-          .indexWhere((element) => element.id == widget.editExtra.id);
-      allExtrasFromFile.removeAt(deleteIndex);
+  //   String menuFileContent = await fileManagement.readFile(menuJsonFile);
+  //   List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+  //   int extraInMenuFoundIndex = -1;
+  //   if (allMenusFromFile != null) {
+  //     for (var m in allMenusFromFile) {
+  //       extraInMenuFoundIndex =
+  //           m.extras.indexWhere((i) => i.id == widget.editExtra.id);
+  //       if (extraInMenuFoundIndex >= 0) {
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   if (extraInMenuFoundIndex != -1) {
+  //     Navigator.of(context).pop();
+  //     showCouldNotDeleteDialog();
+  //   } else {
+  //     int deleteIndex = allExtrasFromFile
+  //         .indexWhere((element) => element.id == widget.editExtra.id);
+  //     allExtrasFromFile.removeAt(deleteIndex);
 
-      fileManagement.writeFile(extraJsonFile, jsonEncode(allExtrasFromFile));
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${widget.editExtra.name} was deleted.')));
-    }
-  }
-
-//change focus to remove keyboard when background is tapped
-  void changeFocus() {
-    FocusScope.of(context).nextFocus();
-  }
+  //     fileManagement.writeFile(extraJsonFile, jsonEncode(allExtrasFromFile));
+  //     Navigator.of(context).popUntil((route) => route.isFirst);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('${widget.editExtra.name} was deleted.')));
+  //   }
+  // }
 }

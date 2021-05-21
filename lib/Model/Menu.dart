@@ -8,21 +8,22 @@ class Menu {
   int id;
   String name;
   double salePrice;
+  int amount;
   List<Ingredient> ingredients;
   List<Meal> meals;
   List<Extra> extras;
 
   //Constructor
-  Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals, this.extras);
+  Menu(this.id, this.name, this.salePrice, this.ingredients, this.meals, this.extras, {this.amount});
+
+  Menu.clone(Menu menuCopy)
+      : this(menuCopy.id, menuCopy.name, menuCopy.salePrice, menuCopy.ingredients, menuCopy.meals, menuCopy.extras, amount: menuCopy.amount);
 
   //Get the total cost of the menu, calculated from all ingredients and meals
   double totalCost(int hourPrice) {
     double totalPrice = 0;
     ingredients?.forEach((e) {
-      if (e.measureUnit == 'ml' || e.measureUnit == 'g') {
-        totalPrice += (e.amountInGrams) * e.kgPrice;
-      } else
-        totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
+      totalPrice += (e.amountInGrams / 1000) * e.kgPrice;
     });
     meals?.forEach((e) {
       totalPrice += e.totalCost(hourPrice) * e.amount;
@@ -33,13 +34,13 @@ class Menu {
     return totalPrice;
   }
 
-  int get totalMinutesToMake {
-    int totalMinutes = 0;
-    meals?.forEach((e) {
-      totalMinutes += e.minutesToMake * e.amount;
-    });
-    return totalMinutes;
-  }
+  // int get totalMinutesToMake {
+  //   int totalMinutes = 0;
+  //   meals?.forEach((e) {
+  //     totalMinutes += e.minutesToMake * e.amount;
+  //   });
+  //   return totalMinutes;
+  // }
 
   //Get the profit, calculated with salePrice and totalCost
   double profit(int hourPrice, int vatPercent) {
@@ -47,58 +48,34 @@ class Menu {
   }
 
   double profitMargin(int hourPrice, int vatPercent) {
-      double totalWithHour = totalCost(hourPrice);
-      // print( 'total W h: $totalWithHour');
+    double totalWithHour = totalCost(hourPrice);
     if (salePrice != 0 && totalCost(hourPrice) != 0) {
       double salePriceNoVat = salePrice / (vatPercent / 100 + 1);
-    
+
       return ((salePriceNoVat - totalWithHour) / totalWithHour) * 100;
     } else {
       return 0;
     }
   }
-  // double get profitMargin {
-  //   if (salePrice != 0 && totalCost != 0) {
-  //     return ((salePrice - totalCost) / totalCost) * 100;
-  //   } else {
-  //     return 0;
-  //   }
-  // }
-
-  // double get profitMargin {
-  //   if (salePrice != 0) {
-  //     return (profit / salePrice * 100);
-  //   } else
-  //     return 0;
-  // }
 
   //Json convert function, fromJson and toJson
   Menu.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         name = json['name'],
         salePrice = json['salePrice'],
-        ingredients = (json['ingredients'] as List)
-            ?.map((e) => Ingredient.fromJson(e))
-            ?.toList(), //Når man konverterer en liste af objector fra Json.
-        meals = (json['meals'] as List)
-            ?.map((e) => Meal.fromJson(e))
-            ?.toList(), //Når man konverterer en liste af objector fra Json.
-        extras = (json['extras'] as List)
-            ?.map((e) => Extra.fromJson(e))
-            ?.toList(); //Når man konverterer en liste af objector fra Json.
+        ingredients = (json['ingredients'] as List)?.map((e) => Ingredient.fromJson(e))?.toList() ??
+            <Ingredient>[], //Når man konverterer en liste af objector fra Json.
+        meals = (json['meals'] as List)?.map((e) => Meal.fromJson(e))?.toList() ?? <Meal>[], //Når man konverterer en liste af objector fra Json.
+        extras = (json['extras'] as List)?.map((e) => Extra.fromJson(e))?.toList() ?? <Extra>[],
+        amount = json['amount'] ?? 1; //Når man konverterer en liste af objector fra Json.
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'salePrice': salePrice,
-        'ingredients': ingredients
-            .map((e) => e.toJson())
-            .toList(), //Når man konverterer en liste af objector til Json.
-        'meals': meals
-            .map((e) => e.toJson())
-            .toList(), //Når man konverterer en liste af objector til Json.
-        'extras': extras
-            .map((e) => e.toJson())
-            .toList(), //Når man konverterer en liste af objector til Json.
+        'ingredients': ingredients.map((e) => e.toJson()).toList(), //Når man konverterer en liste af objector til Json.
+        'meals': meals.map((e) => e.toJson()).toList(), //Når man konverterer en liste af objector til Json.
+        'extras': extras.map((e) => e.toJson()).toList(),
+        'amount': amount,
       };
 }

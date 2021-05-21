@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
@@ -43,5 +44,14 @@ class ObjectManager {
       menus = tempMenuIterable?.map((e) => Menu.fromJson(e))?.toList();
     }
     return menus;
+  }
+  List<Catering> jsonToListCatering(String cateringJsonSnapshot) {
+    List<Catering> caterings = <Catering>[];
+    Iterable tempCateringIterable;
+    if (cateringJsonSnapshot.length != 0) {
+      tempCateringIterable = json.decode(cateringJsonSnapshot);
+      caterings = tempCateringIterable?.map((e) => Catering.fromJson(e))?.toList();
+    }
+    return caterings;
   }
 }

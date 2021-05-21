@@ -2,3 +2,4 @@
   const mealJsonFile = 'mealJsonFile';
   const menuJsonFile = 'menuJsonFile';
   const extraJsonFile = 'extraJsonFile';
+  const cateringJsonFile = 'cateringJsonFile';

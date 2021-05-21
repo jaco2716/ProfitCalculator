@@ -1,14 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
-import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/Pages/ExtraPages/CreateExtraPage.dart';
+import 'package:profit_calculator/Pages/ExtraPages/SingleExtraPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
 import '../../Model/Extra.dart';
 import '../../MyWidgets/MyAppBarWithCalc.dart';
@@ -68,34 +69,60 @@ class _ExtraListPageState extends State<ExtraListPage> {
                         objManager.jsonToListExtra(extraJsonSnapshot.data);
 
                     return FutureBuilder(
-                        future: _sharedValueHandler.getStringSharedP(
-                            'CurrencyChosen', 'DKK'),
+                        future:
+                            _sharedValueHandler.getIntSharedP('VATPercent', 25),
                         initialData: '',
-                        builder: (context, currencySnapshot) {
-                          if (currencySnapshot.connectionState ==
+                        builder: (context, vatSnapshot) {
+                          if (vatSnapshot.connectionState ==
                               ConnectionState.waiting) {
                             return MyLoadingCircle(500);
                           }
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 40),
-                            child: ListView.builder(
-                              itemCount: extras.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                Map<String, dynamic> element = {
-                                  'title': extras[index].name,
-                                  'trailing':
-                                      '${extras[index].costPrice.toStringAsFixed(2)},- / ${extras[index].salePrice.toStringAsFixed(2)},-'
-                                };
+                          extras.sort((b, a) => a
+                              .profitMargin(vatSnapshot.data)
+                              .compareTo(b.profitMargin(vatSnapshot.data)));
 
-                                return SmallElementListTile(
-                                    element: element,
-                                    myOnPressed: () =>
-                                        _goToExtraPage(extras[index]));
-                              },
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                            ),
-                          );
+                          return FutureBuilder(
+                              future: _sharedValueHandler.getStringSharedP(
+                                  'CurrencyChosen', 'DKK'),
+                              initialData: '',
+                              builder: (context, currencySnapshot) {
+                                if (currencySnapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return MyLoadingCircle(500);
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 40),
+                                  child: ListView.builder(
+                                    itemCount: extras.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      Map<String, dynamic> element = {
+                                        'title': extras[index].name,
+                                        'subtitle': null,
+                                        'trailing1': extras[index].salePrice,
+
+                                        // '${extras[index].costPrice.toStringAsFixed(2)},-',
+                                        'trailing2': extras[index]
+                                            .profitMargin(vatSnapshot.data)
+                                            .round(),
+
+                                        // '${extras[index].salePrice.toStringAsFixed(2)},-'
+                                      };
+
+                                      // return SmallElementListTile(
+                                      //     element: element,
+                                      //     myOnPressed: () =>
+                                      //         _goToExtraPage(extras[index]));
+                                      return ElementListTile(
+                                          element: element,
+                                          myOnPressed: () =>
+                                              _goToExtraPage(extras[index]));
+                                    },
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                  ),
+                                );
+                              });
                         });
                   },
                 ),
@@ -104,29 +131,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
             ),
           ),
         ),
-        MyTopListLabel(title: 'Name', trailing: 'Buy / Saleprice'),
-
-        // Align(
-        //   alignment: Alignment.topCenter,
-        //   child: Container(
-        //     color: Colors.white,
-        //     child: Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 45.0),
-        //       child: ListTile(
-        //         visualDensity: VisualDensity.compact,
-        //         title: Text(
-        //           'Name',
-        //           style: TextStyle(fontSize: 16),
-        //         ),
-        //         trailing: Text(
-        //           'Buy / Saleprice',
-        //           style: TextStyle(fontSize: 16),
-        //         ),
-        //         dense: true,
-        //       ),
-        //     ),
-        //   ),
-        // ),
+        MyTopListLabel(title: 'Name', trailing: 'Price / Profit %'),
       ]),
     );
   }
@@ -134,7 +139,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
   void _goToExtraPage(Extra extra) {
     Navigator.of(context)
         .push(MaterialPageRoute(
-      builder: (context) => CreateExtra(editMode: true, editExtra: extra),
+      builder: (context) => SingleExtraPage(extra),
     ))
         .then((context) {
       setState(() {});

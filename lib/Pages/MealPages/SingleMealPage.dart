@@ -11,11 +11,11 @@ import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementPriceCard.dart';
+import 'package:profit_calculator/Pages/MealPages/CreateMealPage.dart';
 import '../../Model/EnvironmentConfig.dart' as config;
-import 'CreateMeal.dart';
 
 class SingleMealPage extends StatefulWidget {
-  Meal meal;
+  final Meal meal;
 
   SingleMealPage(this.meal);
 
@@ -31,6 +31,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
   String menuJsonFile = config.menuJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
+  Meal meal;
   String _name;
   double _totalCost;
   double _salePrice;
@@ -41,10 +42,16 @@ class _SingleMealPageState extends State<SingleMealPage> {
   int _hourPrice;
 
   @override
+  void initState() {
+    super.initState();
+    meal = widget.meal;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _name = widget.meal.name;
-    _salePrice = widget.meal.salePrice;
-    _ingredients = widget.meal.ingredients;
+    _name = meal.name;
+    _salePrice = meal.salePrice;
+    _ingredients = meal.ingredients;
 
     return Scaffold(
       appBar: AppBar(
@@ -54,14 +61,10 @@ class _SingleMealPageState extends State<SingleMealPage> {
               icon: Icon(Icons.edit),
               onPressed: () async {
                 Meal newEditedMeal;
-                newEditedMeal = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => CreateMeal(
-                            editMode: true,
-                            editMeal: widget.meal,
-                            isMeals: true)));
+                newEditedMeal =
+                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMealPage(editMode: true, editMeal: meal)));
                 if (newEditedMeal != null) {
-                  widget.meal = newEditedMeal;
+                  meal = newEditedMeal;
                 }
                 setState(() {});
               })
@@ -78,76 +81,50 @@ class _SingleMealPageState extends State<SingleMealPage> {
                 return FutureBuilder(
                     future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
                     builder: (context, hourPriceSnapshot) {
-                      if (hourPriceSnapshot.connectionState ==
-                          ConnectionState.waiting) {
+                      if (hourPriceSnapshot.connectionState == ConnectionState.waiting) {
                         return MyLoadingCircle(500);
                       }
 
                       return FutureBuilder(
-                          future: _sharedValueHandler.getStringSharedP(
-                              'CurrencyChosen', 'DKK'),
+                          future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                           initialData: '',
                           builder: (context, currencySnapshot) {
-                            if (currencySnapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (currencySnapshot.connectionState == ConnectionState.waiting) {
                               return MyLoadingCircle(500);
                             }
 
                             _hourPrice = hourPriceSnapshot.data;
 
-                            _totalCost = widget.meal.totalCost(_hourPrice);
-                            _profit =
-                                widget.meal.profit(_hourPrice, _vatPercent);
-                            _profitMargin = widget.meal
-                                .profitMargin(_hourPrice, _vatPercent);
+                            _totalCost = meal.totalCost(_hourPrice);
+                            _profit = meal.profit(_hourPrice, _vatPercent);
+                            _profitMargin = meal.profitMargin(_hourPrice, _vatPercent);
                             return Column(
                               children: [
                                 SingleElementPriceCard(
-                                    'Total Cost:',
-                                    null,
-                                    '${_totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                    Colors.red),
-                                SingleElementPriceCard(
-                                    'Net Price:',
-                                    null,
-                                    '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                    Colors.indigo),
-                                SingleElementPriceCard(
-                                    'Sale Price:',
-                                    '($_vatPercent% VAT)',
-                                    '${(_salePrice).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                    Colors.blue),
-                                SingleElementPriceCard(
-                                    'Profit:',
-                                    null,
-                                    '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                    _profitMargin > 0
-                                        ? Colors.green
-                                        : Colors.orange),
+                                    'Total Cost:', null, '${_totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.red),
+                                SingleElementPriceCard('Net Price:', null,
+                                    '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.indigo),
+                                SingleElementPriceCard('Sale Price:', '($_vatPercent% VAT)',
+                                    '${(_salePrice).toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.blue),
+                                SingleElementPriceCard('Profit:', null, '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                                    _profitMargin > 0 ? Colors.green : Colors.orange),
                                 _profitMargin < 0
-                                    ? ProfitMarginPercentageWidget(
-                                        -_profitMargin, Colors.orange[700], '-')
-                                    : ProfitMarginPercentageWidget(
-                                        _profitMargin, Colors.green[700], ''),
+                                    ? ProfitMarginPercentageWidget(-_profitMargin, Colors.orange[700], '-')
+                                    : ProfitMarginPercentageWidget(_profitMargin, Colors.green[700], ''),
                                 SingleElementExtraList(
                                     currencySnapshot.data,
                                     _ingredients
                                         ?.map<Map<String, dynamic>>((e) => {
                                               'title': e.name,
-                                              'subtitle':
-                                                  '${e.amountInGrams.round()} ${e.measureUnit == 'Kg' ? 'g' : 'ml'}',
-                                              'trailing': e.kgPrice *
-                                                  e.amountInGrams /
-                                                  1000,
+                                              'subtitle': '${e.amountInGrams.round()} ${e.measureUnit == 'Kg' ? 'g' : 'ml'}',
+                                              'trailing': e.kgPrice * e.amountInGrams / 1000,
                                             })
                                         ?.toList(),
                                     'Ingredients'),
                                 Card(
                                     margin: EdgeInsets.all(20),
-                                    child: SingleElementExtraListTile(
-                                        'Time spent making meal.',
-                                        '${widget.meal.minutesToMake} min',
-                                        '${((hourPriceSnapshot.data / 60) * widget.meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
+                                    child: SingleElementExtraListTile('Time spent making meal.', '${meal.minutesToMake} min',
+                                        '${((hourPriceSnapshot.data / 60) * meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
                                 Container(
                                   padding: EdgeInsets.all(20),
                                   width: 200,
@@ -156,8 +133,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
                                       color: Colors.red,
                                       icon: Icon(Icons.delete),
                                       padding: EdgeInsets.all(15),
-                                      onPressed: () =>
-                                          _deleteMealDialog(context)),
+                                      onPressed: () => _deleteMealDialog(context)),
                                 ),
                               ],
                             );
@@ -185,7 +161,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
   _deleteMeal(BuildContext context) async {
     bool deleteSuccess = false;
 
-    deleteSuccess = await _deleteMealFromFile(widget.meal);
+    deleteSuccess = await _deleteMealFromFile(meal);
 
     if (deleteSuccess) {
       Navigator.of(context).pop();
@@ -210,7 +186,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
       int mealFoundIndex = -1;
       if (allMenusFromFile != null) {
         for (var m in allMenusFromFile) {
-          mealFoundIndex = m.meals.indexWhere((i) => i.id == widget.meal.id);
+          mealFoundIndex = m.meals.indexWhere((i) => i.id == meal.id);
           if (mealFoundIndex >= 0) {
             break;
           }
@@ -224,8 +200,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
           builder: (context) {
             return MyAlertDialog(
               title: 'Error',
-              content:
-                  'Could not delete meal, because one or more menus are using it.',
+              content: 'Could not delete meal, because one or more menus are using it.',
               cancelText: 'Close',
               infoDialog: true,
             );
@@ -233,8 +208,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
         );
         return false;
       } else {
-        int deleteIndex =
-            allMeals.indexWhere((element) => element.id == newMeal.id);
+        int deleteIndex = allMeals.indexWhere((element) => element.id == newMeal.id);
         allMeals.removeAt(deleteIndex);
         fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
       }

@@ -20,7 +20,8 @@ class ElementListTile extends StatelessWidget {
       child: ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           title: Text(element['title']),
-          subtitle: Text(element['subtitle']),
+          subtitle:
+              element['subtitle'] != null ? Text(element['subtitle']) : null,
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -32,9 +33,7 @@ class ElementListTile extends StatelessWidget {
               Text(
                 '$trailing2%',
                 style: TextStyle(
-                    color: trailing2 > 0
-                        ? Colors.green
-                        : Colors.orange[700]),
+                    color: trailing2 > 0 ? Colors.green : Colors.orange[700]),
               ),
             ],
           ),

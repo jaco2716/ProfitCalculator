@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/Model/Meal.dart';
 
 class ElementAmountInputListTile extends StatefulWidget {
   final dynamic element;
