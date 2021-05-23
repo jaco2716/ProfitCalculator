@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:video_player/video_player.dart';
 
 import '../MyWidgets/MyAppBarWithCalc.dart';
@@ -14,28 +15,30 @@ class _VideoAppGuidePageState extends State<VideoAppGuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: MyAppBarWithCalc('App Guide'),
-        // body: Image.asset('assets/icon/icon.png')
-        body: _ButterFlyAssetVideo()
+        appBar: AppBar(
+          title: Text('App Guide'),
+          // toolbarHeight: 40,
+        ),
+        // appBar: MyAppBarWithCalc('App Guide'),
+        body: _AppGuideAssetVideo()
         //
         // //assets/videos/ProfitDemoTest.MP4
         );
   }
 }
 
-class _ButterFlyAssetVideo extends StatefulWidget {
+class _AppGuideAssetVideo extends StatefulWidget {
   @override
-  _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
+  _AppGuideAssetVideoState createState() => _AppGuideAssetVideoState();
 }
 
-class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
+class _AppGuideAssetVideoState extends State<_AppGuideAssetVideo> {
   VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller =
-        VideoPlayerController.asset('assets/videos/ProfitDemoTest.MP4');
+    _controller = VideoPlayerController.asset('assets/videos/ProfitDemoTest.MP4');
 
     _controller.addListener(() {
       setState(() {});
@@ -58,9 +61,9 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
         children: <Widget>[
           Center(
             child: Container(
-              // height: 2000,
-              height: MediaQuery.of(context).size.height - 180,
-              // padding: const EdgeInsets.symmetric( vertical: 0),
+              padding: EdgeInsets.only(top: 30),
+              // height: MediaQuery.of(context).size.height - 60,
+              width: MediaQuery.of(context).size.width - 100,
               child: AspectRatio(
                 aspectRatio: _controller.value.aspectRatio,
                 child: Stack(
@@ -80,14 +83,22 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(10),
-            width: double.infinity,
-            height: 70,
-            child: ElevatedButton(onPressed: () {
-              Navigator.of(context).pop();
-            }, child: Text('Close')),
-          )
+          MyIconButton(
+              height: 55,
+              tileIcon: Icon(Icons.close),
+              tileTitle: 'Close',
+              compact: true,
+              myOnPressed: () {
+                Navigator.of(context).pop();
+              }),
+          // Container(
+          //   padding: EdgeInsets.all(10),
+          //   width: double.infinity,
+          //   height: 70,
+          //   child: ElevatedButton(onPressed: () {
+          //     Navigator.of(context).pop();
+          //   }, child: Text('Close')),
+          // )
         ],
       ),
     );

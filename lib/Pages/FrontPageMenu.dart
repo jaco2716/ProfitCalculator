@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
-import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyFirstTimeLoadingWidget.dart';
+
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/Pages/CateringPages/CateringListPage.dart';
@@ -19,26 +18,31 @@ class FrontPageMenu extends StatefulWidget {
 }
 
 class _FrontPageMenuState extends State<FrontPageMenu> {
-  // final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-
-
   @override
   Widget build(BuildContext context) {
-    // reset();
-    double gridPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 80 : 50;
+    // double gridSpacingPadding = 10;
+    print(MediaQuery.of(context).size.height);
+    double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
+
+    // double gridTopPadding = 50;
+    // double gridTopPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 50 : 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
           // padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: <Widget>[
+              Container(
+                height: gridSpacingPadding * 5,
+                color: Colors.blue,
+              ),
               Stack(
                 alignment: Alignment.center,
                 children: [
                   Container(
                     color: Colors.blue,
                     child: GridView.count(
-                      padding: EdgeInsets.only(top: gridPadding, bottom: 30, left: 30, right: 30),
+                      padding: EdgeInsets.only(top: 20, bottom: 20, left: 30, right: 30),
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
                       crossAxisCount: 2,
@@ -69,8 +73,8 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.only(top: 50),
-                    height: 180,
+                    // padding: EdgeInsets.only(top: 50),
+                    height: 130,
                     width: 130,
                     child: MyGridMenuButton(
                       title: 'Catering',
@@ -83,7 +87,11 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   ),
                 ],
               ),
-              Padding(padding: EdgeInsets.all(10)),
+              Container(
+                height: gridSpacingPadding,
+                color: Colors.blue,
+                margin: EdgeInsets.only(bottom: 8 + gridSpacingPadding),
+              ),
               MyIconButton(
                   tileIcon: Icon(Icons.attach_money),
                   tileTitle: 'Set VAT, Currency &\nHourly rate',
@@ -104,7 +112,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   tileTitle: 'Contact Support',
                   buttonColor: Colors.blueGrey[800],
                   myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
-              SizedBox(height: 20),
+              SizedBox(height: 5),
             ],
           ),
         ),
