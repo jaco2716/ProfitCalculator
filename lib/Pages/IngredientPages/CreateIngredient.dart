@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ValidateValues.dart';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -45,6 +46,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   String ingredientJsonFile = config.ingredientJsonFile;
   String mealJsonFile = config.mealJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  String cateringJsonFile = config.cateringJsonFile;
   List<Ingredient> ingredientsList = <Ingredient>[];
 
   final FileManagement fileManagement = FileManagement();
@@ -55,8 +57,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   @override
   void initState() {
     super.initState();
-    _currencyChosenFuture =
-        _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
+    _currencyChosenFuture = _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
     initEditMode();
   }
 
@@ -76,8 +77,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc(
-          widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
+      appBar: MyAppBarWithCalc(widget.editMode ?? false ? 'Edit Ingredient' : 'Create Ingredient'),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -92,8 +92,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                     future: _currencyChosenFuture,
                     initialData: '',
                     builder: (context, currencySnapshot) {
-                      if (currencySnapshot.connectionState ==
-                          ConnectionState.waiting) {
+                      if (currencySnapshot.connectionState == ConnectionState.waiting) {
                         return MyLoadingCircle(500);
                       }
                       _currencyChosen = currencySnapshot.data;
@@ -116,10 +115,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             setValue: (value) => _kgPrice = value,
                             readOnly: true,
                             onTap: () => inputAmuntDialog(),
-                            suffixText:
-                                _measureUnit == 'Kg' || _measureUnit == 'g'
-                                    ? '$_currencyChosen/Kg'
-                                    : '$_currencyChosen/Liter',
+                            suffixText: _measureUnit == 'Kg' || _measureUnit == 'g' ? '$_currencyChosen/Kg' : '$_currencyChosen/Liter',
                           ),
                           MyIconButton(
                             tileIcon: Icon(Icons.save),
@@ -127,11 +123,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
                             tileTitle: 'Save Ingredient',
                             myOnPressed: () => _saveIngredient(),
                           ),
-                          widget.editMode ?? false
-                              ? MyDeleteIconButton(
-                                    myOnPressed: () =>
-                                        _deleteIngredientDialog(context))
-                              : Center(),
+                          widget.editMode ?? false ? MyDeleteIconButton(myOnPressed: () => _deleteIngredientDialog(context)) : Center(),
                           SizedBox(
                             height: 400,
                           ),
@@ -153,8 +145,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
       builder: (context) {
         return MyAlertDialog(
           title: 'Delete Ingredient',
-          content:
-              'This cannot be undone, are you sure you want to delete this ingredient?',
+          content: 'This cannot be undone, are you sure you want to delete this ingredient?',
           cancelText: 'Cancel',
           confirmText: 'Delete',
           myOnPressed: () => _deleteIngredient(context),
@@ -169,8 +160,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
       builder: (context) {
         return MyAlertDialog(
           title: 'Error',
-          content:
-              'Could not delete ingredient, because one or more meals or menus are using it.',
+          content: 'Could not delete ingredient, because one or more meals or menus are using it.',
           cancelText: 'Close',
           infoDialog: true,
         );
@@ -184,10 +174,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            contentPadding:
-                EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 5),
-            content:
-                StatefulBuilder(builder: (BuildContext context, setModalState) {
+            contentPadding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 5),
+            content: StatefulBuilder(builder: (BuildContext context, setModalState) {
               return Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 key: _formKeyDialog,
@@ -199,8 +187,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         title: 'Price for amount',
                         myValue: _amountPrice,
                         suffixText: ',- $_currencyChosen',
-                        textInputType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        textInputType: TextInputType.numberWithOptions(decimal: true),
+                        allowedInput: r'[0-9.,]',
                         validate: (value) => _validateValues.validateDouble(value),
                         setValue: (value) => _amountPrice = value,
                       ),
@@ -208,8 +196,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         title: 'Amount in $_tempMeasureUnit',
                         myValue: _amountValue,
                         suffixText: _tempMeasureUnit,
-                        textInputType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        allowedInput: r'[0-9.,]',
+                        textInputType: TextInputType.numberWithOptions(decimal: true),
                         validate: (value) => _validateValues.validateDouble(value),
                         setValue: (value) => _amountValue = value,
                       ),
@@ -258,10 +246,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
         newID = DateTime.now().millisecondsSinceEpoch;
 
 //Create object
-      String _newMeasureUnit =
-          _measureUnit == 'Kg' || _measureUnit == 'g' ? 'Kg' : 'Liter';
-      Ingredient newIngredient =
-          Ingredient(newID, _name, finalKgPrice, 4294198070, _newMeasureUnit);
+      String _newMeasureUnit = _measureUnit == 'Kg' || _measureUnit == 'g' ? 'Kg' : 'Liter';
+      Ingredient newIngredient = Ingredient(newID, _name, finalKgPrice, 4294198070, _newMeasureUnit);
 
       bool saveSucess = false;
 //Save ingredient to json file.
@@ -285,71 +271,42 @@ class _CreateIngredientState extends State<CreateIngredient> {
 //Save to file storage
   Future<bool> _saveIngredientToFile(Ingredient newIngredient) async {
     try {
-      String ingredientFileContent =
-          await fileManagement.readFile(ingredientJsonFile);
-      List<Ingredient> allIngredientsFromFile =
-          objManager.jsonToListIngredient(ingredientFileContent);
+      String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
+      List<Ingredient> allIngredientsFromFile = objManager.jsonToListIngredient(ingredientFileContent);
 
       if (widget.editMode ?? false) {
         String mealFileContent = await fileManagement.readFile(mealJsonFile);
         String menuFileContent = await fileManagement.readFile(menuJsonFile);
-        List<Meal> allMealsFromFile =
-            objManager.jsonToListMeal(mealFileContent);
-        List<Menu> allMenusFromFile =
-            objManager.jsonToListMenu(menuFileContent);
+        String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+        List<Meal> allMealsFromFile = objManager.jsonToListMeal(mealFileContent);
+        List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+        List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
 
-        int ingredientEditIndex = allIngredientsFromFile
-            .indexWhere((element) => element.id == newIngredient.id);
+        int ingredientEditIndex = allIngredientsFromFile.indexWhere((element) => element.id == newIngredient.id);
         allIngredientsFromFile[ingredientEditIndex] = newIngredient;
 
-        //Update data of ingredients in meals
-        allMealsFromFile.forEach((meal) {
-          int mealEditIndex = meal.ingredients
-              .indexWhere((element) => element.id == newIngredient.id);
-          if (mealEditIndex != -1) {
-            Ingredient newIngredientWGrams = Ingredient.clone(newIngredient);
-            double amountInGrams =
-                meal.ingredients[mealEditIndex].amountInGrams;
-            newIngredientWGrams.amountInGrams = amountInGrams;
-            meal.ingredients[mealEditIndex] = newIngredientWGrams;
-          }
-        });
-        //Update data of ingredients in menus
+        //Update data of ingredients in meals, menus and caterings
+        _updateIngredientsInFile(allMealsFromFile, newIngredient);
+        _updateIngredientsInFile(allMenusFromFile, newIngredient);
         allMenusFromFile.forEach((menu) {
-          int menuEditIndex = menu.ingredients
-              .indexWhere((element) => element.id == newIngredient.id);
-          print('index: $menuEditIndex');
-          if (menuEditIndex != -1) {
-            Ingredient newIngredientWGrams = Ingredient.clone(newIngredient);
-            double amountInGrams =
-                menu.ingredients[menuEditIndex].amountInGrams;
-            newIngredientWGrams.amountInGrams = amountInGrams;
-            menu.ingredients[menuEditIndex] = newIngredientWGrams;
-          }
-
-          //Update data of ingredients in menu's meals
-          menu.meals.forEach((meal) {
-            int menuMealEditIndex = meal.ingredients
-                .indexWhere((element) => element.id == newIngredient.id);
-            print('index Meal: $menuMealEditIndex');
-
-            if (menuMealEditIndex != -1) {
-              Ingredient newIngredientWGramsMeal =
-                  Ingredient.clone(newIngredient);
-              double amountInGramsMeal =
-                  meal.ingredients[menuMealEditIndex].amountInGrams;
-              newIngredientWGramsMeal.amountInGrams = amountInGramsMeal;
-              meal.ingredients[menuMealEditIndex] = newIngredientWGramsMeal;
-            }
+          _updateIngredientsInFile(menu.meals, newIngredient);
+        });
+        _updateIngredientsInFile(allCateringsFromFile, newIngredient);
+        allCateringsFromFile.forEach((catering) {
+          _updateIngredientsInFile(catering.meals, newIngredient);
+          _updateIngredientsInFile(catering.menus, newIngredient);
+          catering.menus.forEach((menu) {
+            _updateIngredientsInFile(menu.meals, newIngredient);
           });
         });
+
         fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
         fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
+        fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
       } else {
         allIngredientsFromFile.add(newIngredient);
       }
-      fileManagement.writeFile(
-          ingredientJsonFile, jsonEncode(allIngredientsFromFile));
+      fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredientsFromFile));
     } catch (error) {
       print('Error saving ingredient: $error');
       return false;
@@ -357,18 +314,26 @@ class _CreateIngredientState extends State<CreateIngredient> {
     return true;
   }
 
+  _updateIngredientsInFile(List<dynamic> updateElementList, Ingredient newIngredient) {
+    updateElementList.forEach((element) {
+      int elementEditIndex = element.ingredients.indexWhere((element) => element.id == newIngredient.id);
+      if (elementEditIndex != -1) {
+        Ingredient newIngredientWGrams = Ingredient.clone(newIngredient);
+        newIngredientWGrams.amountInGrams = element.ingredients[elementEditIndex].amountInGrams;
+        element.ingredients[elementEditIndex] = newIngredientWGrams;
+      }
+    });
+  }
+
   _deleteIngredient(BuildContext context) async {
-    String ingredientFileContent =
-        await fileManagement.readFile(ingredientJsonFile);
-    List<Ingredient> allIngredientsFromFile =
-        objManager.jsonToListIngredient(ingredientFileContent);
+    String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
+    List<Ingredient> allIngredientsFromFile = objManager.jsonToListIngredient(ingredientFileContent);
     String mealFileContent = await fileManagement.readFile(mealJsonFile);
     List<Meal> allMealsFromFile = objManager.jsonToListMeal(mealFileContent);
     int ingredientFoundIndex = -1;
     if (allMealsFromFile != null) {
       for (var m in allMealsFromFile) {
-        ingredientFoundIndex =
-            m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        ingredientFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
         if (ingredientFoundIndex >= 0) {
           break;
         }
@@ -380,8 +345,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
     int ingredientinmenuFoundIndex = -1;
     if (allMenusFromFile != null) {
       for (var m in allMenusFromFile) {
-        ingredientinmenuFoundIndex =
-            m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        ingredientinmenuFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
         if (ingredientinmenuFoundIndex >= 0) {
           break;
         }
@@ -392,15 +356,12 @@ class _CreateIngredientState extends State<CreateIngredient> {
       Navigator.of(context).pop();
       showCouldNotDeleteDialog();
     } else {
-      int deleteIndex = allIngredientsFromFile
-          .indexWhere((element) => element.id == widget.editIngredient.id);
+      int deleteIndex = allIngredientsFromFile.indexWhere((element) => element.id == widget.editIngredient.id);
       allIngredientsFromFile.removeAt(deleteIndex);
 
-      fileManagement.writeFile(
-          ingredientJsonFile, jsonEncode(allIngredientsFromFile));
+      fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredientsFromFile));
       Navigator.of(context).popUntil((route) => route.isFirst);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('${widget.editIngredient.name} was deleted.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.editIngredient.name} was deleted.')));
     }
   }
 

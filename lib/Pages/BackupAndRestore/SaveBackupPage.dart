@@ -23,6 +23,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
   final String extraJsonFile = config.extraJsonFile;
   final String mealJsonFile = config.mealJsonFile;
   final String menuJsonFile = config.menuJsonFile;
+  final String cateringJsonFile = config.cateringJsonFile;
 
   List<String> saveButtonDates = [];
 
@@ -41,28 +42,23 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       pageTitle = 'Restore your data from a previous save file.';
     } else {
       saveButtonTitle = 'Save to slot ';
-      pageTitle =
-          'Save your data to a save file, and be able to restore it at a later time.';
+      pageTitle = 'Save your data to a save file, and be able to restore it at a later time.';
     }
 
     return Scaffold(
-      appBar: MyAppBarWithCalc(
-          widget.restorePageSelected ? 'Restore Backup' : 'Save Backup'),
+      appBar: MyAppBarWithCalc(widget.restorePageSelected ? 'Restore Backup' : 'Save Backup'),
       body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
           // color: Colors.amber,
           padding: EdgeInsets.all(20),
           child: FutureBuilder(
-              future: _sharedValueHandler.getStringSharedP(
-                  'saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
+              future: _sharedValueHandler.getStringSharedP('saveAndRestoreDates', 'Empty%Empty%Empty%Empty%Empty%'),
               builder: (context, saveAndRestoreSnapshot) {
-                if (saveAndRestoreSnapshot.connectionState ==
-                    ConnectionState.waiting) {
+                if (saveAndRestoreSnapshot.connectionState == ConnectionState.waiting) {
                   return MyLoadingCircle(500);
                 }
-                List<String> saveAndRestoreDates =
-                    saveAndRestoreSnapshot.data.toString().split('%');
+                List<String> saveAndRestoreDates = saveAndRestoreSnapshot.data.toString().split('%');
 
                 return Column(
                   // mainAxisAlignment: MainAxisAlignment.center,
@@ -100,9 +96,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       child: ElevatedButton.icon(
         style: ButtonStyle(),
         icon: Icon(Icons.save),
-        label: SizedBox(
-            width: 180,
-            child: Text('$title$index \nDate: ${dateLastSaved[index - 1]}')),
+        label: SizedBox(width: 180, child: Text('$title$index \nDate: ${dateLastSaved[index - 1]}')),
         onPressed: () {
           if (widget.restorePageSelected) {
             _saveAndRestoreDialog(context, 'Restore from Save slot $index',
@@ -122,8 +116,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
     );
   }
 
-  _saveAndRestoreDialog(BuildContext context, String title, String content,
-      {void Function() myOnPressed}) {
+  _saveAndRestoreDialog(BuildContext context, String title, String content, {void Function() myOnPressed}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -144,31 +137,26 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
   saveDataToSaveFile(int index, List<String> datesList) async {
     try {
       DateTime newDate = DateTime.now();
-
       String dateString = dateFormat.format(newDate);
-
-      // print(dateString);
-
       datesList[index - 1] = dateString;
-      // datesList[index-1] = 'Empty';
       String datesString = '';
       for (var i = 0; i < 5; i++) {
         datesString += datesList[i] + '%';
       }
-      // print(datesString);
 
       _sharedValueHandler.saveStringSharedP(datesString, 'saveAndRestoreDates');
 
-      String ingredientFileContent =
-          await fileManagement.readFile(ingredientJsonFile);
-      fileManagement.writeFile(
-          '$ingredientJsonFile$index', ingredientFileContent);
+      String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
       String extraFileContent = await fileManagement.readFile(extraJsonFile);
-      fileManagement.writeFile('$extraJsonFile$index', extraFileContent);
       String mealFileContent = await fileManagement.readFile(mealJsonFile);
-      fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
       String menuFileContent = await fileManagement.readFile(menuJsonFile);
+      String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+      
+      fileManagement.writeFile('$ingredientJsonFile$index', ingredientFileContent);
+      fileManagement.writeFile('$extraJsonFile$index', extraFileContent);
+      fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
       fileManagement.writeFile('$menuJsonFile$index', menuFileContent);
+      fileManagement.writeFile('$cateringJsonFile$index', cateringFileContent);
       setState(() {});
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data was saved to save slot $index'),
@@ -183,24 +171,21 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
 
   restoreDataFromSaveFile(int index) async {
     try {
-      String ingredientFileContent =
-          await fileManagement.readFile('$ingredientJsonFile$index');
-      String extraFileContent =
-          await fileManagement.readFile('$extraJsonFile$index');
-      String mealFileContent =
-          await fileManagement.readFile('$mealJsonFile$index');
-      String menuFileContent =
-          await fileManagement.readFile('$menuJsonFile$index');
+      String ingredientFileContent = await fileManagement.readFile('$ingredientJsonFile$index');
+      String extraFileContent = await fileManagement.readFile('$extraJsonFile$index');
+      String mealFileContent = await fileManagement.readFile('$mealJsonFile$index');
+      String menuFileContent = await fileManagement.readFile('$menuJsonFile$index');
+      String cateringFileContent = await fileManagement.readFile('$cateringJsonFile$index');
 
       fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
       fileManagement.writeFile(extraJsonFile, extraFileContent);
       fileManagement.writeFile(mealJsonFile, mealFileContent);
       fileManagement.writeFile(menuJsonFile, menuFileContent);
+      fileManagement.writeFile(cateringJsonFile, cateringFileContent);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Data was restored from save slot $index'),
       ));
-      print('ingre: $ingredientFileContent \n meal: $mealFileContent');
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Something went wrong, try again.'),

@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/Model/ElementTypes.dart';
 
 import 'package:profit_calculator/Model/Meal.dart';
+import 'package:profit_calculator/MyWidgets/CreateElementWidgets/AddElementModule.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/ElementGramInputListTile.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -126,47 +127,12 @@ class _CreateMealPageState extends State<CreateMealPage> {
                             validate: _validateValues.validateInt,
                             setValue: (value) => _minutesToMake = value,
                           ),
-                          Divider(thickness: 1),
-                          itemListTitle('Ingredients:', 'No ingredients added.',
-                              _selectedIngredients.length),
-                          Container(
-                            child: ListView.builder(
-                              padding: EdgeInsets.all(0),
-                              itemCount: _selectedIngredients.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return ElementGramInputListTile(
-                                    ingredient: _selectedIngredients[index],
-                                    myOnPressed: () =>
-                                        _createElementLogic.onElementSelected(
-                                            false,
-                                            _selectedIngredients[index].id,
-                                            setState,
-                                            _selectedIngredients,
-                                            ingredients),
-                                    myOnChanged: (value) =>
-                                        _createElementLogic.setIngredientAmount(
-                                            value,
-                                            _selectedIngredients[index].id,
-                                            _selectedIngredients));
-                              },
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                            ),
-                          ),
-                          MyIconButton(
-                            tileIcon: Icon(Icons.add),
-                            buttonColor: Colors.orange,
-                            compact: true,
-                            height: 60,
-                            tileTitle: 'Add Ingredients',
-                            myOnPressed: () =>
-                                _createElementLogic.showEditElements(
-                                    context: context,
-                                    setState: setState,
-                                    elements: ingredients,
-                                    selectedElements: _selectedIngredients,
-                                    title: 'Ingredients'),
-                          ),
+                          AddElementModule(
+                              selectedElement: _selectedIngredients,
+                              allElements: ingredients,
+                              title: 'Ingredients',
+                              wGramInput: true,
+                              setState: setState),
                           Divider(thickness: 1),
                           MyIconButton(
                               tileIcon: Icon(Icons.save),
@@ -197,14 +163,6 @@ class _CreateMealPageState extends State<CreateMealPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget itemListTitle(String _title, String _altTitle, int listLenght) {
-    return Text(
-      listLenght == 0 ? _altTitle : _title,
-      style: TextStyle(
-          fontSize: 20, color: Colors.grey, fontWeight: FontWeight.w300),
     );
   }
 }

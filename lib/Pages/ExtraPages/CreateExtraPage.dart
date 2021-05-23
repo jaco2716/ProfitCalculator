@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ValidateValues.dart';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/EnvironmentConfig.dart' as config;
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -36,6 +37,7 @@ class _CreateExtraState extends State<CreateExtra> {
   String _buyPrice = '';
   String extraJsonFile = config.extraJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  String cateringJsonFile = config.cateringJsonFile;
   List<Extra> extraList = <Extra>[];
 
   final FileManagement fileManagement = FileManagement();
@@ -46,8 +48,7 @@ class _CreateExtraState extends State<CreateExtra> {
   @override
   void initState() {
     super.initState();
-    _currencyChosenFuture =
-        _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
+    _currencyChosenFuture = _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK');
     initEditMode();
   }
 
@@ -70,8 +71,7 @@ class _CreateExtraState extends State<CreateExtra> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBarWithCalc(
-          widget.editMode ?? false ? 'Edit Extra' : 'Create Extra'),
+      appBar: MyAppBarWithCalc(widget.editMode ?? false ? 'Edit Extra' : 'Create Extra'),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
@@ -86,8 +86,7 @@ class _CreateExtraState extends State<CreateExtra> {
                       future: _currencyChosenFuture,
                       initialData: '',
                       builder: (context, currencySnapshot) {
-                        if (currencySnapshot.connectionState ==
-                            ConnectionState.waiting) {
+                        if (currencySnapshot.connectionState == ConnectionState.waiting) {
                           return MyLoadingCircle(500);
                         }
                         return Column(
@@ -106,9 +105,9 @@ class _CreateExtraState extends State<CreateExtra> {
                               textEditingController: _buyPriceController,
                               validate: _validateValues.validateDouble,
                               setValue: (value) => _buyPrice = value,
+                              allowedInput: r'[0-9.,]',
                               suffixText: ',- ${currencySnapshot.data}',
-                              textInputType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              textInputType: TextInputType.numberWithOptions(decimal: true),
                             ),
                             CreateElementTextField(
                               title: 'Sale Price',
@@ -116,9 +115,9 @@ class _CreateExtraState extends State<CreateExtra> {
                               textEditingController: _salePriceController,
                               validate: _validateValues.validateDouble,
                               setValue: (value) => _salePrice = value,
+                              allowedInput: r'[0-9.,]',
                               suffixText: ',- ${currencySnapshot.data}',
-                              textInputType: TextInputType.numberWithOptions(
-                                  decimal: true),
+                              textInputType: TextInputType.numberWithOptions(decimal: true),
                             ),
                             MyIconButton(
                               tileTitle: 'Save Extra',
@@ -126,11 +125,6 @@ class _CreateExtraState extends State<CreateExtra> {
                               myOnPressed: () => _saveExtra(),
                               compact: true,
                             ),
-                            // widget.editMode ?? false
-                            //     ? MyDeleteIconButton(
-                            //         myOnPressed: () =>
-                            //             _deleteExtraDialog(context))
-                            //     : Center(),
                             SizedBox(
                               height: 400,
                             )
@@ -143,38 +137,6 @@ class _CreateExtraState extends State<CreateExtra> {
       ),
     );
   }
-
-  // //Delete extra menu box
-  // _deleteExtraDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return MyAlertDialog(
-  //         title: 'Delete element',
-  //         content:
-  //             'This cannot be undone, are you sure you want to delete this element?',
-  //         cancelText: 'Cancel',
-  //         confirmText: 'Delete',
-  //         myOnPressed: () => _deleteExtra(context),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // void showCouldNotDeleteDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return MyAlertDialog(
-  //         title: 'Error',
-  //         content:
-  //             'Could not delete extra, because one or more menus are using it.',
-  //         cancelText: 'Close',
-  //         infoDialog: true,
-  //       );
-  //     },
-  //   );
-  // }
 
 //create object and save
   _saveExtra() async {
@@ -193,12 +155,9 @@ class _CreateExtraState extends State<CreateExtra> {
         newID = DateTime.now().millisecondsSinceEpoch;
 
 //Create object
-      Extra newExtra =
-          Extra(newID, _name, finalSalePrice, finalBuyPrice, amount: 1);
-
+      Extra newExtra = Extra(newID, _name, finalSalePrice, finalBuyPrice, amount: 1);
       bool saveSucess = false;
 //Save Extra to json file.
-
       saveSucess = await _saveExtraToFile(newExtra);
 
 //Show error or succes message
@@ -210,8 +169,7 @@ class _CreateExtraState extends State<CreateExtra> {
         if (widget.editMode ?? false) {
           Navigator.of(context).pop(newExtra);
         } else {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) => SingleExtraPage(newExtra)));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => SingleExtraPage(newExtra)));
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -228,26 +186,22 @@ class _CreateExtraState extends State<CreateExtra> {
       List<Extra> allExtrasFromFile = objManager.jsonToListExtra(fileContent);
 
       if (widget.editMode ?? false) {
-        int editExtraIndex = allExtrasFromFile
-            .indexWhere((element) => element.id == newExtra.id);
+        int editExtraIndex = allExtrasFromFile.indexWhere((element) => element.id == newExtra.id);
         allExtrasFromFile[editExtraIndex] = newExtra;
 
         String menuFileContent = await fileManagement.readFile(menuJsonFile);
-        List<Menu> allMenusFromFile =
-            objManager.jsonToListMenu(menuFileContent);
+        List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+        String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+        List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
 
         //Update data of extras in menus
-        allMenusFromFile.forEach((menu) {
-          int menuEditIndex =
-              menu.extras.indexWhere((element) => element.id == newExtra.id);
-          if (menuEditIndex != -1) {
-            Extra newExtraWGrams = newExtra;
-            int amount = menu.extras[menuEditIndex].amount;
-            newExtraWGrams.amount = amount;
-            menu.extras[menuEditIndex] = newExtraWGrams;
-          }
+        _updateExtrasInFile(allMenusFromFile, newExtra);
+        _updateExtrasInFile(allCateringsFromFile, newExtra);
+        allCateringsFromFile.forEach((catering) {
+          _updateExtrasInFile(catering.menus, newExtra);
         });
         fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
+        fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
       } else {
         allExtrasFromFile.add(newExtra);
       }
@@ -259,35 +213,14 @@ class _CreateExtraState extends State<CreateExtra> {
     return true;
   }
 
-  // _deleteExtra(BuildContext context) async {
-  //   String extraFileContent = await fileManagement.readFile(extraJsonFile);
-  //   List<Extra> allExtrasFromFile =
-  //       objManager.jsonToListExtra(extraFileContent);
-
-  //   String menuFileContent = await fileManagement.readFile(menuJsonFile);
-  //   List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
-  //   int extraInMenuFoundIndex = -1;
-  //   if (allMenusFromFile != null) {
-  //     for (var m in allMenusFromFile) {
-  //       extraInMenuFoundIndex =
-  //           m.extras.indexWhere((i) => i.id == widget.editExtra.id);
-  //       if (extraInMenuFoundIndex >= 0) {
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   if (extraInMenuFoundIndex != -1) {
-  //     Navigator.of(context).pop();
-  //     showCouldNotDeleteDialog();
-  //   } else {
-  //     int deleteIndex = allExtrasFromFile
-  //         .indexWhere((element) => element.id == widget.editExtra.id);
-  //     allExtrasFromFile.removeAt(deleteIndex);
-
-  //     fileManagement.writeFile(extraJsonFile, jsonEncode(allExtrasFromFile));
-  //     Navigator.of(context).popUntil((route) => route.isFirst);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('${widget.editExtra.name} was deleted.')));
-  //   }
-  // }
+  _updateExtrasInFile(List<dynamic> updateElementList, Extra newExtra) {
+    updateElementList.forEach((element) {
+      int elementEditIndex = element.extras.indexWhere((element) => element.id == newExtra.id);
+      if (elementEditIndex != -1) {
+        Extra newExtraWAmount = Extra.clone(newExtra);
+        newExtraWAmount.amount = element.extras[elementEditIndex].amount;
+        element.extras[elementEditIndex] = newExtraWAmount;
+      }
+    });
+  }
 }

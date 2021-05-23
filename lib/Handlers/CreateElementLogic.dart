@@ -197,24 +197,6 @@ class CreateElementLogic {
     }
   }
 
-  Future<bool> _saveMenuToFile(Menu newMenu, bool editMode) async {
-    try {
-      String fileContent = await fileManagement.readFile(menuJsonFile);
-      List<Menu> allMenusFromFile = objManager.jsonToListMenu(fileContent);
-      if (editMode ?? false) {
-        int editIndex = allMenusFromFile.indexWhere((element) => element.id == newMenu.id);
-        allMenusFromFile[editIndex] = newMenu;
-      } else {
-        allMenusFromFile.add(newMenu);
-      }
-      fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
-    } catch (error) {
-      print('Error saving menu: $error');
-      return false;
-    }
-    return true;
-  }
-
   Future<bool> _saveMealToFile(Meal newMeal, bool editMode) async {
     try {
       String fileContent = await fileManagement.readFile(mealJsonFile);
@@ -225,24 +207,53 @@ class CreateElementLogic {
 
         String menuFileContent = await fileManagement.readFile(menuJsonFile);
         List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
+        String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+        List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
 
         //Update data of meals in menus
-        allMenusFromFile.forEach((menu) {
-          int menuEditIndex = menu.meals.indexWhere((element) => element.id == newMeal.id);
-          if (menuEditIndex != -1) {
-            Meal newMealWGrams = newMeal;
-            int amount = menu.meals[menuEditIndex].amount;
-            newMealWGrams.amount = amount;
-            menu.meals[menuEditIndex] = newMealWGrams;
-          }
-        });
+        _updateMealsInFile(allMenusFromFile, newMeal);
+        _updateMealsInFile(allCateringsFromFile, newMeal);
+        // allMenusFromFile.forEach((menu) {
+        //   int menuEditIndex = menu.meals.indexWhere((element) => element.id == newMeal.id);
+        //   if (menuEditIndex != -1) {
+        //     Meal newMealWGrams = newMeal;
+        //     int amount = menu.meals[menuEditIndex].amount;
+        //     newMealWGrams.amount = amount;
+        //     menu.meals[menuEditIndex] = newMealWGrams;
+        //   }
+        // });
         fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
+        fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
       } else {
         allMealsFromFile.add(newMeal);
       }
       fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
     } catch (error) {
       print('Error saving meal: $error');
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> _saveMenuToFile(Menu newMenu, bool editMode) async {
+    try {
+      String fileContent = await fileManagement.readFile(menuJsonFile);
+      List<Menu> allMenusFromFile = objManager.jsonToListMenu(fileContent);
+      if (editMode ?? false) {
+        int editIndex = allMenusFromFile.indexWhere((element) => element.id == newMenu.id);
+        allMenusFromFile[editIndex] = newMenu;
+
+        String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+        List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
+
+        _updateMenusInFile(allCateringsFromFile, newMenu);
+        fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
+      } else {
+        allMenusFromFile.add(newMenu);
+      }
+      fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
+    } catch (error) {
+      print('Error saving menu: $error');
       return false;
     }
     return true;
@@ -264,5 +275,27 @@ class CreateElementLogic {
       return false;
     }
     return true;
+  }
+
+  _updateMealsInFile(List<dynamic> updateElementList, Meal newMeal) {
+    updateElementList.forEach((element) {
+      int elementEditIndex = element.meals.indexWhere((element) => element.id == newMeal.id);
+      if (elementEditIndex != -1) {
+        Meal newMealWAmount = Meal.clone(newMeal);
+        newMealWAmount.amount = element.meals[elementEditIndex].amount;
+        element.meals[elementEditIndex] = newMealWAmount;
+      }
+    });
+  }
+
+  _updateMenusInFile(List<dynamic> updateElementList, Menu newMenu) {
+    updateElementList.forEach((element) {
+      int elementEditIndex = element.menus.indexWhere((element) => element.id == newMenu.id);
+      if (elementEditIndex != -1) {
+        Menu newMenuWAmount = Menu.clone(newMenu);
+        newMenuWAmount.amount = element.menus[elementEditIndex].amount;
+        element.menus[elementEditIndex] = newMenuWAmount;
+      }
+    });
   }
 }
