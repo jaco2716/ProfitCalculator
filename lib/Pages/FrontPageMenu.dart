@@ -23,13 +23,9 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
     // double gridSpacingPadding = 10;
     print(MediaQuery.of(context).size.height);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
-
-    // double gridTopPadding = 50;
-    // double gridTopPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 50 : 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          // padding: EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: <Widget>[
               Container(
@@ -73,7 +69,6 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                     ),
                   ),
                   Container(
-                    // padding: EdgeInsets.only(top: 50),
                     height: 130,
                     width: 130,
                     child: MyGridMenuButton(

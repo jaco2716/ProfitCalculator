@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/Model/SortingElement.dart';
+import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/SmallElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
@@ -24,6 +26,8 @@ class _IngredientListState extends State<IngredientList> {
   // bool showArchived = false;
   String appBarTitle = 'All Ingredients';
   String ingredientJsonFile = config.ingredientJsonFile;
+  SortingElement sortingElement = SortingElement('   ', '▼', SortingTypes.trailingDescending);
+
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
@@ -58,25 +62,35 @@ class _IngredientListState extends State<IngredientList> {
                   future: fileManagement.readFile(ingredientJsonFile),
                   initialData: '',
                   builder: (context, ingredientJsonSnapshot) {
-                    if (ingredientJsonSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (ingredientJsonSnapshot.connectionState == ConnectionState.waiting) {
                       return MyLoadingCircle(500);
                     }
-                    if (ingredientJsonSnapshot.data.length == 0 ||
-                        ingredientJsonSnapshot.data == '[]') {
+                    if (ingredientJsonSnapshot.data.length == 0 || ingredientJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
 //Map data from file to objects in list.
-                    List<Ingredient> ingredients = objManager
-                        .jsonToListIngredient(ingredientJsonSnapshot.data);
+                    List<Ingredient> ingredients = objManager.jsonToListIngredient(ingredientJsonSnapshot.data);
+
+                    switch (sortingElement.sortingType) {
+                      case SortingTypes.leadingAscending:
+                        ingredients.sort((a, b) => a.name.compareTo(b.name));
+                        break;
+                      case SortingTypes.leadingDescending:
+                        ingredients.sort((b, a) => a.name.compareTo(b.name));
+                        break;
+                      case SortingTypes.trailingAscending:
+                        ingredients.sort((a, b) => a.kgPrice.compareTo(b.kgPrice));
+                        break;
+                      case SortingTypes.trailingDescending:
+                        ingredients.sort((b, a) => a.kgPrice.compareTo(b.kgPrice));
+                        break;
+                    }
 
                     return FutureBuilder(
-                        future: _sharedValueHandler.getStringSharedP(
-                            'CurrencyChosen', 'DKK'),
+                        future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                         initialData: '',
                         builder: (context, currencySnapshot) {
-                          if (currencySnapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (currencySnapshot.connectionState == ConnectionState.waiting) {
                             return MyLoadingCircle(500);
                           }
                           return Padding(
@@ -87,13 +101,9 @@ class _IngredientListState extends State<IngredientList> {
                                 //${currencySnapshot.data}
                                 Map<String, dynamic> element = {
                                   'title': ingredients[index].name,
-                                  'trailing':
-                                      '${ingredients[index].kgPrice.toStringAsFixed(2)},- /${ingredients[index].measureUnit}'
+                                  'trailing': '${ingredients[index].kgPrice.toStringAsFixed(2)},- /${ingredients[index].measureUnit}'
                                 };
-                                return SmallElementListTile(
-                                    element: element,
-                                    myOnPressed: () => _goToIngredientPage(
-                                        ingredients[index]));
+                                return SmallElementListTile(element: element, myOnPressed: () => _goToIngredientPage(ingredients[index]));
                               },
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -107,7 +117,20 @@ class _IngredientListState extends State<IngredientList> {
             ),
           ),
         ),
-        MyTopListLabel(title: 'Name', trailing: 'Kg/Liter Cost'),
+        MyTopListLabel(
+          title: 'Name ${sortingElement.leadingText}',
+          trailing: 'Kg/Liter Cost ${sortingElement.trailingText}',
+          sortByLeading: () {
+            setState(() {
+              sortingElement.sortByLeading();
+            });
+          },
+          sortByTrailing: () {
+            setState(() {
+              sortingElement.sortByTrailing();
+            });
+          },
+        ),
       ]),
     );
   }
@@ -115,8 +138,7 @@ class _IngredientListState extends State<IngredientList> {
   void _goToIngredientPage(Ingredient ingredient) {
     Navigator.of(context)
         .push(MaterialPageRoute(
-      builder: (context) =>
-          CreateIngredient(editMode: true, editIngredient: ingredient),
+      builder: (context) => CreateIngredient(editMode: true, editIngredient: ingredient),
     ))
         .then((context) {
       setState(() {});

@@ -3,6 +3,8 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Menu.dart';
+import 'package:profit_calculator/Model/SortingElement.dart';
+import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
@@ -24,6 +26,7 @@ class _MenuListPageState extends State<MenuListPage> {
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
   final FileManagement _fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
+  SortingElement sortingElement = SortingElement('   ', '▼', SortingTypes.trailingDescending);
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
@@ -43,7 +46,9 @@ class _MenuListPageState extends State<MenuListPage> {
           myOnPressed: () {
             Navigator.of(context)
                 .push(MaterialPageRoute(
-              builder: (context) => CreateMenuPage(editMode: false,),
+              builder: (context) => CreateMenuPage(
+                editMode: false,
+              ),
             ))
                 .then((value) {
               setState(() {});
@@ -60,38 +65,43 @@ class _MenuListPageState extends State<MenuListPage> {
               child: FutureBuilder(
                   future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
                   builder: (context, vatSnapshot) {
-                    if (vatSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (vatSnapshot.connectionState == ConnectionState.waiting) {
                       return MyLoadingCircle(500);
                     }
                     _vatPercent = vatSnapshot.data;
                     return FutureBuilder(
-                        future:
-                            _sharedValueHandler.getIntSharedP('hourPrice', 100),
+                        future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
                         builder: (context, hourSnapshot) {
-                          if (hourSnapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (hourSnapshot.connectionState == ConnectionState.waiting) {
                             return MyLoadingCircle(500);
                           }
                           _hourPrice = hourSnapshot.data;
                           return FutureBuilder(
                             future: _fileManagement.readFile(menuJsonFile),
                             initialData: '',
-                            builder: (BuildContext context,
-                                AsyncSnapshot menuJsonSnapshot) {
-                              if (menuJsonSnapshot.connectionState ==
-                                  ConnectionState.waiting) {
+                            builder: (BuildContext context, AsyncSnapshot menuJsonSnapshot) {
+                              if (menuJsonSnapshot.connectionState == ConnectionState.waiting) {
                                 return MyLoadingCircle(500);
                               }
                               if (menuJsonSnapshot.data.length <= 2) {
                                 return InitialFutureWidget();
                               }
-                              List<Menu> menus = objManager
-                                  .jsonToListMenu(menuJsonSnapshot.data);
-                              menus.sort((b, a) => a
-                                  .profitMargin(_hourPrice, _vatPercent)
-                                  .compareTo(
-                                      b.profitMargin(_hourPrice, _vatPercent)));
+                              List<Menu> menus = objManager.jsonToListMenu(menuJsonSnapshot.data);
+
+                              switch (sortingElement.sortingType) {
+                                case SortingTypes.leadingAscending:
+                                  menus.sort((a, b) => a.name.compareTo(b.name));
+                                  break;
+                                case SortingTypes.leadingDescending:
+                                  menus.sort((b, a) => a.name.compareTo(b.name));
+                                  break;
+                                case SortingTypes.trailingAscending:
+                                  menus.sort((a, b) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  break;
+                                case SortingTypes.trailingDescending:
+                                  menus.sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  break;
+                              }
 
                               return Column(
                                 children: [
@@ -99,22 +109,15 @@ class _MenuListPageState extends State<MenuListPage> {
                                     padding: const EdgeInsets.only(top: 40),
                                     child: ListView.builder(
                                       itemCount: menus.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
+                                      itemBuilder: (BuildContext context, int index) {
                                         Map<String, dynamic> element = {
                                           'title': menus[index].name,
                                           'subtitle':
                                               '${menus[index].ingredients.length} Ingredients\n${menus[index].meals.length} Meals\n${menus[index].extras.length} Extras',
                                           'trailing1': menus[index].salePrice,
-                                          'trailing2': menus[index]
-                                              .profitMargin(
-                                                  _hourPrice, _vatPercent)
-                                              .round(),
+                                          'trailing2': menus[index].profitMargin(_hourPrice, _vatPercent).round(),
                                         };
-                                        return ElementListTile(
-                                            element: element,
-                                            myOnPressed: () =>
-                                                goToElementPage(menus[index]));
+                                        return ElementListTile(element: element, myOnPressed: () => goToElementPage(menus[index]));
                                       },
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
@@ -130,7 +133,20 @@ class _MenuListPageState extends State<MenuListPage> {
             ),
           ),
         ),
-        MyTopListLabel(title: 'Name', trailing: 'Price / Profit %'),
+        MyTopListLabel(
+          title: 'Name ${sortingElement.leadingText}',
+          trailing: 'Price / Profit % ${sortingElement.trailingText}',
+          sortByLeading: () {
+            setState(() {
+              sortingElement.sortByLeading();
+            });
+          },
+          sortByTrailing: () {
+            setState(() {
+              sortingElement.sortByTrailing();
+            });
+          },
+        ),
       ]),
     );
   }

@@ -3,6 +3,8 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Catering.dart';
+import 'package:profit_calculator/Model/SortingElement.dart';
+import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
@@ -24,6 +26,7 @@ class _CateringListPageState extends State<CateringListPage> {
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
   final FileManagement _fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
+  SortingElement sortingElement = SortingElement('   ', '▼', SortingTypes.trailingDescending);
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
@@ -85,7 +88,20 @@ class _CateringListPageState extends State<CateringListPage> {
                                 return InitialFutureWidget();
                               }
                               List<Catering> caterings = objManager.jsonToListCatering(cateringJsonSnapshot.data);
-                              caterings.sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                              switch (sortingElement.sortingType) {
+                                case SortingTypes.leadingAscending:
+                                  caterings.sort((a, b) => a.name.compareTo(b.name));
+                                  break;
+                                case SortingTypes.leadingDescending:
+                                  caterings.sort((b, a) => a.name.compareTo(b.name));
+                                  break;
+                                case SortingTypes.trailingAscending:
+                                  caterings.sort((a, b) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  break;
+                                case SortingTypes.trailingDescending:
+                                  caterings.sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  break;
+                              }
                               return Column(
                                 children: [
                                   Padding(
@@ -116,7 +132,20 @@ class _CateringListPageState extends State<CateringListPage> {
             ),
           ),
         ),
-        MyTopListLabel(title: 'Name', trailing: 'Price / Profit %'),
+        MyTopListLabel(
+          title: 'Name ${sortingElement.leadingText}',
+          trailing: 'Price / Profit % ${sortingElement.trailingText}',
+          sortByLeading: () {
+            setState(() {
+              sortingElement.sortByLeading();
+            });
+          },
+          sortByTrailing: () {
+            setState(() {
+              sortingElement.sortByTrailing();
+            });
+          },
+        ),
       ]),
     );
   }
