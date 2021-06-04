@@ -4,28 +4,62 @@ import 'package:flutter/services.dart';
 import 'package:profit_calculator/Pages/FrontPageMenu.dart';
 
 import 'Handlers/SharedValueHandler.dart';
+import 'InAppPurchase/components.dart';
 import 'MyWidgets/FrontPageWidgets/MyFirstTimeLoadingWidget.dart';
 import 'MyWidgets/MyLoadingCircle.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(MyApp());
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
-  // This widget is the root of your application.
   reset() async {
     await _sharedValueHandler.saveIntSharedP(0, 'newUser');
   }
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    appData.isPro = false;
+
+    // await Purchases.setDebugLogsEnabled(true);
+    await Purchases.setup("tsZsqXbTbbzAZavjqlWhKLUwPtCkkJtP");
+
+    PurchaserInfo purchaserInfo;
+    try {
+      purchaserInfo = await Purchases.getPurchaserInfo();
+      print(purchaserInfo.toString());
+      if (purchaserInfo.entitlements.all['all_features'] != null) {
+        appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
+      } else {
+        appData.isPro = false;
+      }
+    } on PlatformException catch (e) {
+      print(e);
+    }
+
+    print('#### is user pro? ${appData.isPro}');
+  }
+
   @override
   Widget build(BuildContext context) {
     // reset();
-    
+
     return MaterialApp(
       title: 'Profit Calculator',
       theme: ThemeData(
@@ -37,7 +71,7 @@ class MyApp extends StatelessWidget {
             textTheme: ButtonTextTheme.primary,
           )),
       debugShowCheckedModeBanner: false,
-          home: FutureBuilder(
+      home: FutureBuilder(
           future: _sharedValueHandler.getIntSharedP('newUser', 0),
           builder: (context, newUserSnapshot) {
             if (newUserSnapshot.connectionState == ConnectionState.waiting) {
@@ -47,27 +81,7 @@ class MyApp extends StatelessWidget {
               return MyFirstTimeLoadingWidget();
             }
             return FrontPageMenu();
-            }),
-      // home: MyHomePage(),
+          }),
     );
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   MyHomePage({Key key}) : super(key: key);
-
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   // final FileManagement fileManagement = FileManagement();
-//   // final String ingredientJsonFile = config.ingredientJsonFile;
-//   // final String mealJsonFile = config.mealJsonFile;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//         // appBar: MyAppBarWithCalc('Menu'),
-//         body: FrontPageMenu());
-//   }
-// }

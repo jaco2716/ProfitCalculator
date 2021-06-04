@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
@@ -30,6 +32,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  List<Extra> extras;
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +44,19 @@ class _ExtraListPageState extends State<ExtraListPage> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => CreateExtra(),
-          ))
-              .then((context) {
-            setState(() {});
-          });
+          if (!appData.isPro && extras.length > 1) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => UpgradeScreen(),
+            ));
+          } else {
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => CreateExtra(),
+            ))
+                .then((context) {
+              setState(() {});
+            });
+          }
         },
       ),
       appBar: MyAppBarWithCalc('Extras'),
@@ -67,7 +76,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
                     if (extraJsonSnapshot.data.length == 0 || extraJsonSnapshot.data == '[]') {
                       return InitialFutureWidget();
                     }
-                    List<Extra> extras = objManager.jsonToListExtra(extraJsonSnapshot.data);
+                    extras = objManager.jsonToListExtra(extraJsonSnapshot.data);
 
                     return FutureBuilder(
                         future: _sharedValueHandler.getIntSharedP('VATPercent', 25),

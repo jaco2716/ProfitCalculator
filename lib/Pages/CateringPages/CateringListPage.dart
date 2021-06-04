@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
@@ -31,6 +33,7 @@ class _CateringListPageState extends State<CateringListPage> {
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
   final String cateringJsonFile = config.cateringJsonFile;
+  List<Catering> caterings;
 
   int _vatPercent;
   int _hourPrice;
@@ -45,15 +48,21 @@ class _CateringListPageState extends State<CateringListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Catering',
           myOnPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-              builder: (context) => CreateCateringPage(
-                editMode: false,
-              ),
-            ))
-                .then((value) {
-              setState(() {});
-            });
+            if (!appData.isPro && caterings.length > 1) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => UpgradeScreen(),
+              ));
+            } else {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                builder: (context) => CreateCateringPage(
+                  editMode: false,
+                ),
+              ))
+                  .then((value) {
+                setState(() {});
+              });
+            }
 
             // setState(() {});
           }),
@@ -87,7 +96,7 @@ class _CateringListPageState extends State<CateringListPage> {
                               if (cateringJsonSnapshot.data.length <= 2) {
                                 return InitialFutureWidget();
                               }
-                              List<Catering> caterings = objManager.jsonToListCatering(cateringJsonSnapshot.data);
+                              caterings = objManager.jsonToListCatering(cateringJsonSnapshot.data);
                               switch (sortingElement.sortingType) {
                                 case SortingTypes.leadingAscending:
                                   caterings.sort((a, b) => a.name.compareTo(b.name));
@@ -96,10 +105,12 @@ class _CateringListPageState extends State<CateringListPage> {
                                   caterings.sort((b, a) => a.name.compareTo(b.name));
                                   break;
                                 case SortingTypes.trailingAscending:
-                                  caterings.sort((a, b) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  caterings
+                                      .sort((a, b) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
                                   break;
                                 case SortingTypes.trailingDescending:
-                                  caterings.sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
+                                  caterings
+                                      .sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
                                   break;
                               }
                               return Column(

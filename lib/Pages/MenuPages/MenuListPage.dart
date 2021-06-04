@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
@@ -30,6 +32,7 @@ class _MenuListPageState extends State<MenuListPage> {
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
+  List<Menu> menus;
 
   int _vatPercent;
   int _hourPrice;
@@ -44,6 +47,11 @@ class _MenuListPageState extends State<MenuListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Menu',
           myOnPressed: () {
+            if (!appData.isPro && menus.length > 6) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => UpgradeScreen(),
+              ));
+            } else {
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => CreateMenuPage(
@@ -53,8 +61,7 @@ class _MenuListPageState extends State<MenuListPage> {
                 .then((value) {
               setState(() {});
             });
-
-            // setState(() {});
+            }
           }),
       appBar: MyAppBarWithCalc('All Menus'),
       body: Stack(children: [
@@ -86,7 +93,7 @@ class _MenuListPageState extends State<MenuListPage> {
                               if (menuJsonSnapshot.data.length <= 2) {
                                 return InitialFutureWidget();
                               }
-                              List<Menu> menus = objManager.jsonToListMenu(menuJsonSnapshot.data);
+                              menus = objManager.jsonToListMenu(menuJsonSnapshot.data);
 
                               switch (sortingElement.sortingType) {
                                 case SortingTypes.leadingAscending:

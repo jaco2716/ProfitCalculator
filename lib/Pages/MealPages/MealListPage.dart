@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
@@ -29,6 +31,7 @@ class _MealListPageState extends State<MealListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  List<Meal> meals;
 
   @override
   Widget build(BuildContext context) {
@@ -40,13 +43,19 @@ class _MealListPageState extends State<MealListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Meal',
           myOnPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-              builder: (context) => CreateMealPage(),
-            ))
-                .then((value) {
-              setState(() {});
-            });
+            if (!appData.isPro && meals.length > 6) {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => UpgradeScreen(),
+              ));
+            } else {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(
+                builder: (context) => CreateMealPage(),
+              ))
+                  .then((value) {
+                setState(() {});
+              });
+            }
           }),
       appBar: MyAppBarWithCalc('All Meals'),
       body: Stack(children: [
@@ -79,7 +88,7 @@ class _MealListPageState extends State<MealListPage> {
                                 return InitialFutureWidget();
                               }
                               //Map data from file to list of objects
-                              List<Meal> meals = objManager.jsonToListMeal(mealJsonSnapshot.data);
+                              meals = objManager.jsonToListMeal(mealJsonSnapshot.data);
                               switch (sortingElement.sortingType) {
                                 case SortingTypes.leadingAscending:
                                   meals.sort((a, b) => a.name.compareTo(b.name));

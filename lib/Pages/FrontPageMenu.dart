@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/InAppPurchase/parental_gate.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
@@ -38,46 +40,31 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   Container(
                     color: Colors.blue,
                     child: GridView.count(
-                      padding: EdgeInsets.only(top: 20, bottom: 20, left: 30, right: 30),
+                      padding: EdgeInsets.only(top: 20, bottom: 20, left: 15, right: 15),
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
                       crossAxisCount: 2,
                       children: [
-                        MyGridMenuButton(
-                            // contentColor: Colors.orange,
-                            title: 'Ingredients',
-                            icon: Icons.tapas,
-                            onTap: () => _goToPage(IngredientList())),
-                        MyGridMenuButton(
-                            title: 'Extras',
-                            icon: Icons.liquor,
-                            // contentColor: Colors.teal,
-                            onTap: () => _goToPage(ExtraListPage())),
-                        MyGridMenuButton(
-                            title: 'Meals',
-                            icon: Icons.lunch_dining,
-                            // contentColor: Colors.purple,
-                            onTap: () => _goToPage(MealListPage())),
-                        MyGridMenuButton(
-                            title: 'Menus',
-                            icon: Icons.fastfood,
-                            // contentColor: Colors.deepOrange,
-                            onTap: () => _goToPage(MenuListPage())),
+                        MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
+                        MyGridMenuButton(title: 'Meals', index: 3, icon: Icons.lunch_dining, onTap: () => _goToPage(MealListPage())),
+                        MyGridMenuButton(title: 'Menus', index: 4, icon: Icons.fastfood, onTap: () => _goToPage(MenuListPage())),
+                        MyGridMenuButton(title: 'Catering', index: 5, icon: Icons.food_bank_rounded, onTap: () => _goToPage(CateringListPage())),
                       ],
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                     ),
                   ),
                   Container(
-                    height: 130,
-                    width: 130,
+                    height: 160,
+                    width: 160,
                     child: MyGridMenuButton(
-                      title: 'Catering',
-                      icon: Icons.food_bank_rounded,
-                      round: true,
-                      buttonColor: Colors.lightBlue[700],
-                      contentColor: Colors.white,
-                      onTap: () => _goToPage(CateringListPage()),
+                      title: 'Ingredients',
+                      index: 1,
+                      icon: Icons.tapas,
+                      // round: true,
+                      // buttonColor: Colors.lightBlue[700],
+                      // contentColor: Colors.white,
+                      onTap: () => _goToPage(IngredientList()),
                     ),
                   ),
                 ],
@@ -87,6 +74,8 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                 color: Colors.blue,
                 margin: EdgeInsets.only(bottom: 8 + gridSpacingPadding),
               ),
+              MyIconButton(
+                  tileIcon: Icon(Icons.star), tileTitle: 'Upgrade', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(UpgradeScreen())),
               MyIconButton(
                   tileIcon: Icon(Icons.attach_money),
                   tileTitle: 'Set VAT, Currency &\nHourly rate',

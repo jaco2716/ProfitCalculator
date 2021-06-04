@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
@@ -31,6 +33,7 @@ class _IngredientListState extends State<IngredientList> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  List<Ingredient> ingredients;
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +45,19 @@ class _IngredientListState extends State<IngredientList> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => CreateIngredient(),
-          ))
-              .then((context) {
-            setState(() {});
-          });
+          if (!appData.isPro && ingredients.length > 6) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => UpgradeScreen(),
+            ));
+          } else {
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+              builder: (context) => CreateIngredient(),
+            ))
+                .then((context) {
+              setState(() {});
+            });
+          }
         },
       ),
       appBar: MyAppBarWithCalc('Ingredients'),
@@ -69,7 +78,7 @@ class _IngredientListState extends State<IngredientList> {
                       return InitialFutureWidget();
                     }
 //Map data from file to objects in list.
-                    List<Ingredient> ingredients = objManager.jsonToListIngredient(ingredientJsonSnapshot.data);
+                    ingredients = objManager.jsonToListIngredient(ingredientJsonSnapshot.data);
 
                     switch (sortingElement.sortingType) {
                       case SortingTypes.leadingAscending:

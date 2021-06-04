@@ -99,7 +99,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
         label: SizedBox(width: 180, child: Text('$title$index \nDate: ${dateLastSaved[index - 1]}')),
         onPressed: () {
           if (widget.restorePageSelected) {
-            _saveAndRestoreDialog(context, 'Restore from Save slot $index',
+            _saveAndRestoreDialog(context, 'Restore Save slot $index',
                 'Are you sure you want to restore from this save file?\nThis will replace your current data, and it will be lost if you haven\'t saved it.',
                 myOnPressed: () {
               restoreDataFromSaveFile(index);
