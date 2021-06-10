@@ -18,14 +18,11 @@ class MyAlertDialog extends StatelessWidget {
     this.confirmColor = Colors.blue,
     this.infoDialog = false,
   });
-
-  final TextStyle _whiteText = TextStyle(color: Colors.black);
+  
   final TextStyle _titleText = TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
-  final TextStyle _contentText = TextStyle(color: Colors.white);
 
   @override
   Widget build(BuildContext context) {
-    double buttonSideRadius = infoDialog ? 30 : 0;
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       title: Container(

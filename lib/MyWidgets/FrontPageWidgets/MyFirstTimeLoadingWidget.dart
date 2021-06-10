@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
-import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Pages/FrontPageMenu.dart';
 import 'package:profit_calculator/Pages/VideoAppGuidePage.dart';
 

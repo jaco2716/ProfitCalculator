@@ -44,12 +44,22 @@ class _MyAppState extends State<MyApp> {
     try {
       purchaserInfo = await Purchases.getPurchaserInfo();
       print(purchaserInfo.toString());
-      if (purchaserInfo.entitlements.all['all_features'] != null) {
-        appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
-        if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
+      if (purchaserInfo.entitlements.active.isNotEmpty) {
+        //user has access to some entitlement
+        if (purchaserInfo.entitlements.all['all_features'] != null) {
           appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
         }
-      } else {
+        if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
+          appData.isPro = purchaserInfo.entitlements.all['all_features_lifetime'].isActive;
+        }
+      }
+      // if (purchaserInfo.entitlements.all['all_features'] != null) {
+      //   appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
+      //   if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
+      //     appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
+      //   }
+      // }
+      else {
         appData.isPro = false;
       }
     } on PlatformException catch (e) {

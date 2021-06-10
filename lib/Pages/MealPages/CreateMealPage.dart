@@ -8,7 +8,6 @@ import 'package:profit_calculator/Model/ElementTypes.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/AddElementModule.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';
-import 'package:profit_calculator/MyWidgets/CreateElementWidgets/ElementGramInputListTile.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';

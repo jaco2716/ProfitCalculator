@@ -209,8 +209,7 @@ class _UpsellScreenState extends State<UpsellScreen> {
                         style: TextStyle(color: Colors.blue),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            //TODO change to our policy and terms of use.
-                            _launchURLWebsite('https://google.com');
+                            _launchURLWebsite('https://wejeo.dk/profcalculator-terms-and-conditions.html');
                           },
                       ),
                     ],
@@ -292,6 +291,8 @@ class _UpsellScreenState extends State<UpsellScreen> {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     return UpgradeScreen();
   }
+
+  
 }
 
 class PurchaseButton extends StatefulWidget {
@@ -342,7 +343,6 @@ class _PurchaseButtonState extends State<PurchaseButton> {
                 // shape:
                 ),
             child: Text(
-              // 'Buy ${widget.package.product.title}\n${widget.package.product.priceString}',
               '${widget.leadingString} ${widget.package.product.priceString} ${widget.trailingString}',
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
@@ -420,7 +420,12 @@ class _PurchaseButtonState extends State<PurchaseButton> {
   }
 }
 
-class ProScreen extends StatelessWidget {
+class ProScreen extends StatefulWidget {
+  @override
+  State<ProScreen> createState() => _ProScreenState();
+}
+
+class _ProScreenState extends State<ProScreen> {
   _launchURLWebsite(String zz) async {
     if (await canLaunch(zz)) {
       await launch(zz);
@@ -492,17 +497,16 @@ class ProScreen extends StatelessWidget {
                       style: TextStyle(color: Colors.blue),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          //TODO change to our policy and terms of use.
                           _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy.html');
                         },
                     ),
                     TextSpan(text: ' and '),
                     TextSpan(
-                      text: 'Terms of Use.',
+                      text: 'Terms and Conditions.',
                       style: TextStyle(color: Colors.blue),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          _launchURLWebsite('https://google.com');
+                          _launchURLWebsite('https://wejeo.dk/profcalculator-terms-and-conditions.html');
                         },
                     ),
                   ],
@@ -512,4 +516,6 @@ class ProScreen extends StatelessWidget {
           ],
         ));
   }
+
+  
 }

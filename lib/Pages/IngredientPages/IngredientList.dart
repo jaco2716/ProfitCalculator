@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
-import 'package:profit_calculator/InAppPurchase/components.dart';
-import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
