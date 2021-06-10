@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementPriceCard.dart';
@@ -30,7 +31,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
   final String extraJsonFile = config.extraJsonFile;
   final String menuJsonFile = config.menuJsonFile;
 
-Extra extra;
+  Extra extra;
   String _name;
   double _salePrice;
   double _costPrice;
@@ -38,7 +39,7 @@ Extra extra;
   double _profit;
   int _vatPercent;
 
-  void initState() { 
+  void initState() {
     super.initState();
     extra = widget.extra;
   }
@@ -57,12 +58,11 @@ Extra extra;
               icon: Icon(Icons.edit),
               onPressed: () async {
                 Extra newEditedExtra;
-                newEditedExtra =
-                    await Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CreateExtra(
-                              editExtra: extra,
-                              editMode: true,
-                            )));
+                newEditedExtra = await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => CreateExtra(
+                          editExtra: extra,
+                          editMode: true,
+                        )));
                 if (newEditedExtra != null) {
                   extra = newEditedExtra;
                 }
@@ -79,12 +79,10 @@ Extra extra;
                 }
                 _vatPercent = vatSnapshot.data;
                 return FutureBuilder(
-                    future: _sharedValueHandler.getStringSharedP(
-                        'CurrencyChosen', 'DKK'),
+                    future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                     initialData: '',
                     builder: (context, currencySnapshot) {
-                      if (currencySnapshot.connectionState ==
-                          ConnectionState.waiting) {
+                      if (currencySnapshot.connectionState == ConnectionState.waiting) {
                         return MyLoadingCircle(500);
                       }
 
@@ -92,40 +90,18 @@ Extra extra;
                       _profitMargin = extra.profitMargin(_vatPercent);
                       return Column(
                         children: [
+                          SingleElementPriceCard('Cost:', null, '${_costPrice.toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.red),
+                          SingleElementPriceCard('Net Price:', null,
+                              '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.indigo),
                           SingleElementPriceCard(
-                              'Cost:',
-                              null,
-                              '${_costPrice.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              Colors.red),
-                          SingleElementPriceCard(
-                              'Net Price:',
-                              null,
-                              '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              Colors.indigo),
-                          SingleElementPriceCard(
-                              'Sale Price:',
-                              '($_vatPercent% VAT)',
-                              '${(_salePrice).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                              Colors.blue),
-                          SingleElementPriceCard(
-                              'Profit:',
-                              null,
-                              '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
+                              'Sale Price:', '($_vatPercent% VAT)', '${(_salePrice).toStringAsFixed(2)},- ${currencySnapshot.data}', Colors.blue),
+                          SingleElementPriceCard('Profit:', null, '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
                               _profitMargin > 0 ? Colors.green : Colors.orange),
                           _profitMargin < 0
-                              ? ProfitMarginPercentageWidget(
-                                  -_profitMargin, Colors.orange[700], '-')
-                              : ProfitMarginPercentageWidget(
-                                  _profitMargin, Colors.green[700], ''),
-                          Container(
-                            padding: EdgeInsets.all(20),
-                            width: 200,
-                            child: IconButton(
-                                iconSize: 40,
-                                color: Colors.red,
-                                icon: Icon(Icons.delete),
-                                padding: EdgeInsets.all(15),
-                                onPressed: () => _deleteExtraDialog(context)),
+                              ? ProfitMarginPercentageWidget(-_profitMargin, Colors.orange[700], '-')
+                              : ProfitMarginPercentageWidget(_profitMargin, Colors.green[700], ''),
+                          MyDeleteIconButton(
+                            myOnPressed: () => _deleteExtraDialog(context),
                           ),
                         ],
                       );
@@ -155,8 +131,7 @@ Extra extra;
       builder: (context) {
         return MyAlertDialog(
           title: 'Error',
-          content:
-              'Could not delete extra, because one or more menus are using it.',
+          content: 'Could not delete extra, because one or more menus are using it.',
           cancelText: 'Close',
           infoDialog: true,
         );
@@ -166,8 +141,7 @@ Extra extra;
 
   _deleteExtra(BuildContext context, Extra myExtra) async {
     String extraFileContent = await fileManagement.readFile(extraJsonFile);
-    List<Extra> allExtrasFromFile =
-        objManager.jsonToListExtra(extraFileContent);
+    List<Extra> allExtrasFromFile = objManager.jsonToListExtra(extraFileContent);
 
     String menuFileContent = await fileManagement.readFile(menuJsonFile);
     List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
@@ -184,14 +158,12 @@ Extra extra;
       Navigator.of(context).pop();
       showCouldNotDeleteDialog();
     } else {
-      int deleteIndex =
-          allExtrasFromFile.indexWhere((element) => element.id == myExtra.id);
+      int deleteIndex = allExtrasFromFile.indexWhere((element) => element.id == myExtra.id);
       allExtrasFromFile.removeAt(deleteIndex);
 
       fileManagement.writeFile(extraJsonFile, jsonEncode(allExtrasFromFile));
       Navigator.of(context).popUntil((route) => route.isFirst);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${myExtra.name} was deleted.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${myExtra.name} was deleted.')));
     }
   }
 }

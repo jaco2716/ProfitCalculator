@@ -130,6 +130,7 @@ class CreateElementLogic {
     @required bool editMode,
     @required BuildContext context,
     @required ElementTypes elementType,
+    String discount,
     String minutesToMake,
     int editId,
     List<Meal> selectedMeals,
@@ -139,9 +140,10 @@ class CreateElementLogic {
     int nullIndex = selectedIngredients.indexWhere((ingredient) => ingredient.amountInGrams == null);
 
     if (nullIndex == -1) {
-      int _finalMinutesToMake;
+      int _finalMinutesToMake = 0;
       int newID;
       bool saveSucess = false;
+      int _finalDiscount = 0;
       double _finalSalePrice = double.parse(salePrice.replaceAll(',', '.'));
       _finalSalePrice = (_finalSalePrice * 100).roundToDouble() / 100;
       if (editMode ?? false)
@@ -151,7 +153,7 @@ class CreateElementLogic {
 
       switch (elementType) {
         case ElementTypes.meal:
-          _finalMinutesToMake = int.parse(minutesToMake);
+          if (minutesToMake != '') _finalMinutesToMake = int.parse(minutesToMake);
           Meal newElement = Meal(newID, name, _finalSalePrice, selectedIngredients, _finalMinutesToMake);
           saveSucess = await _saveMealToFile(newElement, editMode);
           navigateAfterSave(saveSucess, context, name, editMode, newElement, SingleMealPage(newElement));
@@ -162,7 +164,9 @@ class CreateElementLogic {
           navigateAfterSave(saveSucess, context, name, editMode, newElement, SingleMenuPage(newElement));
           break;
         case ElementTypes.catering:
-          Catering newElement = Catering(newID, name, _finalSalePrice, selectedIngredients, selectedMeals, selectedExtras, selectedMenus);
+          if (discount != '') _finalDiscount = int.parse(discount);
+          Catering newElement =
+              Catering(newID, name, _finalSalePrice, _finalDiscount, selectedIngredients, selectedMeals, selectedExtras, selectedMenus);
           saveSucess = await _saveCateringToFile(newElement, editMode);
           navigateAfterSave(saveSucess, context, name, editMode, newElement, SingleCateringPage(newElement));
           break;

@@ -93,14 +93,14 @@ class _CreateExtraState extends State<CreateExtra> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             CreateElementTextField(
-                              title: 'Name',
+                              title: 'Name *',
                               myValue: _name,
                               textEditingController: _nameController,
                               validate: _validateValues.validateString,
                               setValue: (value) => _name = value,
                             ),
                             CreateElementTextField(
-                              title: 'Buy Price',
+                              title: 'Buy Price *',
                               myValue: _buyPrice,
                               textEditingController: _buyPriceController,
                               validate: _validateValues.validateDouble,
@@ -110,7 +110,7 @@ class _CreateExtraState extends State<CreateExtra> {
                               textInputType: TextInputType.numberWithOptions(decimal: true),
                             ),
                             CreateElementTextField(
-                              title: 'Sale Price',
+                              title: 'Sale Price *',
                               myValue: _salePrice,
                               textEditingController: _salePriceController,
                               validate: _validateValues.validateDouble,
@@ -176,6 +176,8 @@ class _CreateExtraState extends State<CreateExtra> {
           content: Text('Something went wrong, try again.'),
         ));
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all required fields')));
     }
   }
 

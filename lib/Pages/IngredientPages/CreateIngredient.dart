@@ -101,14 +101,14 @@ class _CreateIngredientState extends State<CreateIngredient> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CreateElementTextField(
-                            title: 'Name',
+                            title: 'Name *',
                             myValue: _name,
                             textEditingController: _nameController,
                             validate: _validateValues.validateString,
                             setValue: (value) => _name = value,
                           ),
                           CreateElementTextField(
-                            title: 'Kg Price / Liter Price',
+                            title: 'Kg Price / Liter Price *',
                             myValue: _kgPrice,
                             textEditingController: _kgPriceController,
                             validate: _validateValues.validateDouble,
@@ -265,6 +265,8 @@ class _CreateIngredientState extends State<CreateIngredient> {
           content: Text('Something went wrong, try again.'),
         ));
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all required fields')));
     }
   }
 

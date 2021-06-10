@@ -5,7 +5,6 @@ import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/ElementTypes.dart';
-
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
@@ -30,7 +29,7 @@ class CreateCateringPage extends StatefulWidget {
 class _CreateCateringPageState extends State<CreateCateringPage> {
   final _formKey = GlobalKey<FormState>();
   String _name;
-  String _salePrice;
+  String _discount;
 
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
@@ -43,7 +42,7 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
   List<Meal> meals = <Meal>[];
   List<Menu> menus = <Menu>[];
   List<Extra> extras = <Extra>[];
-  TextEditingController _salePriceController = TextEditingController();
+  TextEditingController _discountController = TextEditingController();
   TextEditingController _nameController = TextEditingController();
 
   Future _getElementsFuture;
@@ -56,8 +55,7 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
   final CreateElementLogic _createElementLogic = CreateElementLogic();
 
   Future<bool> getElementsFromFile() async {
-    String ingredientFileContent =
-        await fileManagement.readFile(ingredientJsonFile);
+    String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
     String mealFileContent = await fileManagement.readFile(mealJsonFile);
     String extraFileContent = await fileManagement.readFile(extraJsonFile);
     String menuFileContent = await fileManagement.readFile(menuJsonFile);
@@ -71,21 +69,16 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
 
 //Check if menu is being edited and insert object.
   initEditCateringMode() {
-    String tempSale;
+    String tempDiscount;
     _name = widget.editCatering.name;
-    tempSale = widget.editCatering.salePrice.toString();
-    _salePrice = tempSale.replaceAll('.', ',');
-    _selectedIngredients = widget.editCatering.ingredients
-        ?.map((e) => Ingredient.clone(e))
-        ?.toList();
-    _selectedMeals =
-        widget.editCatering.meals?.map((e) => Meal.clone(e))?.toList();
-    _selectedMenus =
-        widget.editCatering.menus?.map((e) => Menu.clone(e))?.toList();
-    _selectedExtras =
-        widget.editCatering.extras?.map((e) => Extra.clone(e))?.toList();
+    tempDiscount = widget.editCatering.discount.toString();
+    _discount = tempDiscount.replaceAll('.', ',');
+    _selectedIngredients = widget.editCatering.ingredients?.map((e) => Ingredient.clone(e))?.toList();
+    _selectedMeals = widget.editCatering.meals?.map((e) => Meal.clone(e))?.toList();
+    _selectedMenus = widget.editCatering.menus?.map((e) => Menu.clone(e))?.toList();
+    _selectedExtras = widget.editCatering.extras?.map((e) => Extra.clone(e))?.toList();
     _nameController.text = _name;
-    _salePriceController.text = _salePrice;
+    _discountController.text = _discount;
   }
 
   @override
@@ -122,21 +115,20 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CreateElementTextField(
-                            title: 'Name',
+                            title: 'Name *',
                             myValue: _name,
                             textEditingController: _nameController,
                             validate: _validateValues.validateString,
                             setValue: (value) => _name = value,
                           ),
                           CreateElementTextField(
-                            title: 'Sale Price',
-                            myValue: _salePrice,
-                            allowedInput: r'[0-9.,]',
-                            textInputType:
-                                TextInputType.numberWithOptions(decimal: true),
-                            textEditingController: _salePriceController,
-                            validate: _validateValues.validateDouble,
-                            setValue: (value) => _salePrice = value,
+                            title: 'Volume discount %',
+                            myValue: _discount,
+                            allowedInput: r'[0-9]',
+                            textInputType: TextInputType.number,
+                            textEditingController: _discountController,
+                            validate: (value) => _validateValues.validateInt(value, bellowValue: 100, canBeNull: true),
+                            setValue: (value) => _discount = value,
                           ),
                           AddElementModule(
                               selectedElement: _selectedIngredients,
@@ -144,21 +136,9 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
                               title: 'Ingredients',
                               wGramInput: true,
                               setState: setState),
-                          AddElementModule(
-                              selectedElement: _selectedExtras,
-                              allElements: extras,
-                              title: 'Extras',
-                              setState: setState),
-                          AddElementModule(
-                              selectedElement: _selectedMeals,
-                              allElements: meals,
-                              title: 'Meals',
-                              setState: setState),
-                          AddElementModule(
-                              selectedElement: _selectedMenus,
-                              allElements: menus,
-                              title: 'Menus',
-                              setState: setState),
+                          AddElementModule(selectedElement: _selectedExtras, allElements: extras, title: 'Extras', setState: setState),
+                          AddElementModule(selectedElement: _selectedMeals, allElements: meals, title: 'Meals', setState: setState),
+                          AddElementModule(selectedElement: _selectedMenus, allElements: menus, title: 'Menus', setState: setState),
                           MyIconButton(
                               tileIcon: Icon(Icons.save),
                               compact: true,
@@ -169,7 +149,8 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
 
                                   _createElementLogic.saveElement(
                                     selectedIngredients: _selectedIngredients,
-                                    salePrice: _salePrice,
+                                    salePrice: '0',
+                                    discount: _discount,
                                     name: _name,
                                     editMode: widget.editMode,
                                     elementType: ElementTypes.catering,
@@ -179,9 +160,11 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
                                     selectedMeals: _selectedMeals,
                                     selectedMenus: _selectedMenus,
                                   );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all required fields')));
                                 }
                               }),
-                          SizedBox(height: 400),
+                          SizedBox(height: 300),
                         ],
                       ),
                     ),

@@ -31,7 +31,7 @@ class _MealListPageState extends State<MealListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-  List<Meal> meals;
+  List<Meal> meals = [];
 
   @override
   Widget build(BuildContext context) {

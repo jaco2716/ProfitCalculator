@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
@@ -118,16 +119,6 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
                                   'Ingredients'),
                               SingleElementExtraList(
                                   currencySnapshot.data,
-                                  menu.meals
-                                      ?.map<Map<String, dynamic>>((e) => {
-                                            'title': e.name,
-                                            'subtitle': 'x${e.amount}',
-                                            'trailing': e.totalCost(_hourPrice) * e.amount,
-                                          })
-                                      ?.toList(),
-                                  'Meals'),
-                              SingleElementExtraList(
-                                  currencySnapshot.data,
                                   menu.extras
                                       ?.map<Map<String, dynamic>>((e) => {
                                             'title': e.name,
@@ -136,16 +127,19 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
                                           })
                                       ?.toList(),
                                   'Extras'),
-                              Container(
-                                padding: EdgeInsets.all(20),
-                                width: 200,
-                                child: IconButton(
-                                    iconSize: 40,
-                                    color: Colors.red,
-                                    icon: Icon(Icons.delete),
-                                    padding: EdgeInsets.all(15),
-                                    onPressed: () => _deleteMealDialog(context)),
-                              ),
+                              SingleElementExtraList(
+                                  currencySnapshot.data,
+                                  menu.meals
+                                      ?.map<Map<String, dynamic>>((e) => {
+                                            'title': e.name,
+                                            'subtitle': 'x${e.amount}',
+                                            'trailing': e.totalCost(_hourPrice) * e.amount,
+                                          })
+                                      ?.toList(),
+                                  'Meals'),
+                                  MyDeleteIconButton(
+                                  myOnPressed: () => _deleteMealDialog(context),
+                                ),
                             ],
                           );
                         });

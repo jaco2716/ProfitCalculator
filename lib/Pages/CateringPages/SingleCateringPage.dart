@@ -6,6 +6,7 @@ import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
@@ -30,17 +31,19 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
   String cateringJsonFile = config.cateringJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
-Catering catering;
+  Catering catering;
   String _name;
   double _totalCost;
   double _salePrice;
+  int _discount;
   double _profitMargin;
   double _profit;
   List<Ingredient> _ingredients;
   int _vatPercent;
   int _hourPrice;
+  String _currencyChosen;
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     catering = widget.catering;
   }
@@ -48,7 +51,8 @@ Catering catering;
   @override
   Widget build(BuildContext context) {
     _name = catering.name;
-    _salePrice = catering.salePrice;
+    // _salePrice = catering.salePrice;
+    _discount = catering.discount;
     _ingredients = catering.ingredients;
     return Scaffold(
       appBar: AppBar(
@@ -58,10 +62,8 @@ Catering catering;
               icon: Icon(Icons.edit),
               onPressed: () async {
                 Catering newEditedCatering;
-                newEditedCatering = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => CreateCateringPage(
-                            editMode: true, editCatering: catering)));
+                newEditedCatering = await Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => CreateCateringPage(editMode: true, editCatering: catering)));
                 if (newEditedCatering != null) {
                   catering = newEditedCatering;
                 }
@@ -80,83 +82,53 @@ Catering catering;
               return FutureBuilder(
                   future: _sharedValueHandler.getIntSharedP('hourPrice', 100),
                   builder: (context, hourPriceSnapshot) {
-                    if (hourPriceSnapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (hourPriceSnapshot.connectionState == ConnectionState.waiting) {
                       return MyLoadingCircle(500);
                     }
 
                     return FutureBuilder(
-                        future: _sharedValueHandler.getStringSharedP(
-                            'CurrencyChosen', 'DKK'),
+                        future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                         initialData: '',
                         builder: (context, currencySnapshot) {
-                          if (currencySnapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (currencySnapshot.connectionState == ConnectionState.waiting) {
                             return MyLoadingCircle(500);
                           }
 
                           _hourPrice = hourPriceSnapshot.data;
+                          _currencyChosen = currencySnapshot.data;
                           _totalCost = catering.totalCost(_hourPrice);
+                          _salePrice = catering.totalSalePrice(_vatPercent);
+
                           _profit = catering.profit(_hourPrice, _vatPercent);
-                          _profitMargin =
-                              catering.profitMargin(_hourPrice, _vatPercent);
-                          // }
+                          _profitMargin = catering.profitMargin(_hourPrice, _vatPercent);
                           return Column(
                             children: [
-                              SingleElementPriceCard(
-                                  'Total Cost:',
-                                  null,
-                                  '${_totalCost.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                  Colors.red),
-                              SingleElementPriceCard(
-                                  'Net Price:',
-                                  null,
-                                  '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                  Colors.indigo),
-                              SingleElementPriceCard(
-                                  'Sale Price:',
-                                  '($_vatPercent% VAT)',
-                                  '${(_salePrice).toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                  Colors.blue),
-                              SingleElementPriceCard(
-                                  'Profit:',
-                                  null,
-                                  '${_profit.toStringAsFixed(2)},- ${currencySnapshot.data}',
-                                  _profitMargin > 0
-                                      ? Colors.green
-                                      : Colors.orange),
+                              SingleElementPriceCard('Total Cost:', null, '${_totalCost.toStringAsFixed(2)},- $_currencyChosen', Colors.red),
+                              SingleElementPriceCard('Net Price:', _discount != 0 ? '(With discount $_discount%)' : null,
+                                  '${(_salePrice / (_vatPercent / 100 + 1)).toStringAsFixed(2)},- $_currencyChosen', Colors.indigo),
+                              SingleElementPriceCard('Sale Price:', '($_vatPercent% VAT)',
+                                  '${((_salePrice * 100) / (100 - _discount)).toStringAsFixed(2)},- $_currencyChosen', Colors.blue),
+                              _discount != 0
+                                  ? SingleElementPriceCard(
+                                      'Discount Price:', '($_discount%)', '${_salePrice.toStringAsFixed(2)},- $_currencyChosen', Colors.blue)
+                                  : Center(),
+                              SingleElementPriceCard('Profit:', null, '${_profit.toStringAsFixed(2)},- $_currencyChosen',
+                                  _profitMargin > 0 ? Colors.green : Colors.orange),
                               _profitMargin < 0
-                                  ? ProfitMarginPercentageWidget(
-                                      -_profitMargin, Colors.orange[700], '-')
-                                  : ProfitMarginPercentageWidget(
-                                      _profitMargin, Colors.green[700], ''),
+                                  ? ProfitMarginPercentageWidget(-_profitMargin, Colors.orange[700], '-')
+                                  : ProfitMarginPercentageWidget(_profitMargin, Colors.green[700], ''),
                               SingleElementExtraList(
-                                  currencySnapshot.data,
+                                  _currencyChosen,
                                   _ingredients
                                       ?.map<Map<String, dynamic>>((e) => {
                                             'title': e.name,
-                                            'subtitle':
-                                                '${e.amountInGrams.round()} ${e.measureUnit == 'Kg' ? 'g' : 'ml'}',
-                                            'trailing': e.kgPrice *
-                                                e.amountInGrams /
-                                                1000,
+                                            'subtitle': '${e.amountInGrams.round()} ${e.measureUnit == 'Kg' ? 'g' : 'ml'}',
+                                            'trailing': e.kgPrice * e.amountInGrams / 1000,
                                           })
                                       ?.toList(),
                                   'Ingredients'),
                               SingleElementExtraList(
-                                  currencySnapshot.data,
-                                  catering.meals
-                                      ?.map<Map<String, dynamic>>((e) => {
-                                            'title': e.name,
-                                            'subtitle': 'x${e.amount}',
-                                            'trailing':
-                                                e.totalCost(_hourPrice) *
-                                                    e.amount,
-                                          })
-                                      ?.toList(),
-                                  'Meals'),
-                              SingleElementExtraList(
-                                  currencySnapshot.data,
+                                  _currencyChosen,
                                   catering.extras
                                       ?.map<Map<String, dynamic>>((e) => {
                                             'title': e.name,
@@ -165,8 +137,18 @@ Catering catering;
                                           })
                                       ?.toList(),
                                   'Extras'),
-                                  SingleElementExtraList(
-                                  currencySnapshot.data,
+                              SingleElementExtraList(
+                                  _currencyChosen,
+                                  catering.meals
+                                      ?.map<Map<String, dynamic>>((e) => {
+                                            'title': e.name,
+                                            'subtitle': 'x${e.amount}',
+                                            'trailing': e.totalCost(_hourPrice) * e.amount,
+                                          })
+                                      ?.toList(),
+                                  'Meals'),
+                              SingleElementExtraList(
+                                  _currencyChosen,
                                   catering.menus
                                       ?.map<Map<String, dynamic>>((e) => {
                                             'title': e.name,
@@ -175,16 +157,8 @@ Catering catering;
                                           })
                                       ?.toList(),
                                   'Menus'),
-                              Container(
-                                padding: EdgeInsets.all(20),
-                                width: 200,
-                                child: IconButton(
-                                    iconSize: 40,
-                                    color: Colors.red,
-                                    icon: Icon(Icons.delete),
-                                    padding: EdgeInsets.all(15),
-                                    onPressed: () =>
-                                        _deleteMealDialog(context)),
+                              MyDeleteIconButton(
+                                myOnPressed: () => _deleteCateringDialog(context),
                               ),
                             ],
                           );
@@ -195,7 +169,7 @@ Catering catering;
     );
   }
 
-  _deleteMealDialog(BuildContext context) {
+  _deleteCateringDialog(BuildContext context) {
     print(catering.menus);
     showDialog(
       context: context,
@@ -205,13 +179,13 @@ Catering catering;
           content: 'Are you sure you want to delete $_name?',
           cancelText: 'cancel',
           confirmText: 'Delete',
-          myOnPressed: () => _deleteMeal(context),
+          myOnPressed: () => _deleteCatering(context),
         );
       },
     );
   }
 
-  _deleteMeal(BuildContext context) async {
+  _deleteCatering(BuildContext context) async {
     bool deleteSuccess = false;
 
     deleteSuccess = await _deleteCateringFromFile(catering);
@@ -233,8 +207,7 @@ Catering catering;
     try {
       String fileContent = await fileManagement.readFile(cateringJsonFile);
       List<Catering> allCatering = objManager.jsonToListCatering(fileContent);
-      int deleteIndex =
-          allCatering.indexWhere((element) => element.id == newCatering.id);
+      int deleteIndex = allCatering.indexWhere((element) => element.id == newCatering.id);
       allCatering.removeAt(deleteIndex);
       fileManagement.writeFile(cateringJsonFile, jsonEncode(allCatering));
     } catch (error) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/InAppPurchase/parental_gate.dart';
 import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
@@ -25,13 +24,14 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
     // double gridSpacingPadding = 10;
     print(MediaQuery.of(context).size.height);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
+    double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 22;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
           child: Column(
             children: <Widget>[
               Container(
-                height: gridSpacingPadding * 5,
+                height: (gridSpacingPadding - 1) * 5,
                 color: Colors.blue,
               ),
               Stack(
@@ -40,7 +40,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   Container(
                     color: Colors.blue,
                     child: GridView.count(
-                      padding: EdgeInsets.only(top: 20, bottom: 20, left: 15, right: 15),
+                      padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
                       crossAxisSpacing: 20,
                       mainAxisSpacing: 20,
                       crossAxisCount: 2,
@@ -69,13 +69,14 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   ),
                 ],
               ),
-              Container(
-                height: gridSpacingPadding,
-                color: Colors.blue,
-                margin: EdgeInsets.only(bottom: 8 + gridSpacingPadding),
-              ),
-              MyIconButton(
-                  tileIcon: Icon(Icons.star), tileTitle: 'Upgrade', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(UpgradeScreen())),
+              SizedBox(height: (gridSpacingPadding + 8)),
+              // Container(
+              //   height: gridSpacingPadding/2,
+              //   // color: Colors.blue,
+              //   margin: EdgeInsets.only(bottom: 8 + gridSpacingPadding),
+              // ),
+              // MyIconButton(
+              //     tileIcon: Icon(Icons.star), tileTitle: 'Upgrade', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(UpgradeScreen())),
               MyIconButton(
                   tileIcon: Icon(Icons.attach_money),
                   tileTitle: 'Set VAT, Currency &\nHourly rate',
@@ -91,11 +92,36 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   tileTitle: 'App Guide \n(Placeholder video)',
                   buttonColor: Colors.blueGrey[800],
                   myOnPressed: () => _goToPage(VideoAppGuidePage())),
-              MyIconButton(
-                  tileIcon: Icon(Icons.info),
-                  tileTitle: 'Contact Support',
-                  buttonColor: Colors.blueGrey[800],
-                  myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
+              Container(
+                width: 310,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 230,
+                      child: MyIconButton(
+                          tileIcon: Icon(Icons.info),
+                          tileTitle: 'Contact Support',
+                          buttonColor: Colors.blueGrey[800],
+                          myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
+                    ),
+                    Container(
+                      width: 70,
+                      height: 70,
+                      child: Card(
+                        margin: EdgeInsets.symmetric(vertical: 5),
+                        elevation: 2,
+                        color: Colors.orange[500],
+                        child: IconButton(
+                          onPressed: () => _goToPage(UpgradeScreen()),
+                          icon: Icon(Icons.star, color: Colors.white, size: 35),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+
               SizedBox(height: 5),
             ],
           ),

@@ -107,14 +107,14 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CreateElementTextField(
-                            title: 'Name',
+                            title: 'Name *',
                             myValue: _name,
                             textEditingController: _nameController,
                             validate: _validateValues.validateString,
                             setValue: (value) => _name = value,
                           ),
                           CreateElementTextField(
-                            title: 'Sale Price',
+                            title: 'Sale Price *',
                             myValue: _salePrice,
                             allowedInput: r'[0-9.,]',
                             textInputType: TextInputType.numberWithOptions(decimal: true),
@@ -149,6 +149,8 @@ class _CreateMenuPageState extends State<CreateMenuPage> {
                                     selectedExtras: _selectedExtras,
                                     selectedMeals: _selectedMeals,
                                   );
+                                }else {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all required fields')));
                                 }
                               }),
                           SizedBox(height: 400),

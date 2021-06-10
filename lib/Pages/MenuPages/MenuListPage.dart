@@ -32,7 +32,7 @@ class _MenuListPageState extends State<MenuListPage> {
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
-  List<Menu> menus;
+  List<Menu> menus = [];
 
   int _vatPercent;
   int _hourPrice;

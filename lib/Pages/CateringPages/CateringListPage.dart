@@ -33,7 +33,7 @@ class _CateringListPageState extends State<CateringListPage> {
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
   final String cateringJsonFile = config.cateringJsonFile;
-  List<Catering> caterings;
+  List<Catering> caterings = [];
 
   int _vatPercent;
   int _hourPrice;
@@ -48,7 +48,8 @@ class _CateringListPageState extends State<CateringListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Catering',
           myOnPressed: () {
-            if (!appData.isPro && caterings.length > 1) {
+            print(caterings.toString());
+            if (!appData.isPro && caterings.length > 2) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));

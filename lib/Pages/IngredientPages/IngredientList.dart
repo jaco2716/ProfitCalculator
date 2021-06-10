@@ -33,7 +33,7 @@ class _IngredientListState extends State<IngredientList> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-  List<Ingredient> ingredients;
+  List<Ingredient> ingredients = [];
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +45,11 @@ class _IngredientListState extends State<IngredientList> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          if (!appData.isPro && ingredients.length > 6) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => UpgradeScreen(),
-            ));
-          } else {
+          // if (!appData.isPro && ingredients.length > 9) {
+          //   Navigator.of(context).push(MaterialPageRoute(
+          //     builder: (context) => UpgradeScreen(),
+          //   ));
+          // } else {
             Navigator.of(context)
                 .push(MaterialPageRoute(
               builder: (context) => CreateIngredient(),
@@ -57,7 +57,7 @@ class _IngredientListState extends State<IngredientList> {
                 .then((context) {
               setState(() {});
             });
-          }
+          // }
         },
       ),
       appBar: MyAppBarWithCalc('Ingredients'),

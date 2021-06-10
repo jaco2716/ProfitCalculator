@@ -46,6 +46,9 @@ class _MyAppState extends State<MyApp> {
       print(purchaserInfo.toString());
       if (purchaserInfo.entitlements.all['all_features'] != null) {
         appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
+        if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
+          appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
+        }
       } else {
         appData.isPro = false;
       }

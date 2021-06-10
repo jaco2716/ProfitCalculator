@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
+import 'package:profit_calculator/MyWidgets/MyDeleteIconButton.dart';
 import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/ProfitMarginPercentageWidget.dart';
 import 'package:profit_calculator/MyWidgets/SingleElementWidgets/SingleElementExtraList.dart';
@@ -125,15 +126,8 @@ class _SingleMealPageState extends State<SingleMealPage> {
                                     margin: EdgeInsets.all(20),
                                     child: SingleElementExtraListTile('Time spent making meal.', '${meal.minutesToMake} min',
                                         '${((hourPriceSnapshot.data / 60) * meal.minutesToMake).toStringAsFixed(2)},- ${currencySnapshot.data}')),
-                                Container(
-                                  padding: EdgeInsets.all(20),
-                                  width: 200,
-                                  child: IconButton(
-                                      iconSize: 40,
-                                      color: Colors.red,
-                                      icon: Icon(Icons.delete),
-                                      padding: EdgeInsets.all(15),
-                                      onPressed: () => _deleteMealDialog(context)),
+                                MyDeleteIconButton(
+                                  myOnPressed: () => _deleteMealDialog(context),
                                 ),
                               ],
                             );

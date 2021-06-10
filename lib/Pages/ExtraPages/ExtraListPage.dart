@@ -32,7 +32,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-  List<Extra> extras;
+  List<Extra> extras = [];
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          if (!appData.isPro && extras.length > 1) {
+          if (!appData.isPro && extras.length > 2) {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UpgradeScreen(),
             ));

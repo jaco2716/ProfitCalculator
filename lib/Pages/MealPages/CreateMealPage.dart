@@ -102,14 +102,14 @@ class _CreateMealPageState extends State<CreateMealPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           CreateElementTextField(
-                            title: 'Name',
+                            title: 'Name *',
                             myValue: _name,
                             textEditingController: _nameController,
                             validate: _validateValues.validateString,
                             setValue: (value) => _name = value,
                           ),
                           CreateElementTextField(
-                            title: 'Sale Price',
+                            title: 'Sale Price *',
                             myValue: _salePrice,
                             allowedInput: r'[0-9.,]',
                             textInputType:
@@ -124,7 +124,7 @@ class _CreateMealPageState extends State<CreateMealPage> {
                             allowedInput: r'[0-9.,]',
                             textInputType: TextInputType.number,
                             textEditingController: _minutesToMakeController,
-                            validate: _validateValues.validateInt,
+                            validate: (value) => _validateValues.validateInt(value, canBeNull: true),
                             setValue: (value) => _minutesToMake = value,
                           ),
                           AddElementModule(
@@ -152,6 +152,8 @@ class _CreateMealPageState extends State<CreateMealPage> {
                                     context: context,
                                     editId: widget.editMeal?.id,
                                   );
+                                }else {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill all required fields')));
                                 }
                               }),
                           SizedBox(height: 400),
