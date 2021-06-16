@@ -48,17 +48,6 @@ class _MyAppState extends State<MyApp> {
       if (purchaserInfo.entitlements.all['all_features'] != null) {
         appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
       }
-      // if (purchaserInfo.entitlements.active.isNotEmpty) {
-      // if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
-      //   appData.isPro = purchaserInfo.entitlements.all['all_features_lifetime'].isActive;
-      // }
-      // }
-      // if (purchaserInfo.entitlements.all['all_features'] != null) {
-      //   appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
-      //   if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
-      //     appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
-      //   }
-      // }
       else {
         appData.isPro = false;
       }

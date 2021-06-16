@@ -217,15 +217,10 @@ class CreateElementLogic {
         //Update data of meals in menus
         _updateMealsInFile(allMenusFromFile, newMeal);
         _updateMealsInFile(allCateringsFromFile, newMeal);
-        // allMenusFromFile.forEach((menu) {
-        //   int menuEditIndex = menu.meals.indexWhere((element) => element.id == newMeal.id);
-        //   if (menuEditIndex != -1) {
-        //     Meal newMealWGrams = newMeal;
-        //     int amount = menu.meals[menuEditIndex].amount;
-        //     newMealWGrams.amount = amount;
-        //     menu.meals[menuEditIndex] = newMealWGrams;
-        //   }
-        // });
+        allCateringsFromFile.forEach((e) {
+          _updateMealsInFile(e.menus, newMeal);
+        });
+        
         fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
         fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
       } else {

@@ -402,5 +402,3 @@ class _CreateIngredientState extends State<CreateIngredient> {
   }
 }
 
-
-//TODO update elements in file, and check if can delete.

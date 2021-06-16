@@ -201,9 +201,6 @@ class _UpsellScreenState extends State<UpsellScreen> {
       PurchaserInfo restoredInfo = await Purchases.restoreTransactions();
       print('restore info:   s--- ${restoredInfo.entitlements.toString()}');
       appData.isPro = restoredInfo.entitlements.all["all_features"].isActive;
-      if (!appData.isPro) {
-        appData.isPro = restoredInfo.entitlements.all["all_features_lifetime"].isActive;
-      }
       print('is user pro? ${appData.isPro}');
 
       if (appData.isPro) {
@@ -444,7 +441,7 @@ class _ProScreenState extends State<ProScreen> {
     );
 
     try {
-      PurchaserInfo restoredInfo = await Purchases.reset();
+      await Purchases.reset();
       appData.isPro = false;
       print('is user pro? ${appData.isPro}');
 
