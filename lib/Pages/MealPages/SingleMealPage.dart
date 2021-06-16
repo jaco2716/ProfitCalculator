@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/Model/Menu.dart';
@@ -30,6 +31,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
   final ObjectManager objManager = ObjectManager();
   String mealJsonFile = config.mealJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  String cateringJsonFile = config.cateringJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
   Meal meal;
@@ -186,6 +188,16 @@ class _SingleMealPageState extends State<SingleMealPage> {
           }
         }
       }
+      String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+      List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
+      if (allCateringsFromFile != null) {
+        for (var m in allCateringsFromFile) {
+          mealFoundIndex = m.meals.indexWhere((i) => i.id == meal.id);
+          if (mealFoundIndex >= 0) {
+            break;
+          }
+        }
+      }
 
       if (mealFoundIndex != -1) {
         Navigator.of(context).pop();
@@ -194,7 +206,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
           builder: (context) {
             return MyAlertDialog(
               title: 'Error',
-              content: 'Could not delete meal, because one or more menus are using it.',
+              content: 'Could not delete meal, because one or more menus or caterings are using it.',
               cancelText: 'Close',
               infoDialog: true,
             );

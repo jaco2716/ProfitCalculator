@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
@@ -28,6 +29,7 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
   final ObjectManager objManager = ObjectManager();
   String mealJsonFile = config.mealJsonFile;
   String menuJsonFile = config.menuJsonFile;
+  String cateringJsonFile = config.cateringJsonFile;
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
   Menu menu;
   String _name;
@@ -186,9 +188,38 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
     try {
       String fileContent = await fileManagement.readFile(menuJsonFile);
       List<Menu> allMenus = objManager.jsonToListMenu(fileContent);
+
+      int menuFoundIndex = -1;
+      String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+      List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
+      if (allCateringsFromFile != null) {
+        for (var m in allCateringsFromFile) {
+          menuFoundIndex = m.menus.indexWhere((i) => i.id == menu.id);
+          if (menuFoundIndex >= 0) {
+            break;
+          }
+        }
+      }
+
+      if (menuFoundIndex != -1) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return MyAlertDialog(
+              title: 'Error',
+              content: 'Could not delete menu, because one or more caterings are using it.',
+              cancelText: 'Close',
+              infoDialog: true,
+            );
+          },
+        );
+        return false;
+      } else {
       int deleteIndex = allMenus.indexWhere((element) => element.id == newMenu.id);
       allMenus.removeAt(deleteIndex);
       fileManagement.writeFile(menuJsonFile, jsonEncode(allMenus));
+      }
     } catch (error) {
       print('Error deleting menu: $error');
       return false;

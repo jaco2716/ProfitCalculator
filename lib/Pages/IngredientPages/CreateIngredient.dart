@@ -160,7 +160,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
       builder: (context) {
         return MyAlertDialog(
           title: 'Error',
-          content: 'Could not delete ingredient, because one or more meals or menus are using it.',
+          content: 'Could not delete ingredient, because one or more meals, menus or caterings are using it.',
           cancelText: 'Close',
           infoDialog: true,
         );
@@ -330,9 +330,10 @@ class _CreateIngredientState extends State<CreateIngredient> {
   _deleteIngredient(BuildContext context) async {
     String ingredientFileContent = await fileManagement.readFile(ingredientJsonFile);
     List<Ingredient> allIngredientsFromFile = objManager.jsonToListIngredient(ingredientFileContent);
+
+    int ingredientFoundIndex = -1;
     String mealFileContent = await fileManagement.readFile(mealJsonFile);
     List<Meal> allMealsFromFile = objManager.jsonToListMeal(mealFileContent);
-    int ingredientFoundIndex = -1;
     if (allMealsFromFile != null) {
       for (var m in allMealsFromFile) {
         ingredientFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
@@ -344,17 +345,27 @@ class _CreateIngredientState extends State<CreateIngredient> {
 
     String menuFileContent = await fileManagement.readFile(menuJsonFile);
     List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
-    int ingredientinmenuFoundIndex = -1;
     if (allMenusFromFile != null) {
       for (var m in allMenusFromFile) {
-        ingredientinmenuFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
-        if (ingredientinmenuFoundIndex >= 0) {
+        ingredientFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        if (ingredientFoundIndex >= 0) {
           break;
         }
       }
     }
 
-    if (ingredientFoundIndex != -1 || ingredientinmenuFoundIndex != -1) {
+    String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+    List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
+    if (allCateringsFromFile != null) {
+      for (var m in allCateringsFromFile) {
+        ingredientFoundIndex = m.ingredients.indexWhere((i) => i.id == widget.editIngredient.id);
+        if (ingredientFoundIndex >= 0) {
+          break;
+        }
+      }
+    }
+
+    if (ingredientFoundIndex != -1) {
       Navigator.of(context).pop();
       showCouldNotDeleteDialog();
     } else {
@@ -390,3 +401,6 @@ class _CreateIngredientState extends State<CreateIngredient> {
     _tempMeasureUnit = value;
   }
 }
+
+
+//TODO update elements in file, and check if can delete.

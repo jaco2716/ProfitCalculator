@@ -37,22 +37,22 @@ class _MyAppState extends State<MyApp> {
   Future<void> initPlatformState() async {
     appData.isPro = false;
 
-    // await Purchases.setDebugLogsEnabled(true);
+    await Purchases.setDebugLogsEnabled(true);
     await Purchases.setup("tsZsqXbTbbzAZavjqlWhKLUwPtCkkJtP");
 
     PurchaserInfo purchaserInfo;
     try {
       purchaserInfo = await Purchases.getPurchaserInfo();
       print(purchaserInfo.toString());
-      if (purchaserInfo.entitlements.active.isNotEmpty) {
-        //user has access to some entitlement
-        if (purchaserInfo.entitlements.all['all_features'] != null) {
-          appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
-        }
-        if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
-          appData.isPro = purchaserInfo.entitlements.all['all_features_lifetime'].isActive;
-        }
+      //user has access to some entitlement
+      if (purchaserInfo.entitlements.all['all_features'] != null) {
+        appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
       }
+      // if (purchaserInfo.entitlements.active.isNotEmpty) {
+      // if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {
+      //   appData.isPro = purchaserInfo.entitlements.all['all_features_lifetime'].isActive;
+      // }
+      // }
       // if (purchaserInfo.entitlements.all['all_features'] != null) {
       //   appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
       //   if (!appData.isPro && purchaserInfo.entitlements.all['all_features_lifetime'] != null) {

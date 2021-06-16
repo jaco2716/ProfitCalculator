@@ -124,8 +124,8 @@ class _CateringListPageState extends State<CateringListPage> {
                                         Map<String, dynamic> element = {
                                           'title': caterings[index].name,
                                           'subtitle':
-                                              '${caterings[index].ingredients.length} Ingredients\n${caterings[index].meals.length} Meals\n${caterings[index].extras.length} Extras',
-                                          'trailing1': caterings[index].salePrice,
+                                              '${caterings[index].ingredients.length} Ingredients\n${caterings[index].extras.length} Extras\n${caterings[index].meals.length} Meals\n${caterings[index].menus.length} Menus',
+                                          'trailing1': caterings[index].totalSalePrice(_vatPercent),
                                           'trailing2': caterings[index].profitMargin(_hourPrice, _vatPercent).round(),
                                         };
                                         return ElementListTile(element: element, myOnPressed: () => goToElementPage(caterings[index]));

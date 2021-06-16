@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Menu.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
@@ -30,6 +31,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
   final String mealJsonFile = config.mealJsonFile;
   final String extraJsonFile = config.extraJsonFile;
   final String menuJsonFile = config.menuJsonFile;
+  final String cateringJsonFile = config.cateringJsonFile;
 
   Extra extra;
   String _name;
@@ -131,7 +133,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       builder: (context) {
         return MyAlertDialog(
           title: 'Error',
-          content: 'Could not delete extra, because one or more menus are using it.',
+          content: 'Could not delete extra, because one or more menus or caterings are using it.',
           cancelText: 'Close',
           infoDialog: true,
         );
@@ -143,18 +145,30 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
     String extraFileContent = await fileManagement.readFile(extraJsonFile);
     List<Extra> allExtrasFromFile = objManager.jsonToListExtra(extraFileContent);
 
+    int extraFoundIndex = -1;
     String menuFileContent = await fileManagement.readFile(menuJsonFile);
     List<Menu> allMenusFromFile = objManager.jsonToListMenu(menuFileContent);
-    int extraInMenuFoundIndex = -1;
     if (allMenusFromFile != null) {
       for (var m in allMenusFromFile) {
-        extraInMenuFoundIndex = m.extras.indexWhere((i) => i.id == myExtra.id);
-        if (extraInMenuFoundIndex >= 0) {
+        extraFoundIndex = m.extras.indexWhere((i) => i.id == myExtra.id);
+        if (extraFoundIndex >= 0) {
+          print(extraFoundIndex);
           break;
         }
       }
     }
-    if (extraInMenuFoundIndex != -1) {
+    String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
+    List<Catering> allCateringsFromFile = objManager.jsonToListCatering(cateringFileContent);
+    if (allCateringsFromFile != null) {
+      for (var c in allCateringsFromFile) {
+        extraFoundIndex = c.extras.indexWhere((i) => i.id == myExtra.id);
+        if (extraFoundIndex >= 0) {
+          print(extraFoundIndex);
+          break;
+        }
+      }
+    }
+    if (extraFoundIndex != -1) {
       Navigator.of(context).pop();
       showCouldNotDeleteDialog();
     } else {
@@ -166,4 +180,5 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${myExtra.name} was deleted.')));
     }
   }
+  
 }

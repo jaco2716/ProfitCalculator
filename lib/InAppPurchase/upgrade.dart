@@ -1,4 +1,4 @@
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -9,7 +9,6 @@ import 'package:profit_calculator/MyWidgets/MyLoadingCircle.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'IAPwidgets.dart';
 import 'components.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 PurchaserInfo _purchaserInfo;
 
@@ -86,31 +85,31 @@ class UpsellScreen extends StatefulWidget {
 }
 
 class _UpsellScreenState extends State<UpsellScreen> {
-  _launchURLWebsite(String zz) async {
-    if (await canLaunch(zz)) {
-      await launch(zz);
-    } else {
-      throw 'Could not launch $zz';
-    }
-  }
+  // _launchURLWebsite(String zz) async {
+  //   if (await canLaunch(zz)) {
+  //     await launch(zz);
+  //   } else {
+  //     throw 'Could not launch $zz';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     if (widget.offerings != null) {
-      print('offerings: ${widget.offerings}');
       final offering = widget.offerings.current;
       if (offering != null) {
         final monthly = offering.monthly;
-        final lifetime = offering.lifetime;
-        if (monthly != null && lifetime != null) {
-          return _upsellPage(true, monthly: monthly, lifetime: lifetime);
+        final yearly = offering.annual;
+        // final lifetime = offering.lifetime;
+        if (monthly != null && yearly != null) {
+          return _upsellPage(true, monthly: monthly, yearly: yearly);
         }
       }
     }
     return _upsellPage(false);
   }
 
-  Widget _upsellPage(bool canPurchase, {Package monthly, Package lifetime}) {
+  Widget _upsellPage(bool canPurchase, {Package monthly, Package yearly}) {
     return Scaffold(
         appBar: MyAppBarWithCalc('Premium'),
         body: Container(
@@ -168,8 +167,7 @@ class _UpsellScreenState extends State<UpsellScreen> {
                       children: [
                         PurchaseButton(package: monthly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Month'),
                         SizedBox(height: 8),
-                        PurchaseButton(
-                            package: lifetime, purchaseEntitlement: 'all_features_lifetime', leadingString: 'Buy Lifetime for', trailingString: ''),
+                        PurchaseButton(package: yearly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Year'),
                       ],
                     )
                   : Padding(
@@ -188,34 +186,7 @@ class _UpsellScreenState extends State<UpsellScreen> {
                         ],
                       ),
                     ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, bottom: 22, left: 30, right: 30),
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(color: Colors.black38),
-                    children: [
-                      TextSpan(text: 'Recurring subscription, cancel anytime. Read the '),
-                      TextSpan(
-                        text: 'Privacy Policy',
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy.html');
-                          },
-                      ),
-                      TextSpan(text: ' and '),
-                      TextSpan(
-                        text: 'Terms of Use.',
-                        style: TextStyle(color: Colors.blue),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            _launchURLWebsite('https://wejeo.dk/profcalculator-terms-and-conditions.html');
-                          },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              PrivacyAndTerms('Recurring subscription, cancel anytime. Read the '),
             ],
           ),
         ));
@@ -236,6 +207,7 @@ class _UpsellScreenState extends State<UpsellScreen> {
       print('is user pro? ${appData.isPro}');
 
       if (appData.isPro) {
+        Navigator.of(context).pop();
         showDialog(
           context: context,
           builder: (context) {
@@ -260,28 +232,13 @@ class _UpsellScreenState extends State<UpsellScreen> {
           },
         );
       }
-    } on PlatformException catch (e) {
-      var errorCode = PurchasesErrorHelper.getErrorCode(e);
-      print('Error: $errorCode');
-
-      showDialog(
-        context: context,
-        builder: (context) {
-          return MyAlertDialog(
-            title: 'Error',
-            content: 'There was an error. Please try again later.',
-            cancelText: 'Ok',
-            infoDialog: true,
-          );
-        },
-      );
     } catch (e) {
       showDialog(
         context: context,
         builder: (context) {
           return MyAlertDialog(
             title: 'Error',
-            content: 'There was an error. Please try again later.',
+            content: 'There was an error finding your purchase. Please try again later.',
             cancelText: 'Ok',
             infoDialog: true,
           );
@@ -291,8 +248,6 @@ class _UpsellScreenState extends State<UpsellScreen> {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     return UpgradeScreen();
   }
-
-  
 }
 
 class PurchaseButton extends StatefulWidget {
@@ -426,14 +381,6 @@ class ProScreen extends StatefulWidget {
 }
 
 class _ProScreenState extends State<ProScreen> {
-  _launchURLWebsite(String zz) async {
-    if (await canLaunch(zz)) {
-      await launch(zz);
-    } else {
-      throw 'Could not launch $zz';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -453,23 +400,28 @@ class _ProScreenState extends State<ProScreen> {
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Colors.orange[500]),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 15),
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Reset Purchase (Testing only)',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    onTap: () => _resetPurchase(),
+                  ),
+                  // SizedBox(height: 15),
                   Divider(height: 8),
-                  // Padding(
-                  //   padding: const EdgeInsets.all(18.0),
-                  //   child: Icon(
-                  //     Icons.star,
-                  //     color: Colors.yellow[800],
-                  //     size: 100.0,
-                  //   ),
-                  // ),
-
                   FeaturesListTile(
                       icon: Icons.star, title: 'You are a Premium member', subtitle: 'You can use the app in all its functionality.', infoTile: true),
                   FeaturesListTile(
                       icon: Icons.info,
                       title: 'Cancel subscription',
-                      subtitle: 'To cancel a subscription go to your Appstore or Playstore subscriptions.',
+                      subtitle: 'To cancel a subscription go to your application store subscriptions.',
                       infoTile: true),
                   FeaturesListTile(
                       icon: Icons.support_agent,
@@ -480,42 +432,62 @@ class _ProScreenState extends State<ProScreen> {
                 ]),
               ),
             ),
-            // Divider(),
             Divider(height: 8),
-
-            // Spacer(),
-            // SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(top: 15.0, bottom: 22, left: 30, right: 30),
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.black38),
-                  children: [
-                    TextSpan(text: 'Read the '),
-                    TextSpan(
-                      text: 'Privacy Policy',
-                      style: TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy.html');
-                        },
-                    ),
-                    TextSpan(text: ' and '),
-                    TextSpan(
-                      text: 'Terms and Conditions.',
-                      style: TextStyle(color: Colors.blue),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          _launchURLWebsite('https://wejeo.dk/profcalculator-terms-and-conditions.html');
-                        },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            PrivacyAndTerms('Read the '),
           ],
         ));
   }
 
-  
+  Future<Widget> _resetPurchase() async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Container(child: MyLoadingCircle(70)), behavior: SnackBarBehavior.floating, width: 100),
+    );
+
+    try {
+      PurchaserInfo restoredInfo = await Purchases.reset();
+      appData.isPro = false;
+      print('is user pro? ${appData.isPro}');
+
+      if (!appData.isPro) {
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return MyAlertDialog(
+              title: 'Done',
+              content: 'Reset complete',
+              cancelText: 'Ok',
+              infoDialog: true,
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return MyAlertDialog(
+              title: 'Error',
+              content: 'There was an error resetting. Please try again later.',
+              cancelText: 'Ok',
+              infoDialog: true,
+            );
+          },
+        );
+      }
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return MyAlertDialog(
+            title: 'Error',
+            content: 'There was an error. Please try again later.\nError: $e',
+            cancelText: 'Ok',
+            infoDialog: true,
+          );
+        },
+      );
+    }
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    return UpgradeScreen();
+  }
 }
