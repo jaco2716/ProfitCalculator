@@ -76,6 +76,11 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
                     saveSlotButton(saveButtonTitle, saveAndRestoreDates, 3),
                     saveSlotButton(saveButtonTitle, saveAndRestoreDates, 4),
                     saveSlotButton(saveButtonTitle, saveAndRestoreDates, 5),
+                    // TextButton(
+                    //   onPressed: () => restoreDataToExample(99),
+                    //   child: Center(),
+                    //   style: ElevatedButton.styleFrom(padding: EdgeInsets.all(80), primary: Colors.white10),
+                    // ),
                   ],
                 );
               }),
@@ -151,7 +156,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       String mealFileContent = await fileManagement.readFile(mealJsonFile);
       String menuFileContent = await fileManagement.readFile(menuJsonFile);
       String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
-      
+
       fileManagement.writeFile('$ingredientJsonFile$index', ingredientFileContent);
       fileManagement.writeFile('$extraJsonFile$index', extraFileContent);
       fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
@@ -193,4 +198,40 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       print('Error saving data to file: ' + error.toString());
     }
   }
+
+
+
+  // restoreDataToExample(int index) async {
+  //   try {
+  //     String ingredientFileContent =
+  //         '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
+  //             '{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
+  //     String extraFileContent = '';
+  //     String mealFileContent =
+  //         '[{"id":1625054600790,"name":"Burger","salePrice":90.0,"ingredients":[{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":400.0},{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":20.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0}],"minutesToMake":10,"amount":null}]';
+  //     String menuFileContent = '';
+  //     String cateringFileContent = '';
+
+  //     fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
+  //     fileManagement.writeFile(extraJsonFile, extraFileContent);
+  //     fileManagement.writeFile(mealJsonFile, mealFileContent);
+  //     fileManagement.writeFile(menuJsonFile, menuFileContent);
+  //     fileManagement.writeFile(cateringJsonFile, cateringFileContent);
+
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('Data was restored from save slot $index'),
+  //     ));
+  //   } catch (error) {
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text('Something went wrong, try again.'),
+  //     ));
+  //     print('Error saving data to file: ' + error.toString());
+  //   }
+  // }
 }

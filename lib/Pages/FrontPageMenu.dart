@@ -21,8 +21,6 @@ class FrontPageMenu extends StatefulWidget {
 class _FrontPageMenuState extends State<FrontPageMenu> {
   @override
   Widget build(BuildContext context) {
-    // double gridSpacingPadding = 10;
-    print(MediaQuery.of(context).size.height);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
     double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 22;
     return Scaffold(
@@ -61,22 +59,12 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                       title: 'Ingredients',
                       index: 1,
                       icon: Icons.tapas,
-                      // round: true,
-                      // buttonColor: Colors.lightBlue[700],
-                      // contentColor: Colors.white,
                       onTap: () => _goToPage(IngredientList()),
                     ),
                   ),
                 ],
               ),
               SizedBox(height: (gridSpacingPadding + 8)),
-              // Container(
-              //   height: gridSpacingPadding/2,
-              //   // color: Colors.blue,
-              //   margin: EdgeInsets.only(bottom: 8 + gridSpacingPadding),
-              // ),
-              // MyIconButton(
-              //     tileIcon: Icon(Icons.star), tileTitle: 'Upgrade', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(UpgradeScreen())),
               MyIconButton(
                   tileIcon: Icon(Icons.attach_money),
                   tileTitle: 'Set VAT, Currency &\nHourly rate',
@@ -100,6 +88,8 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                     Container(
                       width: 230,
                       child: MyIconButton(
+                          compact: true,
+                          leftalign: true,
                           tileIcon: Icon(Icons.info),
                           tileTitle: 'Contact Support',
                           buttonColor: Colors.blueGrey[800],
@@ -121,7 +111,6 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   ],
                 ),
               ),
-
               SizedBox(height: 5),
             ],
           ),

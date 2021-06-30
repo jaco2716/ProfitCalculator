@@ -9,17 +9,18 @@ class MyIconButton extends StatelessWidget {
   final Color buttonColor;
   final Color contentColor;
   final double height;
+  final bool leftalign;
 
-  MyIconButton({
-    @required this.tileIcon,
-    this.trailingIcon = const Icon(Icons.keyboard_arrow_right),
-    @required this.tileTitle,
-    @required this.myOnPressed,
-    this.compact = false,
-    this.buttonColor = Colors.blue,
-    this.contentColor = Colors.white,
-    this.height = 70
-  });
+  MyIconButton(
+      {@required this.tileIcon,
+      this.trailingIcon = const Icon(Icons.keyboard_arrow_right),
+      @required this.tileTitle,
+      @required this.myOnPressed,
+      this.compact = false,
+      this.leftalign = false,
+      this.buttonColor = Colors.blue,
+      this.contentColor = Colors.white,
+      this.height = 70});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +36,15 @@ class MyIconButton extends StatelessWidget {
         onPressed: () => myOnPressed(),
         icon: tileIcon,
         label: compact
-            ? Text(tileTitle)
-            : Container(
-                width: 240,
+            ? leftalign ? Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text('$tileTitle'),
+                ),
+                fit: FlexFit.tight,
+              ) : Text('$tileTitle')
+            : Flexible(
+                fit: FlexFit.tight,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

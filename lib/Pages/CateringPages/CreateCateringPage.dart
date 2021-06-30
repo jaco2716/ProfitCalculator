@@ -142,7 +142,7 @@ class _CreateCateringPageState extends State<CreateCateringPage> {
                           MyIconButton(
                               tileIcon: Icon(Icons.save),
                               compact: true,
-                              tileTitle: 'Save Menu',
+                              tileTitle: 'Save Catering',
                               myOnPressed: () {
                                 if (_formKey.currentState.validate()) {
                                   _formKey.currentState.save();

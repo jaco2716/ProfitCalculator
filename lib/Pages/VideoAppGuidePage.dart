@@ -36,14 +36,18 @@ class _AppGuideAssetVideoState extends State<_AppGuideAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset('assets/videos/ProfitDemoTest.MP4');
+    try {
+      _controller = VideoPlayerController.asset('assets/videos/ProfCalculatorGuide.MP4');
 
-    _controller.addListener(() {
-      setState(() {});
-    });
-    _controller.setLooping(false);
-    _controller.initialize().then((_) => setState(() {}));
-    // _controller.play();
+      _controller.addListener(() {
+        setState(() {});
+      });
+      _controller.setLooping(false);
+      _controller.initialize().then((_) => setState(() {}));
+      // _controller.play();
+    } catch (e) {
+      print('error loading video: $e');
+    }
   }
 
   @override
@@ -54,52 +58,71 @@ class _AppGuideAssetVideoState extends State<_AppGuideAssetVideo> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 30),
-              // height: MediaQuery.of(context).size.height - 60,
-              width: MediaQuery.of(context).size.width - 100,
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: <Widget>[
-                    VideoPlayer(_controller),
-                    _ControlsOverlay(controller: _controller),
-                    Container(
-                        height: 30,
-                        child: VideoProgressIndicator(
-                          _controller,
-                          allowScrubbing: true,
-                          padding: EdgeInsets.all(5),
-                        )),
-                  ],
+    try {
+      return SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Text(
+                'Please watch this 5 minute video on\nhow to use the app.',
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Center(
+              child: Container(
+                color: Colors.blue[700],
+                padding: EdgeInsets.all(5),
+                // height: MediaQuery.of(context).size.height - 60,
+                // width: 300,
+                height: MediaQuery.of(context).size.height - 220,
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: <Widget>[
+                      VideoPlayer(_controller),
+                      _ControlsOverlay(controller: _controller),
+                      Container(
+                          height: 30,
+                          child: VideoProgressIndicator(
+                            _controller,
+                            allowScrubbing: true,
+                            padding: EdgeInsets.all(5),
+                          )),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          MyIconButton(
-              height: 55,
-              tileIcon: Icon(Icons.close),
-              tileTitle: 'Close',
-              compact: true,
-              myOnPressed: () {
-                Navigator.of(context).pop();
-              }),
-          // Container(
-          //   padding: EdgeInsets.all(10),
-          //   width: double.infinity,
-          //   height: 70,
-          //   child: ElevatedButton(onPressed: () {
-          //     Navigator.of(context).pop();
-          //   }, child: Text('Close')),
-          // )
-        ],
-      ),
-    );
+            // Container(
+            //   width: 20,
+            //   height: 200,
+            //   color: Colors.red,
+            // )
+            // MyIconButton(
+            //     height: 55,
+            //     tileIcon: Icon(Icons.close),
+            //     tileTitle: 'Close',
+            //     compact: true,
+            //     myOnPressed: () {
+            //       Navigator.of(context).pop();
+            //     }),
+            // Container(
+            //   padding: EdgeInsets.all(10),
+            //   width: double.infinity,
+            //   height: 70,
+            //   child: ElevatedButton(onPressed: () {
+            //     Navigator.of(context).pop();
+            //   }, child: Text('Close')),
+            // )
+          ],
+        ),
+      );
+    } catch (e) {
+      print('Error loading video $e');
+      return Text('Error loading video.');
+    }
   }
 }
 
