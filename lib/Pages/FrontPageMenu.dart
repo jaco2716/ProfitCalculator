@@ -77,7 +77,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   myOnPressed: () => _goToPage(BackupAndRestore())),
               MyIconButton(
                   tileIcon: Icon(Icons.help),
-                  tileTitle: 'App Guide \n(Placeholder video)',
+                  tileTitle: 'App Guide',
                   buttonColor: Colors.blueGrey[800],
                   myOnPressed: () => _goToPage(VideoAppGuidePage())),
               Container(

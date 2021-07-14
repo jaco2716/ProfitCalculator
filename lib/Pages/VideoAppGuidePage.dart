@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoAppGuidePage extends StatefulWidget {
