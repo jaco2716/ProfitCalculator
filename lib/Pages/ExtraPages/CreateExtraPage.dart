@@ -209,7 +209,7 @@ class _CreateExtraState extends State<CreateExtra> {
       }
       fileManagement.writeFile(extraJsonFile, jsonEncode(allExtrasFromFile));
     } catch (error) {
-      print('Error saving extra: $error');
+    print('Error saving extra: $error');
       return false;
     }
     return true;

@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     PurchaserInfo purchaserInfo;
     try {
       purchaserInfo = await Purchases.getPurchaserInfo();
-      print(purchaserInfo.toString());
+      // print(purchaserInfo.toString());
       //user has access to some entitlement
       if (purchaserInfo.entitlements.all['all_features'] != null) {
         appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       print(e);
     }
 
-    print('#### is user pro? ${appData.isPro}');
+    // print('#### is user pro? ${appData.isPro}');
   }
 
   @override

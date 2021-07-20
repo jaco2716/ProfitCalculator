@@ -78,7 +78,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
                     saveSlotButton(saveButtonTitle, saveAndRestoreDates, 5),
                     // TextButton(
                     //   onPressed: () => restoreDataToExample(99),
-                    //   child: Center(),
+                    //   child: Text('Restore test'),
                     //   style: ElevatedButton.styleFrom(padding: EdgeInsets.all(80), primary: Colors.white10),
                     // ),
                   ],
@@ -157,6 +157,12 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       String menuFileContent = await fileManagement.readFile(menuJsonFile);
       String cateringFileContent = await fileManagement.readFile(cateringJsonFile);
 
+      // debugPrint('ingredients -- : \n$ingredientFileContent\n\n',wrapWidth: 50);
+      // debugPrint('extras -- : $extraFileContent\n\n', wrapWidth: 300);
+      // debugPrint('meals -- : $mealFileContent\n\n', wrapWidth: 900);
+      // debugPrint('menus -- : $menuFileContent\n\n', wrapWidth: 900);
+      // debugPrint('caterings -- : $cateringFileContent\n\n', wrapWidth: 900);
+
       fileManagement.writeFile('$ingredientJsonFile$index', ingredientFileContent);
       fileManagement.writeFile('$extraJsonFile$index', extraFileContent);
       fileManagement.writeFile('$mealJsonFile$index', mealFileContent);
@@ -170,7 +176,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Something went wrong, try again.'),
       ));
-      print('Error saving data to file: ' + error.toString());
+    print('Error saving data to file: ' + error.toString());
     }
   }
 
@@ -195,28 +201,21 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Something went wrong, try again.'),
       ));
-      print('Error saving data to file: ' + error.toString());
+    print('Error saving data to file: ' + error.toString());
     }
   }
-
-
 
   // restoreDataToExample(int index) async {
   //   try {
   //     String ingredientFileContent =
-  //         '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},' +
-  //             '{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
-  //     String extraFileContent = '';
+  //         '[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":null},{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":null}]';
+  //     String extraFileContent =
+  //         '[{"id":1626429194572,"name":"Cola 500ml","salePrice":40.0,"buyPrice":15.0,"amount":1},{"id":1626429229955,"name":"Beer 500ml","salePrice":50.0,"buyPrice":20.0,"amount":1},{"id":1626429284098,"name":"Wine 300ml","salePrice":50.0,"buyPrice":30.0,"amount":1}]';
   //     String mealFileContent =
-  //         '[{"id":1625054600790,"name":"Burger","salePrice":90.0,"ingredients":[{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":400.0},{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":20.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0}],"minutesToMake":10,"amount":null}]';
-  //     String menuFileContent = '';
-  //     String cateringFileContent = '';
+  //         '[{"id":1625054600790,"name":"Cheese Burger","salePrice":90.0,"ingredients":[{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":300.0},{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":20.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":2.0},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":2.0}],"minutesToMake":10,"amount":null},{"id":1626429060478,"name":"Fries","salePrice":40.0,"ingredients":[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":1.0}],"minutesToMake":10,"amount":1},{"id":1626429135558,"name":"Special Burger","salePrice":120.0,"ingredients":[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":12.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":41.0},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":12.0},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":12.0},{"id":1613445322000,"name":"Chicken (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":13.0},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":31.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":31.0},{"id":1613445325000,"name":"Soya (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Liter","amountInGrams":31.0}],"minutesToMake":20,"amount":1}]';
+  //     String menuFileContent =
+  //         '[{"id":1626430756415,"name":"Cheeseburger Menu","salePrice":130.0,"ingredients":[],"meals":[{"id":1625054600790,"name":"Cheese Burger","salePrice":90.0,"ingredients":[{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":300.0},{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":20.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":10.0},{"id":1613445320000,"name":"Rice (Example)","kgPrice":17.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":2.0},{"id":1613445321000,"name":"Noodles (Example)","kgPrice":38.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":2.0}],"minutesToMake":10,"amount":1},{"id":1626429060478,"name":"Fries","salePrice":40.0,"ingredients":[{"id":1613445318000,"name":"Salt (Example)","kgPrice":29.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445319000,"name":"Pepper (Example)","kgPrice":89.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445323000,"name":"Beef (Example)","kgPrice":60.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":30.0},{"id":1613445324000,"name":"Chili (Example)","kgPrice":230.0,"color":4294198070,"measureUnit":"Kg","amountInGrams":1.0}],"minutesToMake":10,"amount":1}],"extras":[{"id":1626429194572,"name":"Cola 500ml","salePrice":40.0,"buyPrice":15.0,"amount":1}],"amount":null}]';
+  //     String cateringFileContent = '[]';
 
   //     fileManagement.writeFile(ingredientJsonFile, ingredientFileContent);
   //     fileManagement.writeFile(extraJsonFile, extraFileContent);
@@ -231,7 +230,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
   //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
   //       content: Text('Something went wrong, try again.'),
   //     ));
-  //     print('Error saving data to file: ' + error.toString());
+  //   print('Error saving data to file: ' + error.toString());
   //   }
   // }
 }

@@ -49,7 +49,7 @@ class CreateElementLogic {
         selIngredients[ingredientIndex].amountInGrams = null;
       }
     } catch (error) {
-      print('takeNumber Error: ' + error.toString());
+    print('takeNumber Error: ' + error.toString());
     }
   }
 
@@ -228,7 +228,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
     } catch (error) {
-      print('Error saving meal: $error');
+    print('Error saving meal: $error');
       return false;
     }
     return true;
@@ -252,7 +252,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
     } catch (error) {
-      print('Error saving menu: $error');
+    print('Error saving menu: $error');
       return false;
     }
     return true;
@@ -270,7 +270,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
     } catch (error) {
-      print('Error saving catering: $error');
+    print('Error saving catering: $error');
       return false;
     }
     return true;

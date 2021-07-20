@@ -32,7 +32,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     try {
       purchaserInfo = await Purchases.getPurchaserInfo();
     } on PlatformException catch (e) {
-      print('purchaser info error: ${e.message}');
+    print('purchaser info error: ${e.message}');
       if (e.details['underlyingErrorMessage'] != null) _fetchErrorMessage = e.details['underlyingErrorMessage'];
     }
 
@@ -40,7 +40,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
     try {
       offerings = await Purchases.getOfferings();
     } on PlatformException catch (e) {
-      print('Offering get error: ${e.details['underlyingErrorMessage']}');
+    print('Offering get error: ${e.details['underlyingErrorMessage']}');
       if (e.details['underlyingErrorMessage'] != null) _fetchErrorMessage = e.details['underlyingErrorMessage'];
     }
     if (!mounted) return;
@@ -199,9 +199,9 @@ class _UpsellScreenState extends State<UpsellScreen> {
 
     try {
       PurchaserInfo restoredInfo = await Purchases.restoreTransactions();
-      print('restore info:   s--- ${restoredInfo.entitlements.toString()}');
+    //print('restore info:   s--- ${restoredInfo.entitlements.toString()}');
       appData.isPro = restoredInfo.entitlements.all["all_features"].isActive;
-      print('is user pro? ${appData.isPro}');
+    //print('is user pro? ${appData.isPro}');
 
       if (appData.isPro) {
         Navigator.of(context).pop();
@@ -311,12 +311,12 @@ class _PurchaseButtonState extends State<PurchaseButton> {
     );
     try {
       _purchaserInfo = await Purchases.purchasePackage(widget.package);
-      print('PurchaserInfo: ');
-      print(_purchaserInfo);
+    //print('PurchaserInfo: ');
+    //print(_purchaserInfo);
       appData.isPro = _purchaserInfo.entitlements.all[widget.purchaseEntitlement].isActive;
-      print('Is active: ');
-      print(_purchaserInfo.entitlements.all[widget.purchaseEntitlement].isActive);
-      print('is user pro? ${appData.isPro}');
+    //print('Is active: ');
+    //print(_purchaserInfo.entitlements.all[widget.purchaseEntitlement].isActive);
+    //print('is user pro? ${appData.isPro}');
 
       if (appData.isPro) {
         Navigator.of(context).pop();
@@ -346,7 +346,7 @@ class _PurchaseButtonState extends State<PurchaseButton> {
       }
     } on PlatformException catch (e) {
       var errorCode = PurchasesErrorHelper.getErrorCode(e);
-      print('Error: $errorCode');
+    print('Error: $errorCode');
       String errorString = '';
       if (errorCode == PurchasesErrorCode.purchaseCancelledError) {
         // errorString = '\n\nError message: User cancelled.';
@@ -443,7 +443,7 @@ class _ProScreenState extends State<ProScreen> {
     try {
       await Purchases.reset();
       appData.isPro = false;
-      print('is user pro? ${appData.isPro}');
+    //print('is user pro? ${appData.isPro}');
 
       if (!appData.isPro) {
         Navigator.of(context).pop();

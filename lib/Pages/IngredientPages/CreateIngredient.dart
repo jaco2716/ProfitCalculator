@@ -310,7 +310,7 @@ class _CreateIngredientState extends State<CreateIngredient> {
       }
       fileManagement.writeFile(ingredientJsonFile, jsonEncode(allIngredientsFromFile));
     } catch (error) {
-      print('Error saving ingredient: $error');
+    print('Error saving ingredient: $error');
       return false;
     }
     return true;

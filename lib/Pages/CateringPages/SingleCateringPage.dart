@@ -170,7 +170,7 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
   }
 
   _deleteCateringDialog(BuildContext context) {
-    print(catering.menus);
+  //print(catering.menus);
     showDialog(
       context: context,
       builder: (context) {
@@ -211,7 +211,7 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
       allCatering.removeAt(deleteIndex);
       fileManagement.writeFile(cateringJsonFile, jsonEncode(allCatering));
     } catch (error) {
-      print('Error deleting catering: $error');
+    print('Error deleting catering: $error');
       return false;
     }
     return true;

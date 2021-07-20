@@ -14,7 +14,7 @@ class SharedValueHandler {
       await prefs.setInt(variableName, value);
       return true;
     } catch (e) {
-      print('Error saving $variableName: $e');
+    print('Error saving $variableName: $e');
       return false;
     }
   }
@@ -32,7 +32,7 @@ class SharedValueHandler {
       await prefs.setString(variableName, value);
       return true;
     } catch (e) {
-      print('Error saving $variableName: $e');
+    print('Error saving $variableName: $e');
       return false;
     }
   }

@@ -48,7 +48,7 @@ class _CateringListPageState extends State<CateringListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Catering',
           myOnPressed: () {
-            print(caterings.toString());
+          //print(caterings.toString());
             if (!appData.isPro && caterings.length > 2) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),

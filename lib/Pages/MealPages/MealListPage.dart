@@ -87,7 +87,7 @@ class _MealListPageState extends State<MealListPage> {
                               if (mealJsonSnapshot.data.length <= 2) {
                                 return InitialFutureWidget();
                               }
-                              print(mealJsonSnapshot.data);
+                            //print(mealJsonSnapshot.data);
                               //Map data from file to list of objects
                               meals = objManager.jsonToListMeal(mealJsonSnapshot.data);
                               switch (sortingElement.sortingType) {

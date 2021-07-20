@@ -221,7 +221,7 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
       fileManagement.writeFile(menuJsonFile, jsonEncode(allMenus));
       }
     } catch (error) {
-      print('Error deleting menu: $error');
+    print('Error deleting menu: $error');
       return false;
     }
     return true;

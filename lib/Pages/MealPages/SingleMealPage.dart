@@ -219,7 +219,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
         fileManagement.writeFile(mealJsonFile, jsonEncode(allMeals));
       }
     } catch (error) {
-      print('Error deleting meal: $error');
+    print('Error deleting meal: $error');
       return false;
     }
     return true;

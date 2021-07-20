@@ -45,7 +45,7 @@ class _AppGuideAssetVideoState extends State<_AppGuideAssetVideo> {
       _controller.initialize().then((_) => setState(() {}));
       // _controller.play();
     } catch (e) {
-      print('error loading video: $e');
+    print('error loading video: $e');
     }
   }
 
@@ -119,7 +119,7 @@ class _AppGuideAssetVideoState extends State<_AppGuideAssetVideo> {
         ),
       );
     } catch (e) {
-      print('Error loading video $e');
+    print('Error loading video $e');
       return Text('Error loading video.');
     }
   }

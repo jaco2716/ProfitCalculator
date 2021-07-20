@@ -21,6 +21,7 @@ class FrontPageMenu extends StatefulWidget {
 class _FrontPageMenuState extends State<FrontPageMenu> {
   @override
   Widget build(BuildContext context) {
+    print(MediaQuery.of(context).size.width);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
     double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 22;
     return Scaffold(
@@ -36,20 +37,25 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                 alignment: Alignment.center,
                 children: [
                   Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
                     color: Colors.blue,
-                    child: GridView.count(
-                      padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      crossAxisCount: 2,
-                      children: [
-                        MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
-                        MyGridMenuButton(title: 'Meals', index: 3, icon: Icons.lunch_dining, onTap: () => _goToPage(MealListPage())),
-                        MyGridMenuButton(title: 'Menus', index: 4, icon: Icons.fastfood, onTap: () => _goToPage(MenuListPage())),
-                        MyGridMenuButton(title: 'Catering', index: 5, icon: Icons.food_bank_rounded, onTap: () => _goToPage(CateringListPage())),
-                      ],
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
+                    child: Container(
+                      constraints: BoxConstraints(maxHeight: 500, maxWidth: 500),
+                      child: GridView.count(
+                        padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        crossAxisCount: 2,
+                        children: [
+                          MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
+                          MyGridMenuButton(title: 'Meals', index: 3, icon: Icons.lunch_dining, onTap: () => _goToPage(MealListPage())),
+                          MyGridMenuButton(title: 'Menus', index: 4, icon: Icons.fastfood, onTap: () => _goToPage(MenuListPage())),
+                          MyGridMenuButton(title: 'Catering', index: 5, icon: Icons.food_bank_rounded, onTap: () => _goToPage(CateringListPage())),
+                        ],
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                      ),
                     ),
                   ),
                   Container(

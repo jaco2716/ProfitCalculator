@@ -152,7 +152,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       for (var m in allMenusFromFile) {
         extraFoundIndex = m.extras.indexWhere((i) => i.id == myExtra.id);
         if (extraFoundIndex >= 0) {
-          print(extraFoundIndex);
+        //print(extraFoundIndex);
           break;
         }
       }
@@ -163,7 +163,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       for (var c in allCateringsFromFile) {
         extraFoundIndex = c.extras.indexWhere((i) => i.id == myExtra.id);
         if (extraFoundIndex >= 0) {
-          print(extraFoundIndex);
+        //print(extraFoundIndex);
           break;
         }
       }
