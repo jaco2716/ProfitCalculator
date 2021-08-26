@@ -101,6 +101,11 @@ class _ExtraListPageState extends State<ExtraListPage> {
                               break;
                           }
 
+                          int listLenght = extras.length;
+                          if (!appData.isPro && extras.length > 3) {
+                            listLenght = 3;
+                          }
+
                           return FutureBuilder(
                               future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
                               initialData: '',
@@ -111,7 +116,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
                                 return Padding(
                                   padding: const EdgeInsets.only(top: 40),
                                   child: ListView.builder(
-                                    itemCount: extras.length,
+                                    itemCount: listLenght,
                                     itemBuilder: (BuildContext context, int index) {
                                       Map<String, dynamic> element = {
                                         'title': extras[index].name,
@@ -129,6 +134,46 @@ class _ExtraListPageState extends State<ExtraListPage> {
                         });
                   },
                 ),
+                !appData.isPro && extras.length > 3
+                    ? Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Opacity(
+                            opacity: 0.5,
+                            child: ElementListTile(element: {
+                              'title': '________________',
+                              'subtitle': '________',
+                              'trailing1': 75.0,
+                              'trailing2': 100,
+                            }, myOnPressed: null),
+                          ),
+                          Align(
+                              alignment: Alignment.center,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.orange,
+                                    elevation: 0,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => UpgradeScreen(),
+                                    ))
+                                        .then((context) {
+                                      setState(() {});
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
+                                    child: Text(
+                                      'Upgrade to Premium\nto see all of your items',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ))),
+                        ],
+                      )
+                    : Center(),
                 SizedBox(height: 400),
               ]),
             ),

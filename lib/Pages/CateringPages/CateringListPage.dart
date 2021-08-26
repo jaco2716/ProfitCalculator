@@ -38,6 +38,14 @@ class _CateringListPageState extends State<CateringListPage> {
   int _vatPercent;
   int _hourPrice;
 
+  // @override
+  // void initState() {
+  //   Stream<List<Catering>> cateringsStream
+  //   cateringsStream.listen((streamCaterings) => mounted ? setState(() => caterings = streamCaterings) : null);
+
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +56,7 @@ class _CateringListPageState extends State<CateringListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Catering',
           myOnPressed: () {
-          //print(caterings.toString());
+            //print(caterings.toString());
             if (!appData.isPro && caterings.length > 2) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
@@ -114,12 +122,19 @@ class _CateringListPageState extends State<CateringListPage> {
                                       .sort((b, a) => a.profitMargin(_hourPrice, _vatPercent).compareTo(b.profitMargin(_hourPrice, _vatPercent)));
                                   break;
                               }
+
+                              int listLenght = caterings.length;
+                              if (!appData.isPro && caterings.length > 3) {
+                                listLenght = 3;
+                              }
+
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 40),
+                                    padding: const EdgeInsets.only(top: 0),
                                     child: ListView.builder(
-                                      itemCount: caterings.length,
+                                      padding: EdgeInsets.only(top: 40),
+                                      itemCount: listLenght,
                                       itemBuilder: (BuildContext context, int index) {
                                         Map<String, dynamic> element = {
                                           'title': caterings[index].name,
@@ -134,6 +149,46 @@ class _CateringListPageState extends State<CateringListPage> {
                                       physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
+                                  !appData.isPro && caterings.length > 3
+                                      ? Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            Opacity(
+                                              opacity: 0.5,
+                                              child: ElementListTile(element: {
+                                                'title': '________________',
+                                                'subtitle': '________\n_____\n____\n___',
+                                                'trailing1': 75.0,
+                                                'trailing2': 100,
+                                              }, myOnPressed: null),
+                                            ),
+                                            Align(
+                                                alignment: Alignment.center,
+                                                child: ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                      primary: Colors.orange,
+                                                      elevation: 0,
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .push(MaterialPageRoute(
+                                                        builder: (context) => UpgradeScreen(),
+                                                      ))
+                                                          .then((context) {
+                                                        setState(() {});
+                                                      });
+                                                    },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
+                                                      child: Text(
+                                                        'Upgrade to Premium\nto see all of your items',
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ))),
+                                          ],
+                                        )
+                                      : Center(),
                                   SizedBox(height: 400),
                                 ],
                               );
