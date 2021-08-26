@@ -147,17 +147,9 @@ class _UpsellScreenState extends State<UpsellScreen> {
                         )
                       : SizedBox(height: 20),
                   Divider(height: 8),
-                  FeaturesListTile(
-                      icon: Icons.star,
-                      title: 'Unlimited',
-                      subtitle: 'Create and analyse unlimited extras, meals, menus, and caterings.',
-                      infoTile: false),
+                  FeaturesListTile(icon: Icons.star, title: 'Unlimited', subtitle: 'Create and analyse unlimited extras, meals, menus, and caterings.', infoTile: false),
                   Divider(height: 8),
-                  FeaturesListTile(
-                      icon: Icons.support_agent,
-                      title: 'Support',
-                      subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.',
-                      infoTile: false),
+                  FeaturesListTile(icon: Icons.support_agent, title: 'Support', subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.', infoTile: false),
                 ]),
               ),
               Divider(height: 8),
@@ -420,18 +412,9 @@ class _ProScreenState extends State<ProScreen> {
                   // ),
                   SizedBox(height: 15),
                   Divider(height: 8),
-                  FeaturesListTile(
-                      icon: Icons.star, title: 'You are a Premium member', subtitle: 'You can use the app in all its functionality.', infoTile: true),
-                  FeaturesListTile(
-                      icon: Icons.info,
-                      title: 'Cancel subscription',
-                      subtitle: 'To cancel a subscription go to your application store subscriptions.',
-                      infoTile: true),
-                  FeaturesListTile(
-                      icon: Icons.support_agent,
-                      title: 'Support',
-                      subtitle: 'Please e-mail us at Support@wejeo.dk if you have any problem.',
-                      infoTile: true),
+                  FeaturesListTile(icon: Icons.star, title: 'You are a Premium member', subtitle: 'You can use the app in all its functionality.', infoTile: true),
+                  FeaturesListTile(icon: Icons.info, title: 'Cancel subscription', subtitle: 'To cancel a subscription go to your application store subscriptions.', infoTile: true),
+                  FeaturesListTile(icon: Icons.support_agent, title: 'Support', subtitle: 'Please e-mail us at Support@wejeo.dk if you have any problem.', infoTile: true),
                   SizedBox(height: 200)
                 ]),
               ),
@@ -442,56 +425,56 @@ class _ProScreenState extends State<ProScreen> {
         ));
   }
 
-  Future<Widget> _resetPurchase() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Container(child: MyLoadingCircle(70)), behavior: SnackBarBehavior.floating, width: 100),
-    );
+  // Future<Widget> _resetPurchase() async {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Container(child: MyLoadingCircle(70)), behavior: SnackBarBehavior.floating, width: 100),
+  //   );
 
-    try {
-      await Purchases.reset();
-      appData.isPro = false;
-      //print('is user pro? ${appData.isPro}');
+  //   try {
+  //     await Purchases.reset();
+  //     appData.isPro = false;
+  //     //print('is user pro? ${appData.isPro}');
 
-      if (!appData.isPro) {
-        Navigator.of(context).pop();
-        showDialog(
-          context: context,
-          builder: (context) {
-            return MyAlertDialog(
-              title: 'Done',
-              content: 'Reset complete',
-              cancelText: 'Ok',
-              infoDialog: true,
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return MyAlertDialog(
-              title: 'Error',
-              content: 'There was an error resetting. Please try again later.',
-              cancelText: 'Ok',
-              infoDialog: true,
-            );
-          },
-        );
-      }
-    } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return MyAlertDialog(
-            title: 'Error',
-            content: 'There was an error. Please try again later.\nError: $e',
-            cancelText: 'Ok',
-            infoDialog: true,
-          );
-        },
-      );
-    }
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    return UpgradeScreen();
-  }
+  //     if (!appData.isPro) {
+  //       Navigator.of(context).pop();
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           return MyAlertDialog(
+  //             title: 'Done',
+  //             content: 'Reset complete',
+  //             cancelText: 'Ok',
+  //             infoDialog: true,
+  //           );
+  //         },
+  //       );
+  //     } else {
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           return MyAlertDialog(
+  //             title: 'Error',
+  //             content: 'There was an error resetting. Please try again later.',
+  //             cancelText: 'Ok',
+  //             infoDialog: true,
+  //           );
+  //         },
+  //       );
+  //     }
+  //   } catch (e) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return MyAlertDialog(
+  //           title: 'Error',
+  //           content: 'There was an error. Please try again later.\nError: $e',
+  //           cancelText: 'Ok',
+  //           infoDialog: true,
+  //         );
+  //       },
+  //     );
+  //   }
+  //   ScaffoldMessenger.of(context).removeCurrentSnackBar();
+  //   return UpgradeScreen();
+  // }
 }

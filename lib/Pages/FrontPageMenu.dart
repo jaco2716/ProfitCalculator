@@ -30,62 +30,51 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
           child: Column(
             children: <Widget>[
               Container(
-                height: (gridSpacingPadding - 1) * 5,
                 color: Colors.blue,
-              ),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: double.infinity,
+                child: SafeArea(
+                  child: Stack(
                     alignment: Alignment.center,
-                    color: Colors.blue,
-                    child: Container(
-                      constraints: BoxConstraints(maxHeight: 500, maxWidth: 500),
-                      child: GridView.count(
-                        padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
-                        crossAxisSpacing: 20,
-                        mainAxisSpacing: 20,
-                        crossAxisCount: 2,
-                        children: [
-                          MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
-                          MyGridMenuButton(title: 'Meals', index: 3, icon: Icons.lunch_dining, onTap: () => _goToPage(MealListPage())),
-                          MyGridMenuButton(title: 'Menus', index: 4, icon: Icons.fastfood, onTap: () => _goToPage(MenuListPage())),
-                          MyGridMenuButton(title: 'Catering', index: 5, icon: Icons.food_bank_rounded, onTap: () => _goToPage(CateringListPage())),
-                        ],
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        color: Colors.blue,
+                        child: Container(
+                          constraints: BoxConstraints(maxHeight: 500, maxWidth: 500),
+                          child: GridView.count(
+                            padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                            crossAxisCount: 2,
+                            children: [
+                              MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
+                              MyGridMenuButton(title: 'Meals', index: 3, icon: Icons.lunch_dining, onTap: () => _goToPage(MealListPage())),
+                              MyGridMenuButton(title: 'Menus', index: 4, icon: Icons.fastfood, onTap: () => _goToPage(MenuListPage())),
+                              MyGridMenuButton(title: 'Catering', index: 5, icon: Icons.food_bank_rounded, onTap: () => _goToPage(CateringListPage())),
+                            ],
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        height: 160,
+                        width: 160,
+                        child: MyGridMenuButton(
+                          title: 'Ingredients',
+                          index: 1,
+                          icon: Icons.tapas,
+                          onTap: () => _goToPage(IngredientList()),
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                    height: 160,
-                    width: 160,
-                    child: MyGridMenuButton(
-                      title: 'Ingredients',
-                      index: 1,
-                      icon: Icons.tapas,
-                      onTap: () => _goToPage(IngredientList()),
-                    ),
-                  ),
-                ],
+                ),
               ),
               SizedBox(height: (gridSpacingPadding + 8)),
-              MyIconButton(
-                  tileIcon: Icon(Icons.attach_money),
-                  tileTitle: 'Set VAT, Currency &\nHourly rate',
-                  buttonColor: Colors.blue[600],
-                  myOnPressed: () => _goToPage(VATChangePage())),
-              MyIconButton(
-                  tileIcon: Icon(Icons.settings),
-                  tileTitle: 'Backup & Restore',
-                  buttonColor: Colors.blue[600],
-                  myOnPressed: () => _goToPage(BackupAndRestore())),
-              MyIconButton(
-                  tileIcon: Icon(Icons.help),
-                  tileTitle: 'App Guide',
-                  buttonColor: Colors.blueGrey[800],
-                  myOnPressed: () => _goToPage(VideoAppGuidePage())),
+              MyIconButton(tileIcon: Icon(Icons.attach_money), tileTitle: 'Set VAT, Currency &\nHourly rate', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(VATChangePage())),
+              MyIconButton(tileIcon: Icon(Icons.settings), tileTitle: 'Backup & Restore', buttonColor: Colors.blue[600], myOnPressed: () => _goToPage(BackupAndRestore())),
+              MyIconButton(tileIcon: Icon(Icons.help), tileTitle: 'App Guide', buttonColor: Colors.blueGrey[800], myOnPressed: () => _goToPage(VideoAppGuidePage())),
               Container(
                 width: 310,
                 child: Row(
@@ -93,13 +82,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   children: [
                     Container(
                       width: 230,
-                      child: MyIconButton(
-                          compact: true,
-                          leftalign: true,
-                          tileIcon: Icon(Icons.info),
-                          tileTitle: 'Contact Support',
-                          buttonColor: Colors.blueGrey[800],
-                          myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
+                      child: MyIconButton(compact: true, leftalign: true, tileIcon: Icon(Icons.info), tileTitle: 'Contact Support', buttonColor: Colors.blueGrey[800], myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
                     ),
                     Container(
                       width: 70,
