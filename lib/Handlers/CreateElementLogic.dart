@@ -14,7 +14,7 @@ import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/Pages/CateringPages/SingleCateringPage.dart';
 import 'package:profit_calculator/Pages/MealPages/SingleMealPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/SingleMenuPage.dart';
-import '../../Model/EnvironmentConfig.dart' as config;
+import '../Model/EnvironmentConfig.dart' as config;
 
 class CreateElementLogic {
   // final SharedValueHandler _sharedValueHandler = SharedValueHandler();
@@ -49,7 +49,7 @@ class CreateElementLogic {
         selIngredients[ingredientIndex].amountInGrams = null;
       }
     } catch (error) {
-    print('takeNumber Error: ' + error.toString());
+      print('takeNumber Error: ' + error.toString());
     }
   }
 
@@ -99,8 +99,7 @@ class CreateElementLogic {
                       : ListView.builder(
                           itemCount: elements.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return AddElementListTile(
-                                element: elements[index], setModalState: setModalState, selectedElements: selectedElements, allElements: elements);
+                            return AddElementListTile(element: elements[index], setModalState: setModalState, selectedElements: selectedElements, allElements: elements);
                           },
                         ),
                 ),
@@ -165,8 +164,7 @@ class CreateElementLogic {
           break;
         case ElementTypes.catering:
           if (discount != '') _finalDiscount = int.parse(discount);
-          Catering newElement =
-              Catering(newID, name, _finalSalePrice, _finalDiscount, selectedIngredients, selectedMeals, selectedExtras, selectedMenus);
+          Catering newElement = Catering(newID, name, _finalSalePrice, _finalDiscount, selectedIngredients, selectedMeals, selectedExtras, selectedMenus);
           saveSucess = await _saveCateringToFile(newElement, editMode);
           navigateAfterSave(saveSucess, context, name, editMode, newElement, SingleCateringPage(newElement));
           break;
@@ -220,7 +218,7 @@ class CreateElementLogic {
         allCateringsFromFile.forEach((e) {
           _updateMealsInFile(e.menus, newMeal);
         });
-        
+
         fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
         fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
       } else {
@@ -228,7 +226,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(mealJsonFile, jsonEncode(allMealsFromFile));
     } catch (error) {
-    print('Error saving meal: $error');
+      print('Error saving meal: $error');
       return false;
     }
     return true;
@@ -252,7 +250,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(menuJsonFile, jsonEncode(allMenusFromFile));
     } catch (error) {
-    print('Error saving menu: $error');
+      print('Error saving menu: $error');
       return false;
     }
     return true;
@@ -270,7 +268,7 @@ class CreateElementLogic {
       }
       fileManagement.writeFile(cateringJsonFile, jsonEncode(allCateringsFromFile));
     } catch (error) {
-    print('Error saving catering: $error');
+      print('Error saving catering: $error');
       return false;
     }
     return true;
