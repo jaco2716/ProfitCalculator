@@ -36,27 +36,40 @@ class MyIconButton extends StatelessWidget {
         onPressed: () => myOnPressed(),
         icon: tileIcon,
         label: compact
-            ? leftalign ? Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text('$tileTitle'),
-                ),
-                fit: FlexFit.tight,
-              ) : Text('$tileTitle')
-            : Flexible(
-                fit: FlexFit.tight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text('$tileTitle'),
-                    ),
-                    trailingIcon,
-                  ],
-                ),
+            ? leftalign
+                ? Container(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(tileTitle),
+                    width: double.infinity,
+                  )
+                : Text('$tileTitle')
+            : Container(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Text(tileTitle),
+                width: double.infinity,
               ),
+        // label: compact
+        //     ? leftalign ? Flexible(
+        //         child: Padding(
+        //           padding: const EdgeInsets.only(left: 10.0),
+        //           child: Text('$tileTitle'),
+        //         ),
+        //         fit: FlexFit.tight,
+        //       ) : Text('$tileTitle')
+        //     : Flexible(
+        //         fit: FlexFit.tight,
+        //         child: Row(
+        //           mainAxisSize: MainAxisSize.max,
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: [
+        //             Padding(
+        //               padding: const EdgeInsets.only(left: 10.0),
+        //               child: Text('$tileTitle'),
+        //             ),
+        //             trailingIcon,
+        //           ],
+        //         ),
+        //       ),
       ),
     );
   }

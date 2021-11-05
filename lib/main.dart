@@ -24,9 +24,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
 
-  reset() async {
-    await _sharedValueHandler.saveIntSharedP(0, 'newUser');
-  }
+  // reset() async {
+  //   await _sharedValueHandler.saveIntSharedP(0, 'newUser');
+  // }
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
       print(e);
     }
 
-    // print('#### is user pro? ${appData.isPro}');
+    print('#### is user pro? ${appData.isPro}');
   }
 
   @override
