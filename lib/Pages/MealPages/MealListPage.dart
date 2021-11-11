@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/upgradeToSeeItems.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
@@ -27,6 +28,7 @@ class _MealListPageState extends State<MealListPage> {
   int _vatPercent = 0;
   SortingElement sortingElement = SortingElement('   ', '▼', SortingTypes.trailingDescending);
 
+  final int maxFreeItems = 3;
   final String mealJsonFile = config.mealJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
@@ -43,7 +45,7 @@ class _MealListPageState extends State<MealListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Meal',
           myOnPressed: () {
-            if (!appData.isPro && meals.length > 6) {
+            if (!appData.isPro && meals.length >= maxFreeItems) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));
@@ -129,45 +131,46 @@ class _MealListPageState extends State<MealListPage> {
                                       physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
-                                  !appData.isPro && meals.length > 3
-                                      ? Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Opacity(
-                                              opacity: 0.5,
-                                              child: ElementListTile(element: {
-                                                'title': '________________',
-                                                'subtitle': '________\n_____\n____\n___',
-                                                'trailing1': 75.0,
-                                                'trailing2': 100,
-                                              }, myOnPressed: null),
-                                            ),
-                                            Align(
-                                                alignment: Alignment.center,
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      primary: Colors.orange,
-                                                      elevation: 0,
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(
-                                                        builder: (context) => UpgradeScreen(),
-                                                      ))
-                                                          .then((context) {
-                                                        setState(() {});
-                                                      });
-                                                    },
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
-                                                      child: Text(
-                                                        'Upgrade to Premium\nto see all of your items',
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                                      ),
-                                                    ))),
-                                          ],
-                                        )
+                                  !appData.isPro && meals.length > maxFreeItems
+                                      ? UpgradeToSeeItems(thisState: setState)
+                                      // ? Stack(
+                                      //     alignment: Alignment.center,
+                                      //     children: [
+                                      //       Opacity(
+                                      //         opacity: 0.5,
+                                      //         child: ElementListTile(element: {
+                                      //           'title': '________________',
+                                      //           'subtitle': '________\n_____\n____\n___',
+                                      //           'trailing1': 75.0,
+                                      //           'trailing2': 100,
+                                      //         }, myOnPressed: null),
+                                      //       ),
+                                      //       Align(
+                                      //           alignment: Alignment.center,
+                                      //           child: ElevatedButton(
+                                      //               style: ElevatedButton.styleFrom(
+                                      //                 primary: Colors.orange,
+                                      //                 elevation: 0,
+                                      //               ),
+                                      //               onPressed: () {
+                                      //                 Navigator.of(context)
+                                      //                     .push(MaterialPageRoute(
+                                      //                   builder: (context) => UpgradeScreen(),
+                                      //                 ))
+                                      //                     .then((context) {
+                                      //                   setState(() {});
+                                      //                 });
+                                      //               },
+                                      //               child: Padding(
+                                      //                 padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
+                                      //                 child: Text(
+                                      //                   'Upgrade to Premium\nto see all of your items',
+                                      //                   textAlign: TextAlign.center,
+                                      //                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      //                 ),
+                                      //               ))),
+                                      //     ],
+                                      //   )
                                       : Center(),
                                   SizedBox(height: 400),
                                 ],
