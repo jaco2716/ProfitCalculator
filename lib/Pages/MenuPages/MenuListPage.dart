@@ -9,6 +9,7 @@ import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/upgradeToSeeItems.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/MyWidgets/MyAppBarWithCalc.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
@@ -32,6 +33,7 @@ class _MenuListPageState extends State<MenuListPage> {
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
+  final int maxFreeItems = 3;
   List<Menu> menus = [];
 
   int _vatPercent;
@@ -47,7 +49,7 @@ class _MenuListPageState extends State<MenuListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Menu',
           myOnPressed: () {
-            if (!appData.isPro && menus.length > 6) {
+            if (!appData.isPro && menus.length >= maxFreeItems) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));
@@ -110,8 +112,8 @@ class _MenuListPageState extends State<MenuListPage> {
                                   break;
                               }
                               int listLenght = menus.length;
-                              if (!appData.isPro && menus.length > 3) {
-                                listLenght = 3;
+                              if (!appData.isPro && menus.length > maxFreeItems) {
+                                listLenght = maxFreeItems;
                               }
 
                               return Column(
@@ -134,46 +136,7 @@ class _MenuListPageState extends State<MenuListPage> {
                                       physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
-                                  !appData.isPro && menus.length > 3
-                                      ? Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            Opacity(
-                                              opacity: 0.5,
-                                              child: ElementListTile(element: {
-                                                'title': '________________',
-                                                'subtitle': '________\n_____\n____\n___',
-                                                'trailing1': 75.0,
-                                                'trailing2': 100,
-                                              }, myOnPressed: null),
-                                            ),
-                                            Align(
-                                                alignment: Alignment.center,
-                                                child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      primary: Colors.orange,
-                                                      elevation: 0,
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .push(MaterialPageRoute(
-                                                        builder: (context) => UpgradeScreen(),
-                                                      ))
-                                                          .then((context) {
-                                                        setState(() {});
-                                                      });
-                                                    },
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
-                                                      child: Text(
-                                                        'Upgrade to Premium\nto see all of your items',
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                                      ),
-                                                    ))),
-                                          ],
-                                        )
-                                      : Center(),
+                                  !appData.isPro && menus.length > maxFreeItems ? UpgradeToSeeItems(thisState: setState) : Center(),
                                   SizedBox(height: 400),
                                 ],
                               );

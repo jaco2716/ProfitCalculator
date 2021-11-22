@@ -7,6 +7,7 @@ import 'package:profit_calculator/Model/SortingElement.dart';
 import 'package:profit_calculator/Model/SortingTypes.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/ElementListTile.dart';
 import 'package:profit_calculator/MyWidgets/ElementListWidgets/MyTopListLabel.dart';
+import 'package:profit_calculator/MyWidgets/ElementListWidgets/upgradeToSeeItems.dart';
 import 'package:profit_calculator/MyWidgets/InitialFutureWidget.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
@@ -32,6 +33,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final int maxFreeItems = 3;
   List<Extra> extras = [];
 
   @override
@@ -44,7 +46,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          if (!appData.isPro && extras.length > 2) {
+          if (!appData.isPro && extras.length >= maxFreeItems) {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UpgradeScreen(),
             ));
@@ -65,117 +67,72 @@ class _ExtraListPageState extends State<ExtraListPage> {
           child: Center(
             child: Container(
               constraints: BoxConstraints(maxWidth: 700),
-              child: Column(children: [
-                FutureBuilder(
-                  future: fileManagement.readFile(extraJsonFile),
-                  initialData: '',
-                  builder: (context, extraJsonSnapshot) {
-                    if (extraJsonSnapshot.connectionState == ConnectionState.waiting) {
-                      return MyLoadingCircle(500);
-                    }
-                    if (extraJsonSnapshot.data.length == 0 || extraJsonSnapshot.data == '[]') {
-                      return InitialFutureWidget();
-                    }
-                    extras = objManager.jsonToListExtra(extraJsonSnapshot.data);
+              child: FutureBuilder(
+                future: fileManagement.readFile(extraJsonFile),
+                initialData: '',
+                builder: (context, extraJsonSnapshot) {
+                  if (extraJsonSnapshot.connectionState == ConnectionState.waiting) {
+                    return MyLoadingCircle(500);
+                  }
+                  if (extraJsonSnapshot.data.length == 0 || extraJsonSnapshot.data == '[]') {
+                    return InitialFutureWidget();
+                  }
+                  extras = objManager.jsonToListExtra(extraJsonSnapshot.data);
 
-                    return FutureBuilder(
-                        future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
-                        initialData: '',
-                        builder: (context, vatSnapshot) {
-                          if (vatSnapshot.connectionState == ConnectionState.waiting) {
-                            return MyLoadingCircle(500);
-                          }
-                          _vatPercent = vatSnapshot.data;
-                          switch (sortingElement.sortingType) {
-                            case SortingTypes.leadingAscending:
-                              extras.sort((a, b) => a.name.compareTo(b.name));
-                              break;
-                            case SortingTypes.leadingDescending:
-                              extras.sort((b, a) => a.name.compareTo(b.name));
-                              break;
-                            case SortingTypes.trailingAscending:
-                              extras.sort((a, b) => a.profitMargin(_vatPercent).compareTo(b.profitMargin(_vatPercent)));
-                              break;
-                            case SortingTypes.trailingDescending:
-                              extras.sort((b, a) => a.profitMargin(_vatPercent).compareTo(b.profitMargin(_vatPercent)));
-                              break;
-                          }
+                  return FutureBuilder(
+                      future: _sharedValueHandler.getIntSharedP('VATPercent', 25),
+                      initialData: '',
+                      builder: (context, vatSnapshot) {
+                        if (vatSnapshot.connectionState == ConnectionState.waiting) {
+                          return MyLoadingCircle(500);
+                        }
+                        _vatPercent = vatSnapshot.data;
+                        switch (sortingElement.sortingType) {
+                          case SortingTypes.leadingAscending:
+                            extras.sort((a, b) => a.name.compareTo(b.name));
+                            break;
+                          case SortingTypes.leadingDescending:
+                            extras.sort((b, a) => a.name.compareTo(b.name));
+                            break;
+                          case SortingTypes.trailingAscending:
+                            extras.sort((a, b) => a.profitMargin(_vatPercent).compareTo(b.profitMargin(_vatPercent)));
+                            break;
+                          case SortingTypes.trailingDescending:
+                            extras.sort((b, a) => a.profitMargin(_vatPercent).compareTo(b.profitMargin(_vatPercent)));
+                            break;
+                        }
 
-                          int listLenght = extras.length;
-                          if (!appData.isPro && extras.length > 3) {
-                            listLenght = 3;
-                          }
+                        int listLenght = extras.length;
+                        if (!appData.isPro && extras.length > maxFreeItems) {
+                          listLenght = maxFreeItems;
+                        }
 
-                          return FutureBuilder(
-                              future: _sharedValueHandler.getStringSharedP('CurrencyChosen', 'DKK'),
-                              initialData: '',
-                              builder: (context, currencySnapshot) {
-                                if (currencySnapshot.connectionState == ConnectionState.waiting) {
-                                  return MyLoadingCircle(500);
-                                }
-                                return Padding(
-                                  padding: const EdgeInsets.only(top: 40),
-                                  child: ListView.builder(
-                                    itemCount: listLenght,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      Map<String, dynamic> element = {
-                                        'title': extras[index].name,
-                                        'subtitle': null,
-                                        'trailing1': extras[index].salePrice,
-                                        'trailing2': extras[index].profitMargin(_vatPercent).round(),
-                                      };
-                                      return ElementListTile(element: element, myOnPressed: () => _goToExtraPage(extras[index]));
-                                    },
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                  ),
-                                );
-                              });
-                        });
-                  },
-                ),
-                !appData.isPro && extras.length > 3
-                    ? Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Opacity(
-                            opacity: 0.5,
-                            child: ElementListTile(element: {
-                              'title': '________________',
-                              'subtitle': '________',
-                              'trailing1': 75.0,
-                              'trailing2': 100,
-                            }, myOnPressed: null),
-                          ),
-                          Align(
-                              alignment: Alignment.center,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.orange,
-                                    elevation: 0,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => UpgradeScreen(),
-                                    ))
-                                        .then((context) {
-                                      setState(() {});
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
-                                    child: Text(
-                                      'Upgrade to Premium\nto see all of your items',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                    ),
-                                  ))),
-                        ],
-                      )
-                    : Center(),
-                SizedBox(height: 400),
-              ]),
+                        return Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 40),
+                              child: ListView.builder(
+                                itemCount: listLenght,
+                                itemBuilder: (BuildContext context, int index) {
+                                  Map<String, dynamic> element = {
+                                    'title': extras[index].name,
+                                    'subtitle': null,
+                                    'trailing1': extras[index].salePrice,
+                                    'trailing2': extras[index].profitMargin(_vatPercent).round(),
+                                  };
+                                  return ElementListTile(element: element, myOnPressed: () => _goToExtraPage(extras[index]));
+                                },
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                              ),
+                            ),
+                            !appData.isPro && extras.length > maxFreeItems ? UpgradeToSeeItems(thisState: setState) : Center(),
+                            SizedBox(height: 400),
+                          ],
+                        );
+                      });
+                },
+              ),
             ),
           ),
         ),

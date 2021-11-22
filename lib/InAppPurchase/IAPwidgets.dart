@@ -50,7 +50,7 @@ class PrivacyAndTerms extends StatelessWidget {
               style: TextStyle(color: Colors.blue),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy.html');
+                  _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy/');
                 },
             ),
             TextSpan(text: ' and '),
@@ -59,7 +59,7 @@ class PrivacyAndTerms extends StatelessWidget {
               style: TextStyle(color: Colors.blue),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  _launchURLWebsite('https://wejeo.dk/profcalculator-terms-and-conditions.html');
+                  _launchURLWebsite('https://wejeo.dk/profitcalcuator-terms-and-conditions/');
                 },
             ),
           ],

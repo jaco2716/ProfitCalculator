@@ -108,8 +108,8 @@ class _MealListPageState extends State<MealListPage> {
                               }
 
                               int listLenght = meals.length;
-                              if (!appData.isPro && meals.length > 3) {
-                                listLenght = 3;
+                              if (!appData.isPro && meals.length > maxFreeItems) {
+                                listLenght = maxFreeItems;
                               }
 
                               return Column(
@@ -131,47 +131,7 @@ class _MealListPageState extends State<MealListPage> {
                                       physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
-                                  !appData.isPro && meals.length > maxFreeItems
-                                      ? UpgradeToSeeItems(thisState: setState)
-                                      // ? Stack(
-                                      //     alignment: Alignment.center,
-                                      //     children: [
-                                      //       Opacity(
-                                      //         opacity: 0.5,
-                                      //         child: ElementListTile(element: {
-                                      //           'title': '________________',
-                                      //           'subtitle': '________\n_____\n____\n___',
-                                      //           'trailing1': 75.0,
-                                      //           'trailing2': 100,
-                                      //         }, myOnPressed: null),
-                                      //       ),
-                                      //       Align(
-                                      //           alignment: Alignment.center,
-                                      //           child: ElevatedButton(
-                                      //               style: ElevatedButton.styleFrom(
-                                      //                 primary: Colors.orange,
-                                      //                 elevation: 0,
-                                      //               ),
-                                      //               onPressed: () {
-                                      //                 Navigator.of(context)
-                                      //                     .push(MaterialPageRoute(
-                                      //                   builder: (context) => UpgradeScreen(),
-                                      //                 ))
-                                      //                     .then((context) {
-                                      //                   setState(() {});
-                                      //                 });
-                                      //               },
-                                      //               child: Padding(
-                                      //                 padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 5),
-                                      //                 child: Text(
-                                      //                   'Upgrade to Premium\nto see all of your items',
-                                      //                   textAlign: TextAlign.center,
-                                      //                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                      //                 ),
-                                      //               ))),
-                                      //     ],
-                                      //   )
-                                      : Center(),
+                                  !appData.isPro && meals.length > maxFreeItems ? UpgradeToSeeItems(thisState: setState) : Center(),
                                   SizedBox(height: 400),
                                 ],
                               );
