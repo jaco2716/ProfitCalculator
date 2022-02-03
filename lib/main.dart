@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:profit_calculator/Handlers/PurchaseHandler.dart';
 import 'package:profit_calculator/Pages/FrontPageMenu.dart';
 
 import 'Handlers/SharedValueHandler.dart';
@@ -23,7 +23,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-
+  final PurchaseHandler _purchaseHandler = PurchaseHandler();
   // reset() async {
   //   await _sharedValueHandler.saveIntSharedP(0, 'newUser');
   // }
@@ -31,31 +31,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  Future<void> initPlatformState() async {
-    appData.isPro = false;
-
-    await Purchases.setDebugLogsEnabled(true);
-    await Purchases.setup("tsZsqXbTbbzAZavjqlWhKLUwPtCkkJtP");
-
-    PurchaserInfo purchaserInfo;
-    try {
-      purchaserInfo = await Purchases.getPurchaserInfo();
-      // print(purchaserInfo.toString());
-      //user has access to some entitlement
-      if (purchaserInfo.entitlements.all['all_features'] != null) {
-        appData.isPro = purchaserInfo.entitlements.all['all_features'].isActive;
-      }
-      else {
-        appData.isPro = false;
-      }
-    } on PlatformException catch (e) {
-      print(e);
-    }
-
-    print('#### is user pro? ${appData.isPro}');
+    _purchaseHandler.initPlatformState();
   }
 
   @override
@@ -65,8 +41,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Profit Calculator',
       theme: ThemeData(
-          // brightness: Brightness.light,
-          appBarTheme: AppBarTheme(brightness: Brightness.dark),
+          appBarTheme: AppBarTheme(systemOverlayStyle: SystemUiOverlayStyle.light),
           primarySwatch: Colors.blue,
           buttonTheme: ButtonThemeData(
             buttonColor: Colors.blue,

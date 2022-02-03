@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:profit_calculator/Handlers/PurchaseHandler.dart';
 import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
@@ -19,9 +20,12 @@ class FrontPageMenu extends StatefulWidget {
 }
 
 class _FrontPageMenuState extends State<FrontPageMenu> {
+  final PurchaseHandler _purchaseHandler = PurchaseHandler();
+
+
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.width);
+    // print(MediaQuery.of(context).size.width);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
     double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 22;
     return Scaffold(
@@ -109,7 +113,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
   }
 
   void _goToPage(Widget page) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page)).then((value) => _purchaseHandler.initPlatformState());
   }
 
   void _launchURL(String _url) async {

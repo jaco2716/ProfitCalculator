@@ -52,15 +52,6 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // if (_purchaserInfo == null) {
-    //   return Scaffold(appBar: MyAppBarWithCalc('Premium'), body: Center(child: MyLoadingCircle(100)));
-    // } else {
-    //   if (_purchaserInfo.entitlements.all.isNotEmpty && _purchaserInfo.entitlements.all['all_features'].isActive != null) {
-    //     appData.isPro = _purchaserInfo.entitlements.all['all_features'].isActive;
-    //   } else {
-    //     appData.isPro = false;
-    //   }
-    // appData.isPro = false;
     if (appData.isPro) {
       return ProScreen();
     } else {
@@ -69,7 +60,6 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
         fetchErrorMessage: _fetchErrorMessage,
       );
     }
-    // }
   }
 }
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:profit_calculator/Handlers/CreateElementLogic.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ValidateValues.dart';
 import 'package:profit_calculator/Model/ElementTypes.dart';
-
 import 'package:profit_calculator/Model/Meal.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/AddElementModule.dart';
 import 'package:profit_calculator/MyWidgets/CreateElementWidgets/CreateElementTextField.dart';

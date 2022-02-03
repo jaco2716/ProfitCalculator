@@ -3,3 +3,4 @@
   const menuJsonFile = 'menuJsonFile';
   const extraJsonFile = 'extraJsonFile';
   const cateringJsonFile = 'cateringJsonFile';
+  const String revenuecatApiKey = "tsZsqXbTbbzAZavjqlWhKLUwPtCkkJtP";
