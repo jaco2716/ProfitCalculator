@@ -113,7 +113,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
   }
 
   void _goToPage(Widget page) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page)).then((value) => _purchaseHandler.initPlatformState());
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
   void _launchURL(String _url) async {
