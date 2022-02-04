@@ -137,19 +137,73 @@ class _UpsellScreenState extends State<UpsellScreen> {
                         )
                       : SizedBox(height: 20),
                   Divider(height: 8),
-                  FeaturesListTile(icon: Icons.star, title: 'Unlimited', subtitle: 'Create and analyse unlimited extras, meals, menus, and caterings.', infoTile: false),
+                  FeaturesListTile(
+                      icon: Icons.star,
+                      title: 'Unlimited',
+                      subtitle: 'Create and analyse unlimited extras, meals, menus, and caterings.',
+                      infoTile: false),
                   Divider(height: 8),
-                  FeaturesListTile(icon: Icons.support_agent, title: 'Support', subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.', infoTile: false),
+                  FeaturesListTile(
+                      icon: Icons.edit,
+                      title: 'Customize',
+                      subtitle: 'Edit all of your of your extras, meals, menus, and caterings after they have been created.',
+                      infoTile: false),
+                  Divider(height: 8),
+                  FeaturesListTile(
+                      icon: Icons.support_agent,
+                      title: 'Support',
+                      subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.',
+                      infoTile: false),
+                  Divider(height: 8),
+                  FeaturesListTile(
+                      icon: Icons.support_agent,
+                      title: 'Support',
+                      subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.',
+                      infoTile: false),
+                  Divider(height: 8),
+                  FeaturesListTile(
+                      icon: Icons.support_agent,
+                      title: 'Support',
+                      subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.',
+                      infoTile: false),
+                  Divider(height: 8),
+                  FeaturesListTile(
+                      icon: Icons.support_agent,
+                      title: 'Support',
+                      subtitle: 'Get support from the team at Wejeo if you have problems or even if you have feature suggestions.',
+                      infoTile: false),
                 ]),
               ),
-              Divider(height: 8),
+              // Divider(height: 1, thickness: 3,),
               canPurchase
-                  ? Column(
-                      children: [
-                        PurchaseButton(package: monthly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Month'),
-                        SizedBox(height: 8),
-                        PurchaseButton(package: yearly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Year'),
-                      ],
+                  ? Container(
+                      padding: EdgeInsets.symmetric(vertical:8),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 5,
+                            spreadRadius: -10,
+                            color: Colors.black26,
+                            offset: Offset(0, -10),
+                          )
+                        ],
+                        color: Colors.grey[50],
+                      ),
+                      child: Column(
+                        children: [
+                          PurchaseButton(package: monthly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Month'),
+                          SizedBox(height: 8),
+                          PurchaseButton(package: yearly, purchaseEntitlement: 'all_features', leadingString: 'Buy for', trailingString: '/ Year'),
+                          SizedBox(height: 12),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Text(
+                              '7 days free trial for new subscribers.',
+                              style: TextStyle(letterSpacing: 0.5, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   : Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -402,9 +456,18 @@ class _ProScreenState extends State<ProScreen> {
                   // ),
                   SizedBox(height: 15),
                   Divider(height: 8),
-                  FeaturesListTile(icon: Icons.star, title: 'You are a Premium member', subtitle: 'You can use the app in all its functionality.', infoTile: true),
-                  FeaturesListTile(icon: Icons.info, title: 'Cancel subscription', subtitle: 'To cancel a subscription go to your application store subscriptions.', infoTile: true),
-                  FeaturesListTile(icon: Icons.support_agent, title: 'Support', subtitle: 'Please e-mail us at Support@wejeo.dk if you have any problem.', infoTile: true),
+                  FeaturesListTile(
+                      icon: Icons.star, title: 'You are a Premium member', subtitle: 'You can use the app in all its functionality.', infoTile: true),
+                  FeaturesListTile(
+                      icon: Icons.info,
+                      title: 'Cancel subscription',
+                      subtitle: 'To cancel a subscription go to your application store subscriptions.',
+                      infoTile: true),
+                  FeaturesListTile(
+                      icon: Icons.support_agent,
+                      title: 'Support',
+                      subtitle: 'Please e-mail us at Support@wejeo.dk if you have any problem.',
+                      infoTile: true),
                   SizedBox(height: 200)
                 ]),
               ),

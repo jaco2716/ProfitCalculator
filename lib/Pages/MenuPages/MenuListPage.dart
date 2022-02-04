@@ -33,7 +33,7 @@ class _MenuListPageState extends State<MenuListPage> {
   final String ingredientJsonFile = config.ingredientJsonFile;
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
-  final int maxFreeItems = 3;
+  final int maxFreeItems = 5;
   List<Menu> menus = [];
 
   int _vatPercent;
@@ -49,7 +49,7 @@ class _MenuListPageState extends State<MenuListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Menu',
           myOnPressed: () {
-            if (!appData.isPro && menus.length >= maxFreeItems) {
+            if (!appData.isPro) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));
@@ -121,6 +121,7 @@ class _MenuListPageState extends State<MenuListPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 40),
                                     child: ListView.builder(
+                                      padding: EdgeInsets.zero,
                                       itemCount: listLenght,
                                       itemBuilder: (BuildContext context, int index) {
                                         Map<String, dynamic> element = {

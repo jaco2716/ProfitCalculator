@@ -32,7 +32,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
-  final int maxFreeItems = 3;
+  final int maxFreeItems = 5;
   List<Extra> extras = [];
 
   @override
@@ -45,7 +45,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
         compact: true,
         buttonColor: Colors.green,
         myOnPressed: () {
-          if (!appData.isPro && extras.length >= maxFreeItems) {
+          if (!appData.isPro) {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => UpgradeScreen(),
             ));
@@ -111,6 +111,7 @@ class _ExtraListPageState extends State<ExtraListPage> {
                             Padding(
                               padding: const EdgeInsets.only(top: 40),
                               child: ListView.builder(
+                                padding: EdgeInsets.zero,
                                 itemCount: listLenght,
                                 itemBuilder: (BuildContext context, int index) {
                                   Map<String, dynamic> element = {

@@ -34,7 +34,7 @@ class _CateringListPageState extends State<CateringListPage> {
   final String menuJsonFile = config.menuJsonFile;
   final String extraJsonFile = config.extraJsonFile;
   final String cateringJsonFile = config.cateringJsonFile;
-  final int maxFreeItems = 3;
+  final int maxFreeItems = 5;
   List<Catering> caterings = [];
 
   int _vatPercent;
@@ -59,7 +59,8 @@ class _CateringListPageState extends State<CateringListPage> {
           tileTitle: 'Create Catering',
           myOnPressed: () {
             //print(caterings.toString());
-            if (!appData.isPro && caterings.length >= maxFreeItems) {
+            //Previous if statement: if (!appData.isPro && caterings.length >= maxFreeItems) {
+            if (!appData.isPro) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));
@@ -133,9 +134,9 @@ class _CateringListPageState extends State<CateringListPage> {
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(top: 0),
+                                    padding: const EdgeInsets.only(top: 40),
                                     child: ListView.builder(
-                                      padding: EdgeInsets.only(top: 40),
+                                      padding: EdgeInsets.zero,
                                       itemCount: listLenght,
                                       itemBuilder: (BuildContext context, int index) {
                                         Map<String, dynamic> element = {

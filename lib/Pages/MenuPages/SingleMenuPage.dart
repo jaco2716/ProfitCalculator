@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Menu.dart';
@@ -59,13 +61,19 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-                Menu newEditedMenu;
-                newEditedMenu =
-                    await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMenuPage(editMode: true, editMenu: menu)));
-                if (newEditedMenu != null) {
-                  menu = newEditedMenu;
+                if (!appData.isPro) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => UpgradeScreen(),
+                  ));
+                } else {
+                  Menu newEditedMenu;
+                  newEditedMenu =
+                      await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMenuPage(editMode: true, editMenu: menu)));
+                  if (newEditedMenu != null) {
+                    menu = newEditedMenu;
+                  }
+                  setState(() {});
                 }
-                setState(() {});
               })
         ],
       ),
@@ -139,9 +147,9 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
                                           })
                                       ?.toList(),
                                   'Meals'),
-                                  MyDeleteIconButton(
-                                  myOnPressed: () => _deleteMealDialog(context),
-                                ),
+                              MyDeleteIconButton(
+                                myOnPressed: () => _deleteMealDialog(context),
+                              ),
                             ],
                           );
                         });
@@ -216,12 +224,12 @@ class _SingleMenuPageState extends State<SingleMenuPage> {
         );
         return false;
       } else {
-      int deleteIndex = allMenus.indexWhere((element) => element.id == newMenu.id);
-      allMenus.removeAt(deleteIndex);
-      fileManagement.writeFile(menuJsonFile, jsonEncode(allMenus));
+        int deleteIndex = allMenus.indexWhere((element) => element.id == newMenu.id);
+        allMenus.removeAt(deleteIndex);
+        fileManagement.writeFile(menuJsonFile, jsonEncode(allMenus));
       }
     } catch (error) {
-    print('Error deleting menu: $error');
+      print('Error deleting menu: $error');
       return false;
     }
     return true;

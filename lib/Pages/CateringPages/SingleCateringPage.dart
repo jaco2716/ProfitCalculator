@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/MyWidgets/MyAlertDialog.dart';
@@ -61,11 +63,17 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-                Catering newEditedCatering;
-                newEditedCatering = await Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => CreateCateringPage(editMode: true, editCatering: catering)));
-                if (newEditedCatering != null) {
-                  catering = newEditedCatering;
+                if (!appData.isPro) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => UpgradeScreen(),
+                  ));
+                } else {
+                  Catering newEditedCatering;
+                  newEditedCatering = await Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => CreateCateringPage(editMode: true, editCatering: catering)));
+                  if (newEditedCatering != null) {
+                    catering = newEditedCatering;
+                  }
                 }
                 setState(() {});
               })
@@ -170,7 +178,7 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
   }
 
   _deleteCateringDialog(BuildContext context) {
-  //print(catering.menus);
+    //print(catering.menus);
     showDialog(
       context: context,
       builder: (context) {
@@ -211,7 +219,7 @@ class _SingleCateringPageState extends State<SingleCateringPage> {
       allCatering.removeAt(deleteIndex);
       fileManagement.writeFile(cateringJsonFile, jsonEncode(allCatering));
     } catch (error) {
-    print('Error deleting catering: $error');
+      print('Error deleting catering: $error');
       return false;
     }
     return true;

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Ingredient.dart';
 import 'package:profit_calculator/Model/Meal.dart';
@@ -63,6 +65,11 @@ class _SingleMealPageState extends State<SingleMealPage> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
+                if (!appData.isPro) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => UpgradeScreen(),
+                  ));
+                } else {
                 Meal newEditedMeal;
                 newEditedMeal =
                     await Navigator.of(context).push(MaterialPageRoute(builder: (context) => CreateMealPage(editMode: true, editMeal: meal)));
@@ -70,6 +77,7 @@ class _SingleMealPageState extends State<SingleMealPage> {
                   meal = newEditedMeal;
                 }
                 setState(() {});
+                }
               })
         ],
       ),

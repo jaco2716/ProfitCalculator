@@ -39,30 +39,33 @@ class PrivacyAndTerms extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, bottom: 25, left: 30, right: 30),
-      child: RichText(
-        text: TextSpan(
-          style: TextStyle(color: Colors.black38),
-          children: [
-            TextSpan(text: leadingText),
-            TextSpan(
-              text: 'Privacy Policy',
-              style: TextStyle(color: Colors.blue),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy/');
-                },
-            ),
-            TextSpan(text: ' and '),
-            TextSpan(
-              text: 'Terms and Conditions.',
-              style: TextStyle(color: Colors.blue),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  _launchURLWebsite('https://wejeo.dk/profitcalcuator-terms-and-conditions/');
-                },
-            ),
-          ],
+      padding: const EdgeInsets.only(top: 15.0, bottom: 25, left: 20, right: 20),
+      child: SizedBox(
+        width: double.infinity,
+        child: RichText(
+          text: TextSpan(
+            style: TextStyle(color: Colors.black38),
+            children: [
+              TextSpan(text: leadingText),
+              TextSpan(
+                text: 'Privacy Policy',
+                style: TextStyle(color: Colors.blue),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    _launchURLWebsite('https://wejeo.dk/profcalculator-privacy-policy/');
+                  },
+              ),
+              TextSpan(text: ' and '),
+              TextSpan(
+                text: 'Terms and Conditions.',
+                style: TextStyle(color: Colors.blue),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    _launchURLWebsite('https://wejeo.dk/profitcalcuator-terms-and-conditions/');
+                  },
+              ),
+            ],
+          ),
         ),
       ),
     );

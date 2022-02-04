@@ -27,13 +27,16 @@ class _MealListPageState extends State<MealListPage> {
   int _hourPrice = 0;
   int _vatPercent = 0;
   SortingElement sortingElement = SortingElement('   ', '▼', SortingTypes.trailingDescending);
-
-  final int maxFreeItems = 3;
   final String mealJsonFile = config.mealJsonFile;
   final FileManagement fileManagement = FileManagement();
   final ObjectManager objManager = ObjectManager();
   final SharedValueHandler _sharedValueHandler = SharedValueHandler();
+  final int maxFreeItems = 5;
   List<Meal> meals = [];
+
+  void boolReverse(bool value){
+    value = !value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +48,7 @@ class _MealListPageState extends State<MealListPage> {
           buttonColor: Colors.green,
           tileTitle: 'Create Meal',
           myOnPressed: () {
-            if (!appData.isPro && meals.length >= maxFreeItems) {
+            if (!appData.isPro) {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => UpgradeScreen(),
               ));
@@ -117,6 +120,7 @@ class _MealListPageState extends State<MealListPage> {
                                   Padding(
                                     padding: const EdgeInsets.only(top: 40),
                                     child: ListView.builder(
+                                      padding: EdgeInsets.zero,
                                       itemCount: listLenght,
                                       itemBuilder: (BuildContext context, int index) {
                                         Map<String, dynamic> element = {

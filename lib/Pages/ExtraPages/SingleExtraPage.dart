@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:profit_calculator/Handlers/FileManagement.dart';
 import 'package:profit_calculator/Handlers/ObjectManager.dart';
 import 'package:profit_calculator/Handlers/SharedValueHandler.dart';
+import 'package:profit_calculator/InAppPurchase/components.dart';
+import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/Model/Catering.dart';
 import 'package:profit_calculator/Model/Extra.dart';
 import 'package:profit_calculator/Model/Menu.dart';
@@ -59,14 +61,20 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
           IconButton(
               icon: Icon(Icons.edit),
               onPressed: () async {
-                Extra newEditedExtra;
-                newEditedExtra = await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => CreateExtra(
-                          editExtra: extra,
-                          editMode: true,
-                        )));
-                if (newEditedExtra != null) {
-                  extra = newEditedExtra;
+                if (!appData.isPro) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => UpgradeScreen(),
+                  ));
+                } else {
+                  Extra newEditedExtra;
+                  newEditedExtra = await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CreateExtra(
+                            editExtra: extra,
+                            editMode: true,
+                          )));
+                  if (newEditedExtra != null) {
+                    extra = newEditedExtra;
+                  }
                 }
                 setState(() {});
               })
@@ -152,7 +160,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       for (var m in allMenusFromFile) {
         extraFoundIndex = m.extras.indexWhere((i) => i.id == myExtra.id);
         if (extraFoundIndex >= 0) {
-        //print(extraFoundIndex);
+          //print(extraFoundIndex);
           break;
         }
       }
@@ -163,7 +171,7 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       for (var c in allCateringsFromFile) {
         extraFoundIndex = c.extras.indexWhere((i) => i.id == myExtra.id);
         if (extraFoundIndex >= 0) {
-        //print(extraFoundIndex);
+          //print(extraFoundIndex);
           break;
         }
       }
@@ -180,5 +188,4 @@ class _SingleExtraPageState extends State<SingleExtraPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${myExtra.name} was deleted.')));
     }
   }
-  
 }
