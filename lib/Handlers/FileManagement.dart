@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../Model/EnvironmentConfig.dart' as config;
 
 class FileManagement {
@@ -66,22 +67,18 @@ class FileManagement {
     }
   }
 
-  // exportData(BuildContext context, String ingredientFileName,
-  //     String mealFileName) async {
-  //   final path = await _localPath;
-  //   String mergedJson = '';
+  exportData(String fileName, String jsonString) async {
+    final path = await _localPath;
+    
 
-  //   String ingredientJson = await readFile(ingredientFileName);
-  //   String mealJson = await readFile(mealFileName);
+    //mergedJson = ingredientJson + '&&&' + mealJson;
+    writeFile(fileName, jsonString);
 
-  //   mergedJson = ingredientJson + '&&&' + mealJson;
-  //   writeFile('profitCalculatorBackup', mergedJson);
-
-  //   await Share.shareFiles(
-  //     ['$path/profitCalculatorBackup.json'],
-  //     subject: 'Profit Calculator Backup',
-  //   );
-  // }
+    await Share.shareFiles(
+      ['$path/profCalculatorExportBackup.json'],
+      subject: 'ProfCalculator Backup',
+    );
+  }
 
   // importData() async {
   //   final String ingredientJsonFile = config.ingredientJsonFile;

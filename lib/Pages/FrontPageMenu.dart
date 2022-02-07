@@ -4,6 +4,7 @@ import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
 import 'package:profit_calculator/MyWidgets/MyIconButton.dart';
 import 'package:profit_calculator/Pages/CateringPages/CateringListPage.dart';
+import 'package:profit_calculator/Pages/ContactSupportPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/MenuListPage.dart';
 import 'package:profit_calculator/Pages/VideoAppGuidePage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -83,7 +84,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                   children: [
                     Container(
                       width: 230,
-                      child: MyIconButton(compact: true, leftalign: true, tileIcon: Icon(Icons.info), tileTitle: 'Contact Support', buttonColor: Colors.blueGrey[800], myOnPressed: () => _launchURL('https://wejeo.dk/#Contact')),
+                      child: MyIconButton(compact: true, leftalign: true, tileIcon: Icon(Icons.info), tileTitle: 'Contact Support', buttonColor: Colors.blueGrey[800], myOnPressed: () => _goToPage(ContactSupportPage())),
                     ),
                     Container(
                       width: 70,
@@ -114,6 +115,6 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
   }
 
   void _launchURL(String _url) async {
-    await canLaunch(_url) ? await launch(_url) : print('Could not launch $_url');
+    await canLaunch(_url) ? await launch(_url, forceSafariVC: false) : print('Could not launch $_url');
   }
 }

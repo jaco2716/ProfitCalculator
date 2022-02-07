@@ -13,7 +13,7 @@ class CalculatorWidget extends StatelessWidget {
       child: Column(children: [
         Container(
           decoration: BoxDecoration(
-          color: Colors.grey[800],
+            color: Colors.grey[800],
             borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
           ),
           // width: double.infinity,
@@ -23,7 +23,10 @@ class CalculatorWidget extends StatelessWidget {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
               },
               // label: Text('Close'),
-              icon: Icon(Icons.close, color: Colors.white,)),
+              icon: Icon(
+                Icons.close,
+                color: Colors.white,
+              )),
         ),
         Container(
           padding: EdgeInsets.all(5),

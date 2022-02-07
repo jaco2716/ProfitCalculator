@@ -173,6 +173,7 @@ class _VATChangePageState extends State<VATChangePage> {
                                   ]),
                             ));
                       }),
+                      Text('Changing the currency does not change any price values.', style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, letterSpacing: -0.5)),
                   SizedBox(
                     height: 10,
                   ),
