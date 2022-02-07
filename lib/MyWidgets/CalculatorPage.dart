@@ -18,12 +18,12 @@ class CalculatorWidget extends StatelessWidget {
           ),
           // width: double.infinity,
           height: 45,
-          child: TextButton.icon(
+          child: IconButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
               },
-              label: Text('Close'),
-              icon: Icon(Icons.close)),
+              // label: Text('Close'),
+              icon: Icon(Icons.close, color: Colors.white,)),
         ),
         Container(
           padding: EdgeInsets.all(5),
