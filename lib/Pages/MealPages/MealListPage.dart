@@ -34,10 +34,6 @@ class _MealListPageState extends State<MealListPage> {
   final int maxFreeItems = 5;
   List<Meal> meals = [];
 
-  void boolReverse(bool value){
-    value = !value;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

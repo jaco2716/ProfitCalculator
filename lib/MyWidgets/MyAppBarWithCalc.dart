@@ -4,8 +4,7 @@ import 'package:profit_calculator/MyWidgets/CalculatorPage.dart';
 
 class MyAppBarWithCalc extends StatelessWidget implements PreferredSizeWidget {
   final String _title;
-  final Function actionTapped;
-  MyAppBarWithCalc(this._title, {this.actionTapped});
+  MyAppBarWithCalc(this._title);
 
   @override
   Size get preferredSize => const Size.fromHeight(54);
@@ -18,7 +17,6 @@ class MyAppBarWithCalc extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
             icon: Icon(CupertinoIcons.plus_slash_minus),
             onPressed: () {
-              if(actionTapped != null) actionTapped();
               // Scaffold.of(context).showBottomSheet((context) => CalculatorPage());
               ScaffoldMessenger.of(context).removeCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

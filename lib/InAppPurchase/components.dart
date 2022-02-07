@@ -1,4 +1,3 @@
-import 'package:purchases_flutter/object_wrappers.dart';
 
 class AppData {
   static final AppData _appData = new AppData._internal();

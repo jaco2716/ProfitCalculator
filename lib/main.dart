@@ -4,10 +4,8 @@ import 'package:profit_calculator/Handlers/PurchaseHandler.dart';
 import 'package:profit_calculator/Pages/FrontPageMenu.dart';
 
 import 'Handlers/SharedValueHandler.dart';
-import 'InAppPurchase/components.dart';
 import 'MyWidgets/FrontPageWidgets/MyFirstTimeLoadingWidget.dart';
 import 'MyWidgets/MyLoadingCircle.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

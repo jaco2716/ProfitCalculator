@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:profit_calculator/Handlers/PurchaseHandler.dart';
 import 'package:profit_calculator/InAppPurchase/upgrade.dart';
 
 import 'package:profit_calculator/MyWidgets/FrontPageWidgets/MyGridMenuButton.dart';
@@ -20,8 +19,6 @@ class FrontPageMenu extends StatefulWidget {
 }
 
 class _FrontPageMenuState extends State<FrontPageMenu> {
-  final PurchaseHandler _purchaseHandler = PurchaseHandler();
-
 
   @override
   Widget build(BuildContext context) {
