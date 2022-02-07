@@ -68,7 +68,7 @@ class BackupAndRestore extends StatelessWidget {
               tileIcon: Icon(Icons.import_export),
               tileTitle: "Import Backup file",
               myOnPressed: () {
-                goToPage(SaveBackupPage(true), context);
+                importBackup();
               },
             ),
           ],
@@ -102,12 +102,19 @@ class BackupAndRestore extends StatelessWidget {
   }
 
   void importBackup() async {
-    FilePickerResult result = await FilePicker.platform.pickFiles();
+    try {
+      FilePickerResult result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      File file = File(result.files.single.path);
-    } else {
-      // User canceled the picker
+      if (result != null) {
+        File file = File(result.files.single.path);
+        String fileJson = await file.readAsString();
+        //TODO Fix import backup
+        // BackupFileJson _backupFileJson = BackupFileJson.fromJson()
+      } else {
+        print('User canceled filepicker');
+      }
+    } catch (e) {
+      print('error: $e');
     }
   }
 }

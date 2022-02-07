@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoAppGuidePage extends StatefulWidget {
-  const VideoAppGuidePage({Key key}) : super(key: key);
 
   @override
   _VideoAppGuidePageState createState() => _VideoAppGuidePageState();

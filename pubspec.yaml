@@ -23,24 +23,34 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  percent_indicator: ^2.1.8
-  flutter_simple_calculator: ^1.0.4
-  path_provider: ^2.0.2
+  # percent_indicator: ^2.1.8
+  # flutter_simple_calculator: ^1.0.4
+  # path_provider: ^2.0.2
+  # share_plus: ^3.0.4
+  # shared_preferences: ^2.0.6
+  # url_launcher: ^6.0.2
+  # video_player: ^2.1.1
+  # purchases_flutter: ^3.6.0
+  # file_picker: ^4.3.3
+
+  percent_indicator: ^4.0.0
+  flutter_simple_calculator: ^2.0.0+1
+  path_provider: ^2.0.8
   share_plus: ^3.0.4
-  shared_preferences: ^2.0.6
-  url_launcher: ^6.0.2
-  video_player: ^2.1.1
-  purchases_flutter: ^3.6.0
+  shared_preferences: ^2.0.13
+  url_launcher: ^6.0.18
+  video_player: ^2.2.18
+  purchases_flutter: ^3.9.3
   file_picker: ^4.3.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
+  cupertino_icons: ^1.0.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.8.0"
+  # flutter_launcher_icons: "^0.8.0"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
