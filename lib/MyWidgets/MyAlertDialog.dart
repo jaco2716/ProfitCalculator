@@ -8,6 +8,7 @@ class MyAlertDialog extends StatelessWidget {
   final String confirmText;
   final Color confirmColor;
   final bool infoDialog;
+  final Widget widgetContext;
 
   MyAlertDialog({
     @required this.title,
@@ -17,8 +18,9 @@ class MyAlertDialog extends StatelessWidget {
     this.confirmText = '',
     this.confirmColor = Colors.blue,
     this.infoDialog = false,
+    this.widgetContext,
   });
-  
+
   final TextStyle _titleText = TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black);
 
   @override
@@ -34,11 +36,13 @@ class MyAlertDialog extends StatelessWidget {
       ),
       content: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
-        child: Text(
-          content,
-          // style: _contentText,
-          textAlign: TextAlign.center,
-        ),
+        child: widgetContext == null
+            ? Text(
+                content,
+                // style: _contentText,
+                textAlign: TextAlign.center,
+              )
+            : widgetContext,
       ),
       actions: [
         Container(

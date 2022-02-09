@@ -69,13 +69,10 @@ class FileManagement {
 
   exportData(String fileName, String jsonString) async {
     final path = await _localPath;
-    
-
-    //mergedJson = ingredientJson + '&&&' + mealJson;
     writeFile(fileName, jsonString);
 
     await Share.shareFiles(
-      ['$path/profCalculatorExportBackup.json'],
+      ['$path/$fileName.json'],
       subject: 'ProfCalculator Backup',
     );
   }
