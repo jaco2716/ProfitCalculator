@@ -25,7 +25,7 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
   Widget build(BuildContext context) {
     // print(MediaQuery.of(context).size.width);
     double gridSpacingPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 2;
-    double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 22;
+    double menuIconPadding = MediaQuery.of(context).size.aspectRatio < 0.5 ? 15 : 32;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -44,9 +44,9 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
                         child: Container(
                           constraints: BoxConstraints(maxHeight: 500, maxWidth: 500),
                           child: GridView.count(
-                            padding: EdgeInsets.only(top: 15, bottom: 15, left: menuIconPadding, right: menuIconPadding),
-                            crossAxisSpacing: 20,
-                            mainAxisSpacing: 20,
+                            padding: EdgeInsets.only(top: 10, bottom: 10, left: menuIconPadding, right: menuIconPadding),
+                            crossAxisSpacing: gridSpacingPadding,
+                            mainAxisSpacing: gridSpacingPadding,
                             crossAxisCount: 2,
                             children: [
                               MyGridMenuButton(title: 'Extras', index: 2, icon: Icons.liquor, onTap: () => _goToPage(ExtraListPage())),
@@ -112,9 +112,5 @@ class _FrontPageMenuState extends State<FrontPageMenu> {
 
   void _goToPage(Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
-
-  void _launchURL(String _url) async {
-    await canLaunch(_url) ? await launch(_url, forceSafariVC: false) : print('Could not launch $_url');
   }
 }
