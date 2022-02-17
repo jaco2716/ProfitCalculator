@@ -80,11 +80,18 @@ class BackupAndRestore extends StatelessWidget {
 
   void importBackup(BuildContext context) async {
     try {
-      FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
+      FilePickerResult result; //= await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
+        print('#### pick file!');
+      
+      Platform.isIOS
+          ? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json'])
+          : result = await FilePicker.platform.pickFiles(type: FileType.any);
       BackupFileJson backupFileJson;
+      
       if (result != null) {
         File file = File(result.files.single.path);
         String fileJson = await file.readAsString();
+        print('#### File picked!');
 
         backupFileJson = BackupFileJson.fromJson(json.decode(fileJson));
         fileManagement.writeFile(ingredientJsonFile, backupFileJson.ingredientJson);

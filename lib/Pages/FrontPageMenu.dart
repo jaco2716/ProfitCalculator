@@ -7,7 +7,6 @@ import 'package:profit_calculator/Pages/CateringPages/CateringListPage.dart';
 import 'package:profit_calculator/Pages/ContactSupportPage.dart';
 import 'package:profit_calculator/Pages/MenuPages/MenuListPage.dart';
 import 'package:profit_calculator/Pages/VideoAppGuidePage.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../Pages/VATChangePage.dart';
 import 'BackupAndRestore/BackupAndRestorePage.dart';
 import 'ExtraPages/ExtraListPage.dart';

@@ -1,4 +1,3 @@
-import 'package:profit_calculator/Model/Ingredient.dart';
 
 class BackupFileJson {
   String ingredientJson;
