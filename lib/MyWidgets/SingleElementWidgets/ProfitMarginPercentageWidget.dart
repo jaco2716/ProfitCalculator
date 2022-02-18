@@ -12,8 +12,8 @@ class ProfitMarginPercentageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double _profitMargin = localProfitMargin/100;
     return CircularPercentIndicator(
-      radius: 170.0,
-      lineWidth: 20.0,
+      radius: 100.0,
+      lineWidth: 25.0,
       animation: true,
       percent: _profitMargin < 1 ? _profitMargin : 1,
       center: Column(
