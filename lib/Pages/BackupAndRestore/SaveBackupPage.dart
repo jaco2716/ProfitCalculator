@@ -176,7 +176,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Something went wrong, try again.'),
       ));
-    print('Error saving data to file: ' + error.toString());
+      print('Error saving data to file: ' + error.toString());
     }
   }
 
@@ -201,7 +201,7 @@ class _SaveBackupPageState extends State<SaveBackupPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Something went wrong, try again.'),
       ));
-    print('Error saving data to file: ' + error.toString());
+      print('Error saving data to file: ' + error.toString());
     }
   }
 
